@@ -26,10 +26,9 @@ public class Main {
 
 	public static void main(String[] args) throws SlickException {
 		Game g = new Game();
-		AppGameContainer gc = new AppGameContainer(g);
+		AppGameContainer gc = new AppGameContainer(g, 800, 600, false);
 		gc.setShowFPS(false);
 		g.setGC(gc);
-		gc.setDisplayMode(800, 600, false);
 		gc.start();
 	}
 

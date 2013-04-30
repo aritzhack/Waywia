@@ -19,7 +19,10 @@ import aritzh.waywia.bds.BDSCompound;
 import aritzh.waywia.bds.BDSString;
 import aritzh.waywia.blocks.Block;
 import aritzh.waywia.entity.Entity;
+import aritzh.waywia.entity.QuadEntity;
 import aritzh.waywia.entity.player.Player;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.newdawn.slick.Graphics;
 
 import java.io.File;
@@ -33,17 +36,19 @@ import java.util.HashMap;
 public class World {
 
 	private final Universe universe;
-
-	private HashMap<Integer, Entity> entities = new HashMap<Integer, Entity>();
+	private Multimap<String, Entity> entities = ArrayListMultimap.create();
 	private HashMap<String, Player> players = new HashMap<String, Player>();
 	private ArrayList<ArrayList<Block>> blocks = new ArrayList<ArrayList<Block>>();
-	
 	private BDSCompound customData = new BDSCompound("CustomData");
-
 	private String worldName;
 
 	public World(Universe universe, File worldFolder) {
 		this.universe = universe;
+		this.spanwEntity(new QuadEntity(200, 200));
+	}
+
+	public void spanwEntity(Entity e) {
+		this.entities.put(e.getName(), e);
 	}
 
 	private void load() {
@@ -97,5 +102,9 @@ public class World {
 		for (Entity e : entities.values()) {
 			e.render(g);
 		}
+	}
+
+	public void removeEntity(Entity e) {
+		this.entities.remove(e.getName(), e);
 	}
 }

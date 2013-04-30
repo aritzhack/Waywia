@@ -29,21 +29,19 @@ import java.util.Map;
  */
 public abstract class Entity {
 
-	private BDSCompound customData = new BDSCompound("CustomData");
-
-	private Map<String, Class<? extends Entity>> stringToEntity = new HashMap<>();
-
 	float posX, posY;
-
 	float velX = 0, velY = 0;
-
 	int health;
+	private BDSCompound customData = new BDSCompound("CustomData");
+	private Map<String, Class<? extends Entity>> stringToEntity = new HashMap<>();
 
 	public Entity(float posX, float posY) {
 		this.posX = posX;
 		this.posY = posY;
 		this.health = this.getMaxHealth();
 	}
+
+	public abstract int getMaxHealth();
 
 	public void update(int delta) {
 		this.posX += this.velX * delta;
@@ -61,8 +59,6 @@ public abstract class Entity {
 	public abstract void render(Graphics g);
 
 	public abstract String getName();
-
-	public abstract int getMaxHealth();
 
 	public BDSCompound toBDS() {
 		return new BDSCompound("Entity")

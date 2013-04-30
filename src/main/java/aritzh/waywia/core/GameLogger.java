@@ -17,8 +17,11 @@ package aritzh.waywia.core;
 
 import aritzh.waywia.i18n.I18N;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.*;
 
 /**
  * @author Aritz Lopez
@@ -29,7 +32,23 @@ public class GameLogger {
 	private static final Level DEFAULT_LOG_LEVEL = Level.INFO;
 
 	public static void initLogger() {
-		logger.setParent(Logger.getGlobal());
+		GameLogger.logger.setUseParentHandlers(false);
+
+		ConsoleHandler ch = new ConsoleHandler();
+		Formatter f = new SimpleFormat();
+
+		ch.setFormatter(f);
+
+		GameLogger.logger.addHandler(ch);
+
+		try {
+			FileHandler fh = new FileHandler("log%g.log");
+			fh.setFormatter(f);
+			GameLogger.logger.addHandler(fh);
+		} catch (IOException e) {
+			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+		}
+
 	}
 
 	public static void log(String s) {
@@ -37,7 +56,7 @@ public class GameLogger {
 	}
 
 	public static void log(Level level, String message) {
-		GameLogger.log(level, message);
+		GameLogger.logger.log(level, message);
 	}
 
 	public static void log(String format, Object... params) {
@@ -86,5 +105,20 @@ public class GameLogger {
 
 	public static void warnTranslated(String format, Object... args) {
 		GameLogger.warnTranslated(String.format(format, args));
+	}
+
+	private static class SimpleFormat extends Formatter {
+
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
+
+		@Override
+		public String format(LogRecord record) {
+			StringBuilder builder = new StringBuilder(1000);
+			builder.append(df.format(new Date(record.getMillis()))).append(" - ");
+			builder.append("[").append(record.getLevel()).append("] ");
+			builder.append(formatMessage(record));
+			builder.append("\n");
+			return builder.toString();
+		}
 	}
 }

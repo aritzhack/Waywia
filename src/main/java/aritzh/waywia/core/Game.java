@@ -15,11 +15,16 @@
 
 package aritzh.waywia.core;
 
+import aritzh.waywia.gui.GUI;
+import aritzh.waywia.gui.MainMenuGUI;
 import aritzh.waywia.i18n.I18N;
-import aritzh.waywia.input.GameInput;
+import aritzh.waywia.input.Keyboard;
+import aritzh.waywia.input.Mouse;
 import aritzh.waywia.universe.Universe;
 import com.google.common.eventbus.EventBus;
 import org.newdawn.slick.*;
+import org.newdawn.slick.util.FileSystemLocation;
+import org.newdawn.slick.util.ResourceLoader;
 
 import java.io.File;
 
@@ -29,9 +34,11 @@ import java.io.File;
  */
 public class Game extends BasicGame {
 
+	public static Game instance = null;
+
 	public final File baseDir;
-	private final GameInput input;
 	private final EventBus BUS;
+	public GUI currGui;
 	private GameContainer gc = null;
 	private Universe universe;
 
@@ -39,10 +46,8 @@ public class Game extends BasicGame {
 		super("Hello World");
 		this.baseDir = new File(System.getProperty("user.dir"));
 		this.BUS = new EventBus("MainBus");
-
+		instance = this;
 		GameLogger.initLogger();
-		this.input = new GameInput(this);
-		I18N.init(baseDir);
 	}
 
 	public void setGC(GameContainer gc) {
@@ -56,13 +61,17 @@ public class Game extends BasicGame {
 
 	@Override
 	public void init(GameContainer gc) throws SlickException {
-		this.universe = new Universe(this);
+		this.universe = new Universe(this, new File(this.baseDir.getPath(), "saves"));
+		new Keyboard(this);
+		new Mouse(this);
+		I18N.init(baseDir);
+		ResourceLoader.addResourceLocation(new FileSystemLocation(new File("./res")));
+		this.currGui = new MainMenuGUI(this);
 	}
 
 	@Override
 	public void update(GameContainer gc, int i) throws SlickException {
 		((AppGameContainer) gc).setTitle(String.valueOf(gc.getFPS()));
-		this.input.update(i);
 	}
 
 	@Override
@@ -80,6 +89,6 @@ public class Game extends BasicGame {
 	}
 
 	public void reload() {
-		this.universe = new Universe(this);
+		this.universe = new Universe(this, new File(this.baseDir.getPath(), "saves"));
 	}
 }

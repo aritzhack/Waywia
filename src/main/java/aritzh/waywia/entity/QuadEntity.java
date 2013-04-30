@@ -15,8 +15,9 @@
 
 package aritzh.waywia.entity;
 
-import aritzh.waywia.util.Util;
+import aritzh.waywia.util.RenderUtil;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
 
@@ -26,27 +27,29 @@ import org.newdawn.slick.geom.Shape;
  */
 public class QuadEntity extends EntityNPC {
 
+	Image texture = RenderUtil.getTexture("test");
+
 	public QuadEntity(int posX, int posY) {
 		super(posX, posY);
 	}
 
 	@Override
+	public int getMaxHealth() {
+		return 100;
+	}
+
+	@Override
 	public Shape getBoundingShape() {
-		return new Rectangle(0,0,10,10);
+		return new Rectangle(0, 0, this.texture.getWidth(), this.texture.getHeight());
 	}
 
 	@Override
 	public void render(Graphics g) {
-		g.draw(Util.move(this.getBoundingShape(), this.posX, this.posY));
+		this.texture.draw(this.posX, this.posY);
 	}
 
 	@Override
 	public String getName() {
 		return "QuadEntity";
-	}
-
-	@Override
-	public int getMaxHealth() {
-		return 100;
 	}
 }

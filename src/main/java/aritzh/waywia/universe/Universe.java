@@ -20,8 +20,8 @@ import org.newdawn.slick.Graphics;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Aritz Lopez
@@ -29,21 +29,23 @@ import java.util.List;
  */
 public class Universe {
 
+	private static FileFilter onlyFolders = new FileFilter() {
+		@Override
+		public boolean accept(File file) {
+			return file.isDirectory();
+		}
+	};
+
 	private final Game game;
-	private List<World> worlds = new ArrayList<World>();
+	private Set<World> worlds = new HashSet<>();
 	private World currentWorld;
 
-	public Universe(Game game) {
+	public Universe(Game game, File savesFolder) {
 		this.game = game;
-		File savesFolder = new File(game.baseDir.getPath(), "saves");
 		savesFolder.mkdir();
-		FileFilter onlyFolders = new FileFilter() {
-			@Override
-			public boolean accept(File file) {
-				return file.isDirectory();
-			}
-		};
-		for(File folder : savesFolder.listFiles(onlyFolders)){
+		this.currentWorld = new World(this, null);
+		this.worlds.add(this.currentWorld);
+		for (File folder : savesFolder.listFiles(onlyFolders)) {
 			this.worlds.add(new World(this, folder));
 		}
 	}
