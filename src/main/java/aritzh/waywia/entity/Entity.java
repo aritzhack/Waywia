@@ -16,10 +16,8 @@
 package aritzh.waywia.entity;
 
 import aritzh.waywia.bds.BDSCompound;
-import aritzh.waywia.bds.BDSInt;
 import aritzh.waywia.bds.BDSString;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
 
 import java.util.HashMap;
@@ -41,7 +39,7 @@ public abstract class Entity {
 
 	int health;
 
-	public Entity(float posX, float posY){
+	public Entity(float posX, float posY) {
 		this.posX = posX;
 		this.posY = posY;
 		this.health = this.getMaxHealth();
@@ -56,7 +54,7 @@ public abstract class Entity {
 
 	public abstract Shape getBoundingShape();
 
-	public BDSCompound getCustomData(){
+	public BDSCompound getCustomData() {
 		return this.customData;
 	}
 
@@ -70,9 +68,9 @@ public abstract class Entity {
 		return new BDSCompound("Entity")
 				.add(new BDSString(this.getName(), "EntityName"))
 				.add(new BDSString(Float.toString(posX), "posX"))
-				.add(new BDSString(Float.toString(posY),"posY"))
-				.add(new BDSString(Float.toString(velX),"velX"))
-				.add(new BDSString(Float.toString(velY),"velY"))
+				.add(new BDSString(Float.toString(posY), "posY"))
+				.add(new BDSString(Float.toString(velX), "velX"))
+				.add(new BDSString(Float.toString(velY), "velY"))
 				.add(this.customData);
 	}
 }

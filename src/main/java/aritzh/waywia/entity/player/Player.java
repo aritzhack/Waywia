@@ -58,7 +58,7 @@ public class Player extends Entity {
 	}
 
 	@Override
-	public int getMaxHealth(){
+	public int getMaxHealth() {
 		return 10;
 	}
 }

@@ -19,10 +19,7 @@ import aritzh.waywia.i18n.I18N;
 import aritzh.waywia.input.GameInput;
 import aritzh.waywia.universe.Universe;
 import com.google.common.eventbus.EventBus;
-import org.newdawn.slick.BasicGame;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 
 import java.io.File;
 
@@ -32,11 +29,11 @@ import java.io.File;
  */
 public class Game extends BasicGame {
 
-	private GameContainer gc = null;
-	private Universe universe;
+	public final File baseDir;
 	private final GameInput input;
 	private final EventBus BUS;
-	public final File baseDir;
+	private GameContainer gc = null;
+	private Universe universe;
 
 	public Game() {
 		super("Hello World");
@@ -48,23 +45,24 @@ public class Game extends BasicGame {
 		I18N.init(baseDir);
 	}
 
-	@Override
-	public void init(GameContainer gc) throws SlickException {
-		this.universe = new Universe(this);
-	}
-
 	public void setGC(GameContainer gc) {
 		this.gc = gc;
 	}
 
 	@Override
-	public void update(GameContainer gc, int i) throws SlickException {
-		this.input.update(i);
+	public boolean closeRequested() {
+		return super.closeRequested();
 	}
 
 	@Override
-	public boolean closeRequested() {
-		return super.closeRequested();
+	public void init(GameContainer gc) throws SlickException {
+		this.universe = new Universe(this);
+	}
+
+	@Override
+	public void update(GameContainer gc, int i) throws SlickException {
+		((AppGameContainer) gc).setTitle(String.valueOf(gc.getFPS()));
+		this.input.update(i);
 	}
 
 	@Override
@@ -79,5 +77,9 @@ public class Game extends BasicGame {
 
 	public void registerEventHandler(Object o) {
 		this.BUS.register(o);
+	}
+
+	public void reload() {
+		this.universe = new Universe(this);
 	}
 }

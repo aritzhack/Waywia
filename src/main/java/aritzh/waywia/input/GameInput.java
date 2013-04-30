@@ -16,6 +16,7 @@
 package aritzh.waywia.input;
 
 import aritzh.waywia.core.Game;
+import aritzh.waywia.core.GameLogger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
@@ -36,12 +37,16 @@ public class GameInput {
 
 	public void update(int i) throws SlickException {
 		GameContainer gc = game.getGc();
-		if (gc.getInput().isKeyDown(Input.KEY_ESCAPE)) gc.exit();
+		if (gc.getInput().isKeyPressed(Input.KEY_ESCAPE)) gc.exit();
 		if (gc.getInput().isKeyPressed(Input.KEY_S)) {
 			Image target = new Image(gc.getWidth(), gc.getHeight());
 			gc.getGraphics().copyArea(target, 0, 0);
 			ImageOut.write(target, "screenshot.png", false);
 			target.destroy();
+		}
+		if (gc.getInput().isKeyPressed(Input.KEY_R)) {
+			GameLogger.log("Reload!");
+			this.game.reload();
 		}
 	}
 }

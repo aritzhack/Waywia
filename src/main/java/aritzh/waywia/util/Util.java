@@ -15,7 +15,6 @@
 
 package aritzh.waywia.util;
 
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Transform;
 
@@ -25,7 +24,7 @@ import org.newdawn.slick.geom.Transform;
  */
 public class Util {
 
-	public static Shape move(Shape source, float x, float y){
+	public static Shape move(Shape source, float x, float y) {
 		return source.transform(Transform.createTranslateTransform(x, y));
 	}
 }
