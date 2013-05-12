@@ -16,6 +16,8 @@
 package aritzh.waywia.core;
 
 import aritzh.waywia.i18n.I18N;
+import org.newdawn.slick.util.Log;
+import org.newdawn.slick.util.LogSystem;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -32,23 +34,26 @@ public class GameLogger {
 	private static final Level DEFAULT_LOG_LEVEL = Level.INFO;
 
 	public static void initLogger() {
+		GameLogger.logger.setLevel(Level.ALL);
 		GameLogger.logger.setUseParentHandlers(false);
+
+		Log.setLogSystem(new NullLogSystem());
 
 		ConsoleHandler ch = new ConsoleHandler();
 		Formatter f = new SimpleFormat();
 
 		ch.setFormatter(f);
+		ch.setLevel(Level.ALL);
 
 		GameLogger.logger.addHandler(ch);
 
 		try {
-			FileHandler fh = new FileHandler("log%g.log");
+			FileHandler fh = new FileHandler("log%g.log", 1, 4, false);
 			fh.setFormatter(f);
 			GameLogger.logger.addHandler(fh);
 		} catch (IOException e) {
-			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+			e.printStackTrace();
 		}
-
 	}
 
 	public static void log(String s) {
@@ -107,6 +112,10 @@ public class GameLogger {
 		GameLogger.warnTranslated(String.format(format, args));
 	}
 
+	public static void exception(String message, Exception exception) {
+		GameLogger.logger.severe(message + "\n" + exception.getLocalizedMessage());
+	}
+
 	private static class SimpleFormat extends Formatter {
 
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
@@ -115,10 +124,41 @@ public class GameLogger {
 		public String format(LogRecord record) {
 			StringBuilder builder = new StringBuilder(1000);
 			builder.append(df.format(new Date(record.getMillis()))).append(" - ");
-			builder.append("[").append(record.getLevel()).append("] ");
+			builder.append("[").append((record.getLevel() == Level.FINE ? "DEBUG" : record.getLevel())).append("] ");
 			builder.append(formatMessage(record));
 			builder.append("\n");
 			return builder.toString();
+		}
+	}
+
+	private static class NullLogSystem implements LogSystem {
+
+		@Override
+		public void error(String message, Throwable e) {
+		}
+
+		@Override
+		public void error(Throwable e) {
+		}
+
+		@Override
+		public void error(String message) {
+		}
+
+		@Override
+		public void warn(String message) {
+		}
+
+		@Override
+		public void warn(String message, Throwable e) {
+		}
+
+		@Override
+		public void info(String message) {
+		}
+
+		@Override
+		public void debug(String message) {
 		}
 	}
 }

@@ -28,7 +28,6 @@ public class Main {
 		Game g = new Game();
 		AppGameContainer gc = new AppGameContainer(g, 800, 600, false);
 		gc.setShowFPS(false);
-		g.setGC(gc);
 		gc.start();
 	}
 

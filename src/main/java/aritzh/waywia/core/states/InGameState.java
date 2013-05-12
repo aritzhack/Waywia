@@ -13,54 +13,43 @@
  * game. If not, see http://www.gnu.org/licenses/.
  */
 
-package aritzh.waywia.entity.player;
+package aritzh.waywia.core.states;
 
-import aritzh.waywia.bds.BDSCompound;
-import aritzh.waywia.entity.Entity;
+import aritzh.waywia.core.Game;
+import aritzh.waywia.universe.Universe;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Shape;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class Player extends Entity {
+public class InGameState extends WaywiaState {
 
-	String username;
+	private Universe universe;
 
-	public Player(String username, int posX, int posY) {
-		super(posX, posY);
-		this.username = username;
-	}
-
-//	public Player(BDSCompound data) {
-//
-//	}
-
-	@Override
-	public Shape getBoundingShape() {
-		return null;
+	public InGameState(Game game) {
+		super(game, "In-Game");
 	}
 
 	@Override
-	public void render(Graphics g) {
-
+	public int getID() {
+		return 1;
 	}
 
 	@Override
-	public String getName() {
-		return this.username;
+	public void init(GameContainer container, StateBasedGame sbGame) throws SlickException {
+		this.game = (Game) sbGame;
 	}
 
 	@Override
-	public BDSCompound toBDS() {
-		// TODO Is there any special data per-player
-		// TODO Maybe friends list?
-		return super.toBDS();
+	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+		if (this.universe != null) this.universe.render(g);
 	}
 
 	@Override
-	public int getMaxHealth() {
-		return 10;
+	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 	}
 }

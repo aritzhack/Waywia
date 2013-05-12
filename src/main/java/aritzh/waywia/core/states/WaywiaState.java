@@ -13,54 +13,41 @@
  * game. If not, see http://www.gnu.org/licenses/.
  */
 
-package aritzh.waywia.entity.player;
+package aritzh.waywia.core.states;
 
-import aritzh.waywia.bds.BDSCompound;
-import aritzh.waywia.entity.Entity;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Shape;
+import aritzh.waywia.core.Game;
+import aritzh.waywia.gui.components.GUI;
+import org.newdawn.slick.state.BasicGameState;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class Player extends Entity {
+public abstract class WaywiaState extends BasicGameState {
 
-	String username;
+	protected GUI currGui;
+	protected Game game;
+	protected String name;
 
-	public Player(String username, int posX, int posY) {
-		super(posX, posY);
-		this.username = username;
+	public WaywiaState(Game game, String name) {
+		this.game = game;
+		this.name = name;
 	}
 
-//	public Player(BDSCompound data) {
-//
-//	}
-
-	@Override
-	public Shape getBoundingShape() {
-		return null;
+	public GUI getCurrentGui() {
+		return currGui;
 	}
 
-	@Override
-	public void render(Graphics g) {
-
+	public boolean isGuiOpen() {
+		return currGui != null;
 	}
 
-	@Override
-	public String getName() {
-		return this.username;
+	public Game getGame() {
+		return game;
 	}
 
 	@Override
-	public BDSCompound toBDS() {
-		// TODO Is there any special data per-player
-		// TODO Maybe friends list?
-		return super.toBDS();
-	}
-
-	@Override
-	public int getMaxHealth() {
-		return 10;
+	public String toString() {
+		return this.name;
 	}
 }

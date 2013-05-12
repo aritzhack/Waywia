@@ -16,6 +16,8 @@
 package aritzh.waywia.blocks;
 
 import aritzh.waywia.bds.BDSCompound;
+import aritzh.waywia.bds.BDSString;
+import aritzh.waywia.core.GameLogger;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -28,7 +30,18 @@ public abstract class Block {
 
 	public abstract void render(Graphics g);
 
-	public abstract void update(int delta);
+	public void update(int delta, int x, int y) {
+		GameLogger.debug("Updated: (" + x + ", " + y + "), after " + delta);
+	}
 
-	public abstract BDSCompound toBDS();
+	public abstract String getName();
+
+	public BDSCompound toBDS() {
+		return new BDSCompound("Block").add(new BDSString(this.getName(), "Name"));
+	}
+
+	public static Block fromBDS(BDSCompound blockBDS) {
+		// TODO Parse block
+		return null;  //To change body of created methods use File | Settings | File Templates.
+	}
 }

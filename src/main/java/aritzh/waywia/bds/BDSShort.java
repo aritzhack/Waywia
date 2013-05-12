@@ -26,7 +26,7 @@ import java.util.Arrays;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class BDSShort implements IBDS {
+public class BDSShort extends BDS {
 
 	private final short data;
 	private final String name;
@@ -52,7 +52,7 @@ public class BDSShort implements IBDS {
 		} catch (IllegalArgumentException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Could not parse BDSShort\n" + e.getStackTrace());
+			throw new IllegalArgumentException("Could not parse BDSShort\n" + e.getLocalizedMessage());
 		}
 	}
 

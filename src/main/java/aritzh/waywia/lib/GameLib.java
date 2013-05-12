@@ -13,54 +13,20 @@
  * game. If not, see http://www.gnu.org/licenses/.
  */
 
-package aritzh.waywia.entity.player;
-
-import aritzh.waywia.bds.BDSCompound;
-import aritzh.waywia.entity.Entity;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Shape;
+package aritzh.waywia.lib;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class Player extends Entity {
+public class GameLib {
 
-	String username;
+	public static final String GAME_NAME = "Waywia";
 
-	public Player(String username, int posX, int posY) {
-		super(posX, posY);
-		this.username = username;
-	}
+	public static final int VERSION_MAJOR = 0;
+	public static final int VERSION_MINOR = 0;
+	public static final int VERSION_BUILD = 0;
+	public static final String VERSION = VERSION_MAJOR + "." + VERSION_MINOR + "." + VERSION_BUILD;
 
-//	public Player(BDSCompound data) {
-//
-//	}
-
-	@Override
-	public Shape getBoundingShape() {
-		return null;
-	}
-
-	@Override
-	public void render(Graphics g) {
-
-	}
-
-	@Override
-	public String getName() {
-		return this.username;
-	}
-
-	@Override
-	public BDSCompound toBDS() {
-		// TODO Is there any special data per-player
-		// TODO Maybe friends list?
-		return super.toBDS();
-	}
-
-	@Override
-	public int getMaxHealth() {
-		return 10;
-	}
+	public static final String FULL_NAME = GAME_NAME + " v" + VERSION;
 }

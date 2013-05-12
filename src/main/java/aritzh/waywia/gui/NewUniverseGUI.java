@@ -15,34 +15,40 @@
 
 package aritzh.waywia.gui;
 
+import aritzh.waywia.core.GameLogger;
 import aritzh.waywia.core.states.MenuState;
 import aritzh.waywia.gui.components.Button;
 import aritzh.waywia.gui.components.GUI;
+import aritzh.waywia.gui.components.Inputbox;
+import aritzh.waywia.gui.components.Label;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class MainMenuGUI extends GUI {
+public class NewUniverseGUI extends GUI {
 
-	private Button newGameButton, loadButton, exitButton;
+	private Button newButton, backButton;
+	private Inputbox worldName;
+	private Label title;
 
-	public MainMenuGUI(MenuState state) {
-		super(state);
-		this.addElement(newGameButton = new Button("New Game", -this.width / 2, -this.height / 2 + 100));
-		this.addElement(loadButton = new Button("Load", -this.width / 2, -this.height / 2 + 50));
-		this.addElement(exitButton = new Button("Exit", -this.width / 2, -this.height / 2));
+	public NewUniverseGUI(MenuState menuState) {
+		super(menuState);
+
+		this.addElement(newButton = new Button("Create", -this.width / 2 + 75, this.height - 50));
+		this.addElement(backButton = new Button("Back", -this.width / 2 - 75, this.height - 50));
+
+		this.addElement(worldName = new Inputbox(-this.width / 2, -this.height / 2, 200));
+
+		this.addElement(title = new Label("Hola!", -this.width / 2, -this.height / 2 + 100, 200));
 	}
 
 	@Override
 	public void clicked(int id) {
-		super.clicked(id);
-		if (id == exitButton.getID()) {
-			this.state.getGame().getGc().exit();
-		} else if (id == newGameButton.getID()) {
-			((MenuState) this.state).openGUI(new NewUniverseGUI((MenuState) this.state));
-		} else if (id == loadButton.getID()) {
-			((MenuState) this.state).openGUI(new UniverseListGUI((MenuState) this.state));
+		if (id == this.newButton.getID() && !this.worldName.getText().trim().equals("")) {
+			GameLogger.debug("Creating world: " + this.worldName.getText().trim());
+		} else if (id == this.backButton.getID()) {
+			((MenuState) this.state).openGUI(new MainMenuGUI((MenuState) this.state));
 		}
 	}
 }

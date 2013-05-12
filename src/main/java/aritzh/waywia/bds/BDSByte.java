@@ -25,7 +25,7 @@ import java.util.Arrays;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class BDSByte implements IBDS {
+public class BDSByte extends BDS {
 
 	private final byte data;
 	private final String name;
@@ -51,7 +51,7 @@ public class BDSByte implements IBDS {
 		} catch (IllegalArgumentException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Could not parse BDSByte\n" + e.getStackTrace());
+			throw new IllegalArgumentException("Could not parse BDSByte\n" + e.getLocalizedMessage());
 		}
 	}
 

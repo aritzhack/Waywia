@@ -17,8 +17,14 @@ package aritzh.waywia.i18n;
 
 import aritzh.waywia.core.GameLogger;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author Aritz Lopez
@@ -26,7 +32,7 @@ import java.util.*;
  */
 public class I18N {
 
-	private static Map<Locale, Properties> locales = new HashMap<Locale, Properties>();
+	private static Map<Locale, Properties> locales = new HashMap<>();
 	private static Locale currentLocale = Locale.US;
 
 	public static void addLocale(Locale locale, Properties properties) {
@@ -77,10 +83,6 @@ public class I18N {
 			if (locale != null) {
 				I18N.mergeLocales(locale, props);
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (InvalidPropertiesFormatException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

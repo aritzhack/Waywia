@@ -25,7 +25,7 @@ import java.util.Arrays;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class BDSInt implements IBDS {
+public class BDSInt extends BDS {
 
 	private int data = 0;
 	private final String name;
@@ -51,7 +51,7 @@ public class BDSInt implements IBDS {
 		} catch (IllegalArgumentException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Could not parse BDSInt\n" + e.getStackTrace());
+			throw new IllegalArgumentException("Could not parse BDSInt\n" + e.getLocalizedMessage());
 		}
 	}
 

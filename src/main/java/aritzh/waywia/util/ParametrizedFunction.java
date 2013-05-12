@@ -13,36 +13,13 @@
  * game. If not, see http://www.gnu.org/licenses/.
  */
 
-package aritzh.waywia.bds;
+package aritzh.waywia.util;
 
 /**
- * Binary Data Storage
- * Used to store different data types in byte arrays, and the data from them
- *
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public interface IBDS { // Binary Data Storage
+public interface ParametrizedFunction<I, R> {
 
-	/**
-	 * Returns the data representing this BDS
-	 *
-	 * @return An array of bytes that represent this BDS
-	 */
-	public byte[] getBytes();
-
-	/**
-	 * Returns the name of this BDS
-	 *
-	 * @return the name of this BDS
-	 */
-	public String getName();
-
-	/**
-	 * Returns the type of this BDS, useful to check if it's one type or another
-	 *
-	 * @return The type of this BDS
-	 * @see BDSType
-	 */
-	public BDSType getType();
+	public R apply(I input, Object... args);
 }

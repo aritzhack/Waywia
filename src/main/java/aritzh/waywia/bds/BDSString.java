@@ -25,7 +25,7 @@ import java.util.Arrays;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class BDSString implements IBDS {
+public class BDSString extends BDS {
 
 	private final String data;
 	private String name;
@@ -51,7 +51,7 @@ public class BDSString implements IBDS {
 		} catch (IllegalArgumentException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Could not parse BDSString\n" + e.getStackTrace());
+			throw new IllegalArgumentException("Could not parse BDSString\n" + e.getLocalizedMessage());
 		}
 	}
 
@@ -67,6 +67,11 @@ public class BDSString implements IBDS {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public String toString() {
+		return data;
 	}
 
 	public String getData() {

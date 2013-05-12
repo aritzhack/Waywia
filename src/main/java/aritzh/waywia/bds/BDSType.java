@@ -22,6 +22,11 @@ package aritzh.waywia.bds;
 public enum BDSType {
 	BDS_BYTE, BDS_SHORT, BDS_INT, BDS_STRING, BDS_COMPOUND, BDS_COMPEND;
 
+	/**
+	 * Why cast if you have a method for that?
+	 *
+	 * @return {@code (byte) this.ordinal();}
+	 */
 	public byte toByte() {
 		return (byte) this.ordinal();
 	}

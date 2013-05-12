@@ -18,10 +18,18 @@ package aritzh.waywia.bds;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Special BDS that can store different BDSs inside of it
@@ -29,9 +37,9 @@ import java.util.List;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class BDSCompound implements IBDS {
+public class BDSCompound extends BDS {
 
-	private List<IBDS> items = new ArrayList<IBDS>();
+	private List<BDS> items = new ArrayList<>();
 	private String name;
 
 	/**
@@ -49,7 +57,7 @@ public class BDSCompound implements IBDS {
 	 * @param items The list of BDSs to construct this with
 	 * @param name  The name of this BDS
 	 */
-	public BDSCompound(List<IBDS> items, String name) {
+	public BDSCompound(List<BDS> items, String name) {
 		this.items.addAll(items);
 		this.name = name;
 	}
@@ -59,8 +67,12 @@ public class BDSCompound implements IBDS {
 	 *
 	 * @param items The array of BDSs to construct this with
 	 */
-	public BDSCompound(IBDS[] items, String name) {
+	public BDSCompound(BDS[] items, String name) {
 		this(Arrays.asList(items), name);
+	}
+
+	public BDSCompound(File file) throws IOException {
+		this(Files.toByteArray(file));
 	}
 
 	/**
@@ -69,8 +81,8 @@ public class BDSCompound implements IBDS {
 	 * @param item The BDS this BDSCompound will contain
 	 * @param name The name of this BDS
 	 */
-	public BDSCompound(IBDS item, String name) {
-		this(new IBDS[]{item}, name);
+	public BDSCompound(BDS item, String name) {
+		this(new BDS[]{item}, name);
 	}
 
 	/**
@@ -79,20 +91,48 @@ public class BDSCompound implements IBDS {
 	 * @param data The byte array to parse this BDSCompound from
 	 */
 	public BDSCompound(byte[] data) {
-		this(ByteStreams.newDataInput(data), true);
+		this(data, true);
 	}
 
-	private BDSCompound(ByteArrayDataInput input, boolean withType) {
+	@Override
+	public boolean equals(Object obj) {
+		return this == obj || (this.hashCode() == obj.hashCode() && this.getClass().equals(obj.getClass()));
+	}
+
+	/**
+	 * Returns a hashcode made from the byte array of this BDSCompound, which should be unique,
+	 * unless the objects are the same or equal.
+	 */
+	@Override
+	public int hashCode() {
+		return Arrays.toString(this.getBytes()).hashCode();
+	}
+
+	/**
+	 * Parses a BDSCompound from a byte array
+	 *
+	 * @param compressed If false, compression will not be used
+	 * @param data       The byte array to parse this BDSCompound from
+	 */
+	public BDSCompound(byte[] data, boolean compressed) {
+		data = (compressed ? BDSCompound.decompress(data) : data);
+		this.parse(ByteStreams.newDataInput(data), true);
+	}
+
+	public BDSCompound(ByteArrayDataInput input, boolean withType) {
+		this.parse(input, withType);
+	}
+
+	private void parse(ByteArrayDataInput input, boolean withType) {
 		if (input == null) {
 			this.name = "";
-			return;
 		}
 		try {
 			if (withType) input.readByte();
 			this.name = input.readUTF();
 
-			BDSType type;
-			while ((type = BDSType.values()[input.readByte()]) != null) {
+			for (byte typeB = input.readByte(); typeB < BDSType.values().length && typeB >= 0; typeB = input.readByte()) {
+				BDSType type = BDSType.values()[typeB];
 				switch (type) {
 					case BDS_COMPEND:
 						return;
@@ -114,12 +154,10 @@ public class BDSCompound implements IBDS {
 					default:
 						throw new IllegalArgumentException("Could not parse BDSCompound");
 				}
-			}
 
-		} catch (IllegalArgumentException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Could not parse BDSCompound\n" + e.getStackTrace());
+			}
+		} catch (NullPointerException e) {
+			throw new IllegalArgumentException("Could not parse BDSCompound", e);
 		}
 	}
 
@@ -129,7 +167,7 @@ public class BDSCompound implements IBDS {
 	 * @param bds The element to be added
 	 * @return {@code this}. Eases builder pattern
 	 */
-	public BDSCompound add(IBDS bds) {
+	public BDSCompound add(BDS bds) {
 		if (bds == this) throw new IllegalArgumentException("Cannot add itself as a sub-element!");
 		this.items.add(bds);
 		return this;
@@ -142,9 +180,32 @@ public class BDSCompound implements IBDS {
 	 * @param bds The element to be added
 	 * @return {@code this}. Eases builder pattern
 	 */
-	public BDSCompound add(int idx, IBDS bds) {
+	public BDSCompound add(int idx, BDS bds) {
 		this.items.add(idx, bds);
 		return this;
+	}
+
+	public BDSCompound addAll(Collection<? extends BDS> coll) {
+		this.items.addAll(coll);
+		return this;
+	}
+
+	public List<BDS> getAllByName(String name) {
+		List<BDS> ret = new ArrayList<>();
+		for (BDS bds : this.items) {
+			if (bds.getName().equals(name)) ret.add(bds);
+		}
+		return ret;
+	}
+
+	public BDS getByName(String name, int offset) {
+		for (BDS bds : this.items) {
+			if (bds.getName().equals(name)) {
+				if (offset <= 0) return bds;
+				else offset--;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -153,7 +214,7 @@ public class BDSCompound implements IBDS {
 	 * @param idx The index of the element
 	 * @return The element in the {@code idx} position
 	 */
-	public IBDS get(int idx) {
+	public BDS get(int idx) {
 		return this.items.get(idx);
 	}
 
@@ -164,7 +225,7 @@ public class BDSCompound implements IBDS {
 	 * @return The {@code offset}'th BDSString from the list
 	 */
 	public BDSString getString(int offset) {
-		for (IBDS bds : this.items) {
+		for (BDS bds : this.items) {
 			if (bds instanceof BDSString) {
 				if (offset == 0) return (BDSString) bds;
 				else offset--;
@@ -180,7 +241,7 @@ public class BDSCompound implements IBDS {
 	 * @return The {@code offset}'th BDSByte from the list
 	 */
 	public BDSByte getByte(int offset) {
-		for (IBDS bds : this.items) {
+		for (BDS bds : this.items) {
 			if (bds instanceof BDSByte) {
 				if (offset == 0) return (BDSByte) bds;
 				else offset--;
@@ -196,7 +257,7 @@ public class BDSCompound implements IBDS {
 	 * @return The {@code offset}'th BDSShort from the list
 	 */
 	public BDSShort getShort(int offset) {
-		for (IBDS bds : this.items) {
+		for (BDS bds : this.items) {
 			if (bds instanceof BDSShort) {
 				if (offset == 0) return (BDSShort) bds;
 				else offset--;
@@ -212,7 +273,7 @@ public class BDSCompound implements IBDS {
 	 * @return The {@code offset}'th BDSInt from the list
 	 */
 	public BDSInt getInt(int offset) {
-		for (IBDS bds : this.items) {
+		for (BDS bds : this.items) {
 			if (bds instanceof BDSInt) {
 				if (offset == 0) return (BDSInt) bds;
 				else offset--;
@@ -228,8 +289,88 @@ public class BDSCompound implements IBDS {
 	 * @return The {@code offset}th BDSCompound from the list
 	 */
 	public BDSCompound getComp(int offset) {
-		for (IBDS bds : this.items) {
+		for (BDS bds : this.items) {
 			if (bds instanceof BDSCompound) {
+				if (offset == 0) return (BDSCompound) bds;
+				else offset--;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@code offset}'th BDSString from the list
+	 *
+	 * @param offset The number of BDSStrings to skip
+	 * @return The {@code offset}'th BDSString from the list
+	 */
+	public BDSString getString(String name, int offset) {
+		for (BDS bds : this.items) {
+			if (bds instanceof BDSString && bds.getName().equals(name)) {
+				if (offset == 0) return (BDSString) bds;
+				else offset--;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@code offset}'th BDSByte from the list
+	 *
+	 * @param offset The number of BDSBytes to skip
+	 * @return The {@code offset}'th BDSByte from the list
+	 */
+	public BDSByte getByte(String name, int offset) {
+		for (BDS bds : this.items) {
+			if (bds instanceof BDSByte && bds.getName().equals(name)) {
+				if (offset == 0) return (BDSByte) bds;
+				else offset--;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@code offset}'th BDSShort from the list
+	 *
+	 * @param offset The number of BDSShorts to skip
+	 * @return The {@code offset}'th BDSShort from the list
+	 */
+	public BDSShort getShort(String name, int offset) {
+		for (BDS bds : this.items) {
+			if (bds instanceof BDSShort && bds.getName().equals(name)) {
+				if (offset == 0) return (BDSShort) bds;
+				else offset--;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@code offset}'th BDSInt from the list
+	 *
+	 * @param offset The number of BDSInts to skip
+	 * @return The {@code offset}'th BDSInt from the list
+	 */
+	public BDSInt getInt(String name, int offset) {
+		for (BDS bds : this.items) {
+			if (bds instanceof BDSInt && bds.getName().equals(name)) {
+				if (offset == 0) return (BDSInt) bds;
+				else offset--;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@code offset}th BDSCompound from the list
+	 *
+	 * @param offset The number of BDSCompounds to skip
+	 * @return The {@code offset}th BDSCompound from the list
+	 */
+	public BDSCompound getComp(String name, int offset) {
+		for (BDS bds : this.items) {
+			if (bds instanceof BDSCompound && bds.getName().equals(name)) {
 				if (offset == 0) return (BDSCompound) bds;
 				else offset--;
 			}
@@ -243,24 +384,27 @@ public class BDSCompound implements IBDS {
 	 * @param bds The element to be removed
 	 * @return {@code true} if this BDSCompound contained the element
 	 */
-	public boolean remove(IBDS bds) {
+	public boolean remove(BDS bds) {
 		return this.items.remove(bds);
 	}
 
 	/**
 	 * Stores the data from this BDSCompound into a byte array, so that
-	 * it can be easy and efficiently saved.
+	 * it can be easy and efficiently saved. This method doesn't
+	 * use gzip compression.
 	 *
 	 * @return The byte array identifying this BDS
+	 * @see #getBytes() Compressed counterpart
 	 */
-	@Override
-	public byte[] getBytes() {
+	private byte[] getUncompressedBytes() {
 
 		ByteArrayDataOutput output = ByteStreams.newDataOutput();
 		output.writeByte(this.getType().toByte());
 		output.writeUTF(this.name);
-		for (IBDS bds : this.items) {
-			output.write(bds.getBytes());
+		for (BDS bds : this.items) {
+			if (bds instanceof BDSCompound) {
+				output.write(((BDSCompound) bds).getUncompressedBytes());
+			} else output.write(bds.getBytes());
 		}
 		output.write(new BDSCompEnd().getBytes());
 		return output.toByteArray();
@@ -276,7 +420,51 @@ public class BDSCompound implements IBDS {
 		return BDSType.BDS_COMPOUND;
 	}
 
-	private class BDSCompEnd implements IBDS {
+	/**
+	 * Stores the data from this BDSCompound into a byte array, so that
+	 * it can be easy and efficiently saved. Gzip is used to compress the data
+	 *
+	 * @return The byte array identifying this BDS
+	 * @see #getUncompressedBytes() Uncompressed counterpart
+	 */
+	public byte[] getBytes() {
+		return compress(this.getUncompressedBytes());
+	}
+
+	public static byte[] decompress(byte[] data) {
+		try {
+			GZIPInputStream stream = new GZIPInputStream(new ByteArrayInputStream(data));
+			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+			int nRead;
+			byte[] buffer = new byte[16384];
+			while ((nRead = stream.read(buffer, 0, buffer.length)) != -1) {
+				byteStream.write(buffer, 0, nRead);
+			}
+			byteStream.flush();
+			return byteStream.toByteArray();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static byte[] compress(byte[] data) {
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			GZIPOutputStream gzos = new GZIPOutputStream(baos);
+			gzos.write(data);
+			gzos.close();
+			return baos.toByteArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public BDSCompound copyOf(BDSCompound comp) {
+		return new BDSCompound(comp.getBytes());
+	}
+
+	private class BDSCompEnd extends BDS {
 
 		public BDSCompEnd() {
 

@@ -13,54 +13,36 @@
  * game. If not, see http://www.gnu.org/licenses/.
  */
 
-package aritzh.waywia.entity.player;
-
-import aritzh.waywia.bds.BDSCompound;
-import aritzh.waywia.entity.Entity;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Shape;
+package aritzh.waywia.bds;
 
 /**
+ * Binary Data Storage
+ * Used to store different data types in byte arrays, and the data from them
+ *
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class Player extends Entity {
+public abstract class BDS { // Binary Data Storage
 
-	String username;
+	/**
+	 * Returns the data representing this BDS
+	 *
+	 * @return An array of bytes that represent this BDS
+	 */
+	public abstract byte[] getBytes();
 
-	public Player(String username, int posX, int posY) {
-		super(posX, posY);
-		this.username = username;
-	}
+	/**
+	 * Returns the name of this BDS
+	 *
+	 * @return the name of this BDS
+	 */
+	public abstract String getName();
 
-//	public Player(BDSCompound data) {
-//
-//	}
-
-	@Override
-	public Shape getBoundingShape() {
-		return null;
-	}
-
-	@Override
-	public void render(Graphics g) {
-
-	}
-
-	@Override
-	public String getName() {
-		return this.username;
-	}
-
-	@Override
-	public BDSCompound toBDS() {
-		// TODO Is there any special data per-player
-		// TODO Maybe friends list?
-		return super.toBDS();
-	}
-
-	@Override
-	public int getMaxHealth() {
-		return 10;
-	}
+	/**
+	 * Returns the type of this BDS, useful to check if it's one type or another
+	 *
+	 * @return The type of this BDS
+	 * @see BDSType
+	 */
+	public abstract BDSType getType();
 }

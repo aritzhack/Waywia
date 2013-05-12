@@ -15,16 +15,19 @@
 
 package aritzh.waywia.core;
 
-import aritzh.waywia.gui.GUI;
-import aritzh.waywia.gui.MainMenuGUI;
+import aritzh.waywia.core.states.InGameState;
+import aritzh.waywia.core.states.MenuState;
+import aritzh.waywia.core.states.WaywiaState;
+import aritzh.waywia.gui.components.GUI;
 import aritzh.waywia.i18n.I18N;
 import aritzh.waywia.input.Keyboard;
 import aritzh.waywia.input.Mouse;
-import aritzh.waywia.universe.Universe;
+import aritzh.waywia.lib.GameLib;
 import com.google.common.eventbus.EventBus;
-import org.newdawn.slick.*;
-import org.newdawn.slick.util.FileSystemLocation;
-import org.newdawn.slick.util.ResourceLoader;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.StateBasedGame;
 
 import java.io.File;
 
@@ -32,26 +35,25 @@ import java.io.File;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class Game extends BasicGame {
-
-	public static Game instance = null;
+public class Game extends StateBasedGame {
 
 	public final File baseDir;
+	public final File savesDir;
 	private final EventBus BUS;
-	public GUI currGui;
 	private GameContainer gc = null;
-	private Universe universe;
 
 	public Game() {
-		super("Hello World");
-		this.baseDir = new File(System.getProperty("user.dir"));
-		this.BUS = new EventBus("MainBus");
-		instance = this;
+		super(GameLib.FULL_NAME);
 		GameLogger.initLogger();
-	}
 
-	public void setGC(GameContainer gc) {
-		this.gc = gc;
+		this.baseDir = new File(System.getProperty("user.dir"));
+		if (!baseDir.exists() && !baseDir.mkdirs()) throw new RuntimeException("Couldn't make folder for the game");
+		this.savesDir = new File(baseDir, "saves");
+		if (!this.savesDir.exists() && !savesDir.mkdirs())
+			throw new RuntimeException("Couldn't make the saves' folder");
+
+		this.BUS = new EventBus("MainBus");
+		I18N.init(baseDir);
 	}
 
 	@Override
@@ -60,24 +62,23 @@ public class Game extends BasicGame {
 	}
 
 	@Override
-	public void init(GameContainer gc) throws SlickException {
-		this.universe = new Universe(this, new File(this.baseDir.getPath(), "saves"));
-		new Keyboard(this);
-		new Mouse(this);
-		I18N.init(baseDir);
-		ResourceLoader.addResourceLocation(new FileSystemLocation(new File("./res")));
-		this.currGui = new MainMenuGUI(this);
+	public void enterState(int id) {
+		super.enterState(id);
 	}
 
 	@Override
-	public void update(GameContainer gc, int i) throws SlickException {
-		((AppGameContainer) gc).setTitle(String.valueOf(gc.getFPS()));
+	public void initStatesList(GameContainer container) throws SlickException {
+		this.gc = container;
+		container.getInput().addKeyListener(new Keyboard(this));
+		container.getInput().addMouseListener(new Mouse(this));
+		container.getInput().poll(container.getWidth(), container.getHeight());
+		this.addState(new MenuState(this));
+		this.addState(new InGameState(this));
 	}
 
 	@Override
-	public void render(GameContainer gc, Graphics g) throws SlickException {
-		g.drawString("Hello World!", 100, 100);
-		this.universe.render(g);
+	protected void preUpdateState(GameContainer container, int delta) throws SlickException {
+		((AppGameContainer) gc).setTitle(GameLib.FULL_NAME + " - " + gc.getFPS() + " FPS - " + this.getCurrentState().toString());
 	}
 
 	public GameContainer getGc() {
@@ -88,7 +89,15 @@ public class Game extends BasicGame {
 		this.BUS.register(o);
 	}
 
-	public void reload() {
-		this.universe = new Universe(this, new File(this.baseDir.getPath(), "saves"));
+	public GUI getCurrentGui() {
+		if (this.getCurrentState() != null && this.getCurrentState() instanceof WaywiaState) {
+			return ((WaywiaState) this.getCurrentState()).getCurrentGui();
+		}
+		// Should not happen, but heh...
+		return null;
+	}
+
+	public boolean isGuiOpen() {
+		return this.getCurrentGui() != null;
 	}
 }

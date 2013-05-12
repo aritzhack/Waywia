@@ -13,54 +13,24 @@
  * game. If not, see http://www.gnu.org/licenses/.
  */
 
-package aritzh.waywia.entity.player;
-
-import aritzh.waywia.bds.BDSCompound;
-import aritzh.waywia.entity.Entity;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Shape;
+package aritzh.waywia.gui.components;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class Player extends Entity {
+public class Label extends Inputbox {
 
-	String username;
-
-	public Player(String username, int posX, int posY) {
-		super(posX, posY);
-		this.username = username;
-	}
-
-//	public Player(BDSCompound data) {
-//
-//	}
-
-	@Override
-	public Shape getBoundingShape() {
-		return null;
+	public Label(String text, int x, int y, int width) {
+		super(x, y, width);
+		this.text = text;
 	}
 
 	@Override
-	public void render(Graphics g) {
-
+	public void keyPressed(int key, char c) {
 	}
 
 	@Override
-	public String getName() {
-		return this.username;
-	}
-
-	@Override
-	public BDSCompound toBDS() {
-		// TODO Is there any special data per-player
-		// TODO Maybe friends list?
-		return super.toBDS();
-	}
-
-	@Override
-	public int getMaxHealth() {
-		return 10;
+	public void mouseClicked(int button, int x, int y, int clickCount) {
 	}
 }

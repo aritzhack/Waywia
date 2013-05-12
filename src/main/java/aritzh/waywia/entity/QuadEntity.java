@@ -27,7 +27,7 @@ import org.newdawn.slick.geom.Shape;
  */
 public class QuadEntity extends EntityNPC {
 
-	Image texture = RenderUtil.getTexture("test");
+	static Image texture = RenderUtil.getTexture("button");
 
 	public QuadEntity(int posX, int posY) {
 		super(posX, posY);
@@ -40,12 +40,12 @@ public class QuadEntity extends EntityNPC {
 
 	@Override
 	public Shape getBoundingShape() {
-		return new Rectangle(0, 0, this.texture.getWidth(), this.texture.getHeight());
+		return new Rectangle(0, 0, texture.getWidth(), texture.getHeight());
 	}
 
 	@Override
 	public void render(Graphics g) {
-		this.texture.draw(this.posX, this.posY);
+		texture.draw(this.posX, this.posY);
 	}
 
 	@Override

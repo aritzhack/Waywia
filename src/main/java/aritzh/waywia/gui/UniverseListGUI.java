@@ -16,33 +16,32 @@
 package aritzh.waywia.gui;
 
 import aritzh.waywia.core.states.MenuState;
-import aritzh.waywia.gui.components.Button;
 import aritzh.waywia.gui.components.GUI;
+import aritzh.waywia.gui.components.ScrollList;
+import aritzh.waywia.universe.Universe;
+import org.newdawn.slick.Input;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class MainMenuGUI extends GUI {
+public class UniverseListGUI extends GUI {
 
-	private Button newGameButton, loadButton, exitButton;
-
-	public MainMenuGUI(MenuState state) {
+	public UniverseListGUI(MenuState state) {
 		super(state);
-		this.addElement(newGameButton = new Button("New Game", -this.width / 2, -this.height / 2 + 100));
-		this.addElement(loadButton = new Button("Load", -this.width / 2, -this.height / 2 + 50));
-		this.addElement(exitButton = new Button("Exit", -this.width / 2, -this.height / 2));
+		List<Universe> universes = Universe.getUniverseList(new File(this.state.getGame().baseDir, "saves"));
+		this.addElement(new ScrollList<>(universes, 0, 0, this.width, this.height));
 	}
 
 	@Override
-	public void clicked(int id) {
-		super.clicked(id);
-		if (id == exitButton.getID()) {
-			this.state.getGame().getGc().exit();
-		} else if (id == newGameButton.getID()) {
-			((MenuState) this.state).openGUI(new NewUniverseGUI((MenuState) this.state));
-		} else if (id == loadButton.getID()) {
-			((MenuState) this.state).openGUI(new UniverseListGUI((MenuState) this.state));
+	public void keyPressed(int key, char c) {
+		if (key == Input.KEY_ESCAPE) {
+			((MenuState) this.state).openGUI(new MainMenuGUI((MenuState) this.state));
+		} else {
+			super.keyPressed(key, c);
 		}
 	}
 }
