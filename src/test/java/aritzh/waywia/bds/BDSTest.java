@@ -17,8 +17,6 @@ package aritzh.waywia.bds;
 
 import org.junit.Test;
 
-import java.io.File;
-
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
@@ -89,8 +87,6 @@ public class BDSTest {
 				.add(beforeByteBDS)
 				.add(beforeShortBDS)
 				.add(beforeIntBDS);
-
-		beforeComp.writeToFile(new File("a.dat"));
 
 
 		BDSCompound afterComp = new BDSCompound(beforeComp.getBytes());
