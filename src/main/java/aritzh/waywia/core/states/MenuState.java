@@ -52,10 +52,6 @@ public class MenuState extends WaywiaState {
 	public void update(GameContainer gc, StateBasedGame game, int delta) throws SlickException {
 	}
 
-	public Game getGame() {
-		return game;
-	}
-
 	public void openGUI(GUI gui) {
 		this.currGui = gui;
 	}

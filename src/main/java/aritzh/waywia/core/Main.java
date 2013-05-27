@@ -15,6 +15,7 @@
 
 package aritzh.waywia.core;
 
+import aritzh.waywia.util.Util;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 
@@ -25,7 +26,7 @@ import org.newdawn.slick.SlickException;
 public class Main {
 
 	public static void main(String[] args) throws SlickException {
-		Game g = new Game();
+		Game g = new Game(Util.getAppDir("waywia"));
 		AppGameContainer gc = new AppGameContainer(g, 800, 600, false);
 		gc.setShowFPS(false);
 		gc.start();

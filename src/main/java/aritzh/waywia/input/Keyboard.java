@@ -53,7 +53,7 @@ public class Keyboard implements KeyListener {
 
 	@Override
 	public void keyReleased(int key, char c) {
-
+		if (this.game.isGuiOpen()) this.game.getCurrentGui().keyPressed(key, c);
 	}
 
 	@Override

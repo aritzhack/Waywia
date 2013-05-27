@@ -26,6 +26,19 @@ import java.io.File;
  */
 public class Util {
 
+	public static boolean delete(File f) {
+		if (f == null || !f.exists()) return true;
+		if (f.isDirectory()) {
+			File[] subFiles = f.listFiles();
+			if (subFiles != null) {
+				for (File sf : subFiles) {
+					Util.delete(sf);
+				}
+			}
+		}
+		return f.delete();
+	}
+
 	public static String repeatString(String s, int n) {
 		return new String(new char[n]).replace("\0", s);
 	}

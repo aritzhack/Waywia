@@ -13,35 +13,35 @@
  * game. If not, see http://www.gnu.org/licenses/.
  */
 
-package aritzh.waywia.entity;
+package aritzh.waywia.core;
 
-import aritzh.waywia.entity.ai.AI;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public abstract class EntityNPC extends Entity {
+public class Config {
+	private static Map<String, String> data = new HashMap<>();
 
-	private List<AI> ais = new ArrayList<>();
+	public static void init() {
+		// DOING CONFIG!!!!
+		Properties p = new Properties();
+		try {
+			p.load(new FileInputStream(new File("config.cfg")));
+			for (Map.Entry e : p.entrySet()) {
+				data.put((String) e.getKey(), (String) e.getValue());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassCastException e) {
 
-	public EntityNPC() {
-		super();
-	}
-
-	public EntityNPC(int posX, int posY) {
-		super(posX, posY);
-	}
-
-	@Override
-	public void update(int delta) {
-		for (AI ai : this.ais) {
-			ai.perform(this, delta);
 		}
 
-		super.update(delta);
 	}
 }

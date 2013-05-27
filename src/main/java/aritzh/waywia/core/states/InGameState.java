@@ -22,6 +22,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import java.io.File;
+
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
@@ -51,5 +53,8 @@ public class InGameState extends WaywiaState {
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+		if (this.universe == null)
+			this.universe = new Universe("uniBase", new File(this.getGame().savesDir, "uniBase"));
+		this.universe.update(delta);
 	}
 }

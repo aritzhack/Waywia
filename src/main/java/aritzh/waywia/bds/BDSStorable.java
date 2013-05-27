@@ -13,35 +13,20 @@
  * game. If not, see http://www.gnu.org/licenses/.
  */
 
-package aritzh.waywia.entity;
-
-import aritzh.waywia.entity.ai.AI;
-
-import java.util.ArrayList;
-import java.util.List;
+package aritzh.waywia.bds;
 
 /**
+ * A class implementing this interface must be able to save its data to a BDS compound
+ *
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public abstract class EntityNPC extends Entity {
+public interface BDSStorable {
 
-	private List<AI> ais = new ArrayList<>();
-
-	public EntityNPC() {
-		super();
-	}
-
-	public EntityNPC(int posX, int posY) {
-		super(posX, posY);
-	}
-
-	@Override
-	public void update(int delta) {
-		for (AI ai : this.ais) {
-			ai.perform(this, delta);
-		}
-
-		super.update(delta);
-	}
+	/**
+	 * Returns a BDSCompound describing this object
+	 *
+	 * @return a BDSCompound describing this object
+	 */
+	public BDSCompound toBDS();
 }

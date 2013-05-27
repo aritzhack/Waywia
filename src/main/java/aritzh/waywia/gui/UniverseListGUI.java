@@ -17,12 +17,7 @@ package aritzh.waywia.gui;
 
 import aritzh.waywia.core.states.MenuState;
 import aritzh.waywia.gui.components.GUI;
-import aritzh.waywia.gui.components.ScrollList;
-import aritzh.waywia.universe.Universe;
 import org.newdawn.slick.Input;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * @author Aritz Lopez
@@ -32,8 +27,9 @@ public class UniverseListGUI extends GUI {
 
 	public UniverseListGUI(MenuState state) {
 		super(state);
-		List<Universe> universes = Universe.getUniverseList(new File(this.state.getGame().baseDir, "saves"));
-		this.addElement(new ScrollList<>(universes, 0, 0, this.width, this.height));
+		//List<Universe> universes = Universe.getUniverseList(new File(this.state.getGame().baseDir, "saves"));
+		//this.addElement(new ScrollList<>(universes, 0, 0, this.width, this.height));
+		this.state.getGame().enterState(this.state.getGame().inGameState.getID());
 	}
 
 	@Override

@@ -18,6 +18,8 @@ package aritzh.waywia.core;
 import aritzh.waywia.core.states.InGameState;
 import aritzh.waywia.core.states.MenuState;
 import aritzh.waywia.core.states.WaywiaState;
+import aritzh.waywia.entity.Entity;
+import aritzh.waywia.entity.QuadEntity;
 import aritzh.waywia.gui.components.GUI;
 import aritzh.waywia.i18n.I18N;
 import aritzh.waywia.input.Keyboard;
@@ -41,18 +43,22 @@ public class Game extends StateBasedGame {
 	public final File savesDir;
 	private final EventBus BUS;
 	private GameContainer gc = null;
+	public WaywiaState menuState, inGameState;
 
-	public Game() {
+	public Game(File baseDir) {
 		super(GameLib.FULL_NAME);
-		GameLogger.initLogger();
 
-		this.baseDir = new File(System.getProperty("user.dir"));
+		if (baseDir == null) this.baseDir = new File(System.getProperty("user.dir"));
+		else this.baseDir = baseDir;
+
 		if (!baseDir.exists() && !baseDir.mkdirs()) throw new RuntimeException("Couldn't make folder for the game");
 		this.savesDir = new File(baseDir, "saves");
 		if (!this.savesDir.exists() && !savesDir.mkdirs())
 			throw new RuntimeException("Couldn't make the saves' folder");
 
+		GameLogger.initLogger();
 		this.BUS = new EventBus("MainBus");
+		this.registerEventHandler(this);
 		I18N.init(baseDir);
 	}
 
@@ -62,18 +68,18 @@ public class Game extends StateBasedGame {
 	}
 
 	@Override
-	public void enterState(int id) {
-		super.enterState(id);
-	}
-
-	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
 		this.gc = container;
+
 		container.getInput().addKeyListener(new Keyboard(this));
 		container.getInput().addMouseListener(new Mouse(this));
+
 		container.getInput().poll(container.getWidth(), container.getHeight());
-		this.addState(new MenuState(this));
-		this.addState(new InGameState(this));
+
+		this.addState(this.menuState = new MenuState(this));
+		this.addState(this.inGameState = new InGameState(this));
+
+		Entity.registerEntity(QuadEntity.class);
 	}
 
 	@Override

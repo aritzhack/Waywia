@@ -16,6 +16,7 @@
 package aritzh.waywia.entity;
 
 import aritzh.waywia.bds.BDSCompound;
+import aritzh.waywia.bds.BDSStorable;
 import aritzh.waywia.bds.BDSString;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Shape;
@@ -27,13 +28,19 @@ import java.util.Map;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public abstract class Entity {
+public abstract class Entity implements BDSStorable {
 
 	float posX, posY;
 	float velX = 0, velY = 0;
 	int health;
 	private BDSCompound customData = new BDSCompound("CustomData");
-	private Map<String, Class<? extends Entity>> stringToEntity = new HashMap<>();
+	private static Map<String, Class<? extends Entity>> stringToEntity = new HashMap<>();
+
+	public Entity() {
+		this.posX = 0;
+		this.posY = 0;
+		this.health = this.getMaxHealth();
+	}
 
 	public Entity(float posX, float posY) {
 		this.posX = posX;
@@ -68,5 +75,28 @@ public abstract class Entity {
 				.add(new BDSString(Float.toString(velX), "velX"))
 				.add(new BDSString(Float.toString(velY), "velY"))
 				.add(this.customData);
+	}
+
+	public static void registerEntity(Class<? extends Entity> clazz) {
+		try {
+			Entity.stringToEntity.put(clazz.newInstance().getName(), clazz);
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Object newEntityFromName(String name) {
+		try {
+			return Entity.stringToEntity.get(name).newInstance();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (NullPointerException e) {
+			throw new IllegalArgumentException("Entity type \"" + name + "\" not registered. This is a bug!");
+		}
+		return null;
 	}
 }

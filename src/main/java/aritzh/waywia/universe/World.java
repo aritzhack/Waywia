@@ -17,7 +17,9 @@ package aritzh.waywia.universe;
 
 import aritzh.waywia.bds.BDSCompound;
 import aritzh.waywia.bds.BDSInt;
+import aritzh.waywia.bds.BDSStorable;
 import aritzh.waywia.bds.BDSString;
+import aritzh.waywia.blocks.BackgroundBlock;
 import aritzh.waywia.blocks.Block;
 import aritzh.waywia.entity.Entity;
 import aritzh.waywia.entity.QuadEntity;
@@ -37,30 +39,38 @@ import java.util.List;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class World {
+public class World implements BDSStorable {
 
 	private final Universe universe;
-	private final File worldFolder;
+	private final File root;
 
 	private Multimap<String, Entity> entities = ArrayListMultimap.create();
 	private HashMap<String, Player> players = new HashMap<>();
-	private Matrix<Block> blocks = new Matrix<>(10, 10);
+	private Matrix<Block> blocks = new Matrix<Block>(100, 100, new BackgroundBlock());
 
 	private BDSCompound customData = new BDSCompound("CustomData");
 
 	private String worldName;
 
-	public World(Universe universe, BDSCompound data, File worldFolder) {
+	public World(String name, Universe universe, File root) {
+		this.worldName = name;
+		this.root = root;
+		if (!(this.root.exists() || this.root.mkdirs()))
+			throw new RuntimeException("Couldn't make root folder for world " + this);
 		this.universe = universe;
-		this.worldFolder = worldFolder;
+		this.toBDS().writeToFile(new File(root, "world.dat"));
+	}
 
+	public World(Universe universe, BDSCompound data, File root) {
+		this.universe = universe;
+		this.root = root;
 		this.parseWorldData(data);
 		this.spanwEntity(new QuadEntity(200, 200));
 	}
 
 	private void parseWorldData(BDSCompound compound) {
 		BDSString nameBDS = compound.getString("Name", 0);
-		this.worldName = (nameBDS != null ? nameBDS.getData() : "World " + worldFolder.getName());
+		this.worldName = (nameBDS != null ? nameBDS.getData() : "World " + root.getName());
 		this.customData = compound.getComp("CustomData", 0);
 		BDSCompound blocksBDS = compound.getComp("Blocks", 0);
 		if (blocksBDS != null) {
@@ -88,11 +98,12 @@ public class World {
 		}
 	}
 
+	@Override
 	public BDSCompound toBDS() {
 		BDSCompound ret = new BDSCompound("World");
 
 		ret.add(new BDSString(this.worldName, "Name"));
-		ret.add(this.customData);
+		if (this.customData != null) ret.add(this.customData);
 
 		BDSCompound entities = new BDSCompound("Entities");
 		for (Entity e : this.entities.values()) {
@@ -114,11 +125,7 @@ public class World {
 	}
 
 	public void render(Graphics g) {
-		for (ArrayList<Block> blockList : this.blocks) {
-			for (Block b : blockList) {
-				b.render(g);
-			}
-		}
+		this.blocks.runForEach(World.blockRender, g);
 
 		for (Entity e : entities.values()) {
 			e.render(g);
@@ -145,6 +152,10 @@ public class World {
 		return ret;
 	}
 
+	public String getName() {
+		return worldName;
+	}
+
 	private static ParametrizedFunction<Block, Object> blockUpdate = new ParametrizedFunction<Block, Object>() {
 		@Override
 		public Object apply(Block input, Object... args) {
@@ -160,6 +171,14 @@ public class World {
 			ret.add(new BDSInt((int) args[0], "x"));
 			ret.add(new BDSInt((int) args[1], "y"));
 			return ret;
+		}
+	};
+
+	private static ParametrizedFunction<Block, Object> blockRender = new ParametrizedFunction<Block, Object>() {
+		@Override
+		public Object apply(Block input, Object... args) {
+			input.render((int) args[0], (int) args[1], (Graphics) args[2]);
+			return null;
 		}
 	};
 }

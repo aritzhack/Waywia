@@ -16,6 +16,7 @@
 package aritzh.waywia.blocks;
 
 import aritzh.waywia.bds.BDSCompound;
+import aritzh.waywia.bds.BDSStorable;
 import aritzh.waywia.bds.BDSString;
 import aritzh.waywia.core.GameLogger;
 import org.newdawn.slick.Graphics;
@@ -24,13 +25,13 @@ import org.newdawn.slick.Graphics;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public abstract class Block {
+public abstract class Block implements BDSStorable {
 
 	int hardness;
 
-	public abstract void render(Graphics g);
+	public abstract void render(int x, int y, Graphics g);
 
-	public void update(int delta, int x, int y) {
+	public void update(int x, int y, int delta) {
 		GameLogger.debug("Updated: (" + x + ", " + y + "), after " + delta);
 	}
 

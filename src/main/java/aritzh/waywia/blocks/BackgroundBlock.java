@@ -13,35 +13,27 @@
  * game. If not, see http://www.gnu.org/licenses/.
  */
 
-package aritzh.waywia.entity;
+package aritzh.waywia.blocks;
 
-import aritzh.waywia.entity.ai.AI;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public abstract class EntityNPC extends Entity {
+public class BackgroundBlock extends Block {
 
-	private List<AI> ais = new ArrayList<>();
-
-	public EntityNPC() {
-		super();
-	}
-
-	public EntityNPC(int posX, int posY) {
-		super(posX, posY);
+	@Override
+	public void render(int x, int y, Graphics g) {
+		Color c = g.getColor();
+		g.setColor(Color.blue);
+		g.fillRect(x * 16, y * 16, (x + 1) * 16, (y + 1) * 16);
+		g.setColor(c);
 	}
 
 	@Override
-	public void update(int delta) {
-		for (AI ai : this.ais) {
-			ai.perform(this, delta);
-		}
-
-		super.update(delta);
+	public String getName() {
+		return "Background";
 	}
 }
