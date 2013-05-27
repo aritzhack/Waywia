@@ -37,7 +37,7 @@ public class BDSFileReader {
 
 	public static File chooseFile() {
 		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setCurrentDirectory(new File("C:\\Programacion\\Java\\waywia\\out"));
+		fileChooser.setCurrentDirectory(new File("."));
 		fileChooser.setDialogTitle("");
 		fileChooser.setMultiSelectionEnabled(false);
 		int result = fileChooser.showOpenDialog(null);

@@ -16,6 +16,7 @@
 package aritzh.waywia.core.states;
 
 import aritzh.waywia.core.Game;
+import aritzh.waywia.core.GameLogger;
 import aritzh.waywia.universe.Universe;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -23,6 +24,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Aritz Lopez
@@ -53,8 +55,14 @@ public class InGameState extends WaywiaState {
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		if (this.universe == null)
-			this.universe = new Universe("uniBase", new File(this.getGame().savesDir, "uniBase"));
+		if (this.universe == null) {
+			try {
+				this.universe = new Universe("uniBase", new File(this.getGame().savesDir, "uniBase"));
+			} catch (IOException e) {
+				GameLogger.logAndThrowAsRuntime("Error opening universe \"unibase\"", e);
+				return;
+			}
+		}
 		this.universe.update(delta);
 	}
 }

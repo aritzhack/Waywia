@@ -19,6 +19,7 @@ import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Transform;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Aritz Lopez
@@ -47,7 +48,7 @@ public class Util {
 		return source.transform(Transform.createTranslateTransform(x, y));
 	}
 
-	public static File getAppDir(String name) {
+	public static File getAppDir(String name) throws IOException {
 		String s1 = System.getProperty("user.home", ".");
 		File file1;
 
@@ -73,7 +74,7 @@ public class Util {
 		}
 
 		if (!file1.exists() && !file1.mkdirs()) {
-			throw new RuntimeException("The working directory could not be created: " + file1);
+			throw new IOException("The working directory could not be created: " + file1);
 		} else {
 			return file1;
 		}

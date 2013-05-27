@@ -51,7 +51,7 @@ public class Universe implements BDSStorable {
 	private String name;
 	private BDSCompound customData;
 
-	public Universe(String name, File root) {
+	public Universe(String name, File root) throws IOException {
 		this.name = name;
 		this.root = root;
 		if (this.root.exists()) { // If it already exists, load it
@@ -65,23 +65,23 @@ public class Universe implements BDSStorable {
 					this.parseUniverse(data);
 					GameLogger.debug("Universe loaded, done!");
 					return;
-				} catch (IOException e) {
-					e.printStackTrace();
+				} catch (IOException ignored) {
+					// Ignore it, because if we got here means we haven't returned, so let it continue
 				}
 			}
 		}
 		GameLogger.debug("Universe folder not detected, or invalid, creating new universe at " + this.root.getAbsolutePath());
 		if (!Util.delete(this.root))
-			throw new RuntimeException("Couldn't delete the folder " + this.root.getAbsolutePath() + " in order to make a new Universe");
-		if (!this.root.mkdirs()) throw new RuntimeException("Couldn't make root folder for universe " + this);
+			throw new IOException("Couldn't delete the folder " + this.root.getAbsolutePath() + " in order to make a new Universe");
+		if (!this.root.mkdirs()) throw new IOException("Couldn't make root folder for universe " + this);
 		this.worlds.add(new World("Base", this, new File(root, "base")));
 		this.toBDS().writeToFile(new File(this.root, "universe.dat"));
 	}
 
-	public Universe(BDSCompound compound, File root) {
+	public Universe(BDSCompound compound, File root) throws IOException {
 		this.root = root;
 		if (!(this.root.exists() || this.root.mkdirs()))
-			throw new RuntimeException("Couldn't make root folder for universe " + this);
+			throw new IOException("Couldn't make root folder for universe " + this);
 		this.parseUniverse(compound);
 	}
 
@@ -119,10 +119,14 @@ public class Universe implements BDSStorable {
 			BDSCompound data;
 			try {
 				data = new BDSCompound(f);
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 				continue;
 			}
-			ret.add(new Universe(data, folder));
+			try {
+				ret.add(new Universe(data, folder));
+			} catch (IOException ignored) {
+				continue;
+			}
 		}
 		return ret;
 	}

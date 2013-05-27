@@ -18,6 +18,7 @@ package aritzh.waywia.entity;
 import aritzh.waywia.bds.BDSCompound;
 import aritzh.waywia.bds.BDSStorable;
 import aritzh.waywia.bds.BDSString;
+import aritzh.waywia.core.GameLogger;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Shape;
 
@@ -78,22 +79,19 @@ public abstract class Entity implements BDSStorable {
 	}
 
 	public static void registerEntity(Class<? extends Entity> clazz) {
+		if (clazz == null) throw new IllegalArgumentException("Null entity class cannot be registered");
 		try {
 			Entity.stringToEntity.put(clazz.newInstance().getName(), clazz);
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+		} catch (InstantiationException | IllegalAccessException e) {
+			GameLogger.exception("Failed to register entity class " + clazz, e);
 		}
 	}
 
-	public static Object newEntityFromName(String name) {
+	public static Entity newEntityFromName(String name) {
 		try {
 			return Entity.stringToEntity.get(name).newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+		} catch (InstantiationException | IllegalAccessException e) {
+			GameLogger.exception("Could not instantiate entity with name \"" + name + "\"", e);
 		} catch (NullPointerException e) {
 			throw new IllegalArgumentException("Entity type \"" + name + "\" not registered. This is a bug!");
 		}

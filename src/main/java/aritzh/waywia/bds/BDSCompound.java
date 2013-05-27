@@ -447,7 +447,7 @@ public class BDSCompound extends BDS {
 			byteStream.flush();
 			return byteStream.toByteArray();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException("Could not decompress");
 		}
 	}
 
@@ -470,7 +470,7 @@ public class BDSCompound extends BDS {
 			fos.flush();
 			fos.close();
 		} catch (IOException e) {
-			GameLogger.exception("Could not write BDSCompound to file!", e);
+			GameLogger.logAndThrowAsRuntime("Could not write BDSCompound to file!", e);
 		}
 	}
 

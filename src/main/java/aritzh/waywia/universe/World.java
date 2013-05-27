@@ -31,6 +31,7 @@ import com.google.common.collect.Multimap;
 import org.newdawn.slick.Graphics;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,11 +53,11 @@ public class World implements BDSStorable {
 
 	private String worldName;
 
-	public World(String name, Universe universe, File root) {
+	public World(String name, Universe universe, File root) throws IOException {
 		this.worldName = name;
 		this.root = root;
 		if (!(this.root.exists() || this.root.mkdirs()))
-			throw new RuntimeException("Couldn't make root folder for world " + this);
+			throw new IOException("Couldn't make root folder for world " + this);
 		this.universe = universe;
 		this.toBDS().writeToFile(new File(root, "world.dat"));
 	}
@@ -144,7 +145,7 @@ public class World implements BDSStorable {
 			BDSCompound data;
 			try {
 				data = new BDSCompound(f);
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 				continue; // Couldn't parse file -> not valid -> Skip
 			}
 			ret.add(new World(univ, data, folder));

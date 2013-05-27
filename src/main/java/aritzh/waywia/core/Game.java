@@ -32,6 +32,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Aritz Lopez
@@ -45,21 +46,21 @@ public class Game extends StateBasedGame {
 	private GameContainer gc = null;
 	public WaywiaState menuState, inGameState;
 
-	public Game(File baseDir) {
+	public Game(File baseDir) throws IOException {
 		super(GameLib.FULL_NAME);
 
-		if (baseDir == null) this.baseDir = new File(System.getProperty("user.dir"));
-		else this.baseDir = baseDir;
+		if (baseDir == null) baseDir = new File(System.getProperty("user.dir"));
 
-		if (!baseDir.exists() && !baseDir.mkdirs()) throw new RuntimeException("Couldn't make folder for the game");
-		this.savesDir = new File(baseDir, "saves");
-		if (!this.savesDir.exists() && !savesDir.mkdirs())
-			throw new RuntimeException("Couldn't make the saves' folder");
+		this.baseDir = baseDir;
+		if (!this.baseDir.exists() && !this.baseDir.mkdirs())
+			throw new IOException("Couldn't make folder for the game");
 
-		GameLogger.initLogger();
+		this.savesDir = new File(this.baseDir, "saves");
+		if (!this.savesDir.exists() && !savesDir.mkdirs()) throw new IOException("Couldn't make the saves' folder");
+
 		this.BUS = new EventBus("MainBus");
 		this.registerEventHandler(this);
-		I18N.init(baseDir);
+		I18N.init(this.baseDir);
 	}
 
 	@Override

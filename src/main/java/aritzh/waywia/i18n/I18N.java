@@ -66,6 +66,8 @@ public class I18N {
 	 *               a {@code locale} property to the file, and leaving this argument as null.
 	 */
 	public static void readLocale(File file, boolean xml, Locale locale) {
+		if (file == null || locale == null)
+			throw new IllegalArgumentException("Both the file and the locale must not be null");
 		try {
 			FileInputStream is = new FileInputStream(file);
 			Properties props = new Properties();
@@ -84,7 +86,7 @@ public class I18N {
 				I18N.mergeLocales(locale, props);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			GameLogger.logAndThrowAsRuntime("Could not read locale " + locale + " from file " + file.toString(), e);
 		}
 	}
 

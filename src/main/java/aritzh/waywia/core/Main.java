@@ -19,6 +19,8 @@ import aritzh.waywia.util.Util;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 
+import java.io.IOException;
+
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
@@ -26,10 +28,17 @@ import org.newdawn.slick.SlickException;
 public class Main {
 
 	public static void main(String[] args) throws SlickException {
-		Game g = new Game(Util.getAppDir("waywia"));
-		AppGameContainer gc = new AppGameContainer(g, 800, 600, false);
-		gc.setShowFPS(false);
-		gc.start();
+		try {
+			Game g = new Game(Util.getAppDir("waywia"));
+			AppGameContainer gc = new AppGameContainer(g, 800, 600, false);
+			gc.setShowFPS(false);
+			gc.start();
+		} catch (IOException e) {
+			if (GameLogger.init) {
+				GameLogger.logAndThrowAsRuntime("Could not initialize Waywia", e);
+			}
+			System.exit(1);
+		}
 	}
 
 }

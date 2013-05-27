@@ -32,8 +32,9 @@ import java.util.logging.*;
 public class GameLogger {
 	private static Logger logger = Logger.getLogger("GameLogger");
 	private static final Level DEFAULT_LOG_LEVEL = Level.INFO;
+	public static final boolean init;
 
-	public static void initLogger() {
+	static {
 		GameLogger.logger.setLevel(Level.ALL);
 		GameLogger.logger.setUseParentHandlers(false);
 
@@ -54,6 +55,7 @@ public class GameLogger {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		init = true;
 	}
 
 	public static void log(String s) {
@@ -112,8 +114,13 @@ public class GameLogger {
 		GameLogger.warnTranslated(String.format(format, args));
 	}
 
-	public static void exception(String message, Exception exception) {
-		GameLogger.logger.severe(message + "\n" + exception.getLocalizedMessage());
+	public static void exception(String message, Throwable throwable) {
+		GameLogger.logger.severe(message + "\n" + throwable.getLocalizedMessage());
+	}
+
+	public static void logAndThrowAsRuntime(String message, Throwable throwable) {
+		GameLogger.exception(message, throwable);
+		throw new RuntimeException(message, throwable);
 	}
 
 	private static class SimpleFormat extends Formatter {
