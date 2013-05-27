@@ -15,6 +15,8 @@
 
 package aritzh.waywia.bds;
 
+import aritzh.waywia.util.Util;
+
 /**
  * Binary Data Storage
  * Used to store different data types in byte arrays, and the data from them
@@ -45,4 +47,18 @@ public abstract class BDS { // Binary Data Storage
 	 * @see BDSType
 	 */
 	public abstract BDSType getType();
+
+	/**
+	 * Returns the data corresponding to this BDS.
+	 */
+	public abstract Object getData();
+
+	@Override
+	public final String toString() {
+		return this.toString(0);
+	}
+
+	public String toString(int level) {
+		return Util.repeatString("    ", level) + this.getType() + ":" + this.getName() + ":" + this.getData();
+	}
 }

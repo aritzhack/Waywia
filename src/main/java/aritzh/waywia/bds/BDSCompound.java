@@ -15,15 +15,14 @@
 
 package aritzh.waywia.bds;
 
+import aritzh.waywia.core.GameLogger;
+import aritzh.waywia.util.Util;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -420,6 +419,11 @@ public class BDSCompound extends BDS {
 		return BDSType.BDS_COMPOUND;
 	}
 
+	@Override
+	public Object getData() {
+		return new ArrayList<>(this.items);
+	}
+
 	/**
 	 * Stores the data from this BDSCompound into a byte array, so that
 	 * it can be easy and efficiently saved. Gzip is used to compress the data
@@ -460,14 +464,39 @@ public class BDSCompound extends BDS {
 		return null;
 	}
 
+	public void writeToFile(File f) {
+		try (FileOutputStream fos = new FileOutputStream(f)) {
+			fos.write(this.getBytes());
+			fos.flush();
+			fos.close();
+		} catch (IOException e) {
+			GameLogger.exception("Could not write BDSCompound to file!", e);
+		}
+	}
+
 	public BDSCompound copyOf(BDSCompound comp) {
 		return new BDSCompound(comp.getBytes());
+	}
+
+	@Override
+	public String toString(int level) {
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(Util.repeatString("    ", level) + this.getType().toString() + ":" + this.getName());
+		boolean some = false;
+		for (BDS b : this.items) {
+			some = true;
+			if (b instanceof BDSCompEnd) continue;
+			builder.append("\n" + b.toString(level + 1));
+		}
+		if (!some) builder.append("\n" + Util.repeatString("    ", level + 1) + "EMPTY COMPOUND");
+
+		return builder.toString();
 	}
 
 	private class BDSCompEnd extends BDS {
 
 		public BDSCompEnd() {
-
 		}
 
 		@Override
@@ -483,6 +512,16 @@ public class BDSCompound extends BDS {
 		@Override
 		public BDSType getType() {
 			return BDSType.BDS_COMPEND;
+		}
+
+		@Override
+		public Object getData() {
+			return null;
+		}
+
+		@Override
+		public String toString(int level) {
+			return "";
 		}
 	}
 }

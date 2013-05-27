@@ -70,7 +70,7 @@ public class BDSShort extends BDS {
 		return name;
 	}
 
-	public short getData() {
+	public Short getData() {
 		return data;
 	}
 

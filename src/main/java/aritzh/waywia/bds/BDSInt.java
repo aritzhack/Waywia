@@ -69,7 +69,7 @@ public class BDSInt extends BDS {
 		return name;
 	}
 
-	public int getData() {
+	public Integer getData() {
 		return data;
 	}
 

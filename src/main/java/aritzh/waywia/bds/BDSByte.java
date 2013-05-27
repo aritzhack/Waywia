@@ -69,7 +69,7 @@ public class BDSByte extends BDS {
 		return name;
 	}
 
-	public byte getData() {
+	public Byte getData() {
 		return data;
 	}
 

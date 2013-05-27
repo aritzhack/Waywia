@@ -17,6 +17,8 @@ package aritzh.waywia.bds;
 
 import org.junit.Test;
 
+import java.io.File;
+
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
@@ -81,14 +83,17 @@ public class BDSTest {
 				.add(beforeShortBDS)
 				.add(beforeIntBDS);
 
-		BDSCompound comp = new BDSCompound("compound");
-		comp.add(beforeStringBDS)
+		BDSCompound beforeComp = new BDSCompound("compound");
+		beforeComp.add(beforeStringBDS)
 				.add(beforeNestedBDS)
 				.add(beforeByteBDS)
 				.add(beforeShortBDS)
 				.add(beforeIntBDS);
 
-		BDSCompound afterComp = new BDSCompound(comp.getBytes());
+		beforeComp.writeToFile(new File("a.dat"));
+
+
+		BDSCompound afterComp = new BDSCompound(beforeComp.getBytes());
 
 		BDSString afterStringBDS = afterComp.getString(0);
 		BDSByte afterByteBDS = afterComp.getByte(0);
@@ -103,7 +108,7 @@ public class BDSTest {
 		BDSShort afterNestedShortBDS = nestedComp.getShort(0);
 		BDSInt afterNestedIntBDS = nestedComp.getInt(0);
 
-		assert comp.equals(afterComp) : "Objects are not equal!";
+		assert beforeComp.equals(afterComp) : "Objects are not equal!";
 
 		assert beforeString.equals(afterStringBDS.getData()) : "String not equal";
 		assert beforeByte == afterByteBDS.getData() : "Byte not equal";

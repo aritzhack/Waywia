@@ -69,11 +69,6 @@ public class BDSString extends BDS {
 		return name;
 	}
 
-	@Override
-	public String toString() {
-		return data;
-	}
-
 	public String getData() {
 		return data;
 	}
