@@ -2,7 +2,11 @@ language: java
 
 jdk:
   - oraclejdk7
-  - openjdk6
+  
+before_script:
+  - git clone git://github.com/nguillaumin/slick2d-maven.git
+  - cd slick2d-maven
+  - mvn clean install
 
 env:
   global:
