@@ -1,0 +1,9 @@
+language: java
+
+jdk:
+  - oraclejdk7
+  - openjdk6
+
+env:
+  global:
+    - JAVA_OPTS="-Djava.library.path=../target/natives"
