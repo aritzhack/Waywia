@@ -96,7 +96,7 @@ public class UtilTest {
 				case MACOS:
 					assert f.getCanonicalPath().startsWith("/") : "Non-windows canonical paths must start with /";
 				case UNKNOWN:
-					assert false : "Unknown OS";
+					assert false : "Unknown OS: " + System.getProperty("os.name").toLowerCase();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
