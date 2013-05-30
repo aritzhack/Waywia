@@ -14,4 +14,4 @@ Waywia is a open source 2D game made by aritzhack and distributed under the term
 
 ### Contributing
 
-Even though this is a personal experiment-project, feel free to make a [pull request](https://github.com/aritzhack/Waywia/pulls "Waywia pull requests"). However, I'd prefer that you just make an issue describing the problem, and let me solve it by myself.
+Even though this is a personal experiment-project, feel free to make a [pull request](https://github.com/aritzhack/Waywia/pulls "Waywia pull requests"). However, I'd prefer that you just make an [issue](https://github.com/aritzhack/Waywia/issues "Waywia issues") describing the problem, and let me solve it by myself.
