@@ -33,7 +33,7 @@ public class RenderUtil {
 		try {
 			return new Image(TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(filename)));
 		} catch (Exception e) {
-			GameLogger.logAndThrowAsRuntime("Could not load image " + filename, e);
+			GameLogger.logAndThrowAsRuntime("Could not load image " + filename);
 		}
 		return null;
 	}

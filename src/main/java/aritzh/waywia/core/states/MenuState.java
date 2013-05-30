@@ -18,10 +18,7 @@ package aritzh.waywia.core.states;
 import aritzh.waywia.core.Game;
 import aritzh.waywia.gui.MainMenuGUI;
 import aritzh.waywia.gui.components.GUI;
-import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
 
 /**
  * @author Aritz Lopez
@@ -39,17 +36,17 @@ public class MenuState extends WaywiaState {
 	}
 
 	@Override
-	public void init(GameContainer container, StateBasedGame game) throws SlickException {
+	public void init(Game game) {
 		this.currGui = new MainMenuGUI(this);
 	}
 
 	@Override
-	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+	public void render(Graphics g) {
 		if (this.isGuiOpen()) this.currGui.render(g);
 	}
 
 	@Override
-	public void update(GameContainer gc, StateBasedGame game, int delta) throws SlickException {
+	public void update(int delta) {
 	}
 
 	public void openGUI(GUI gui) {

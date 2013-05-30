@@ -17,7 +17,11 @@ package aritzh.waywia.core.states;
 
 import aritzh.waywia.core.Game;
 import aritzh.waywia.gui.components.GUI;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  * @author Aritz Lopez
@@ -50,4 +54,38 @@ public abstract class WaywiaState extends BasicGameState {
 	public String toString() {
 		return this.name;
 	}
+
+	@Override
+	public final void init(GameContainer container, StateBasedGame game) throws SlickException {
+		this.game = (Game) game;
+		try {
+			this.init((Game) game);
+		} catch (Throwable t) {
+			this.game.enterState(this.game.errorState.setError("init", t));
+		}
+	}
+
+	@Override
+	public final void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+		try {
+			this.render(g);
+		} catch (Throwable t) {
+			this.game.enterState(this.game.errorState.setError("render", t));
+		}
+	}
+
+	@Override
+	public final void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+		try {
+			this.update(delta);
+		} catch (Throwable t) {
+			this.game.enterState(this.game.errorState.setError("update", t));
+		}
+	}
+
+	public abstract void init(Game game);
+
+	public abstract void render(Graphics g);
+
+	public abstract void update(int delta);
 }

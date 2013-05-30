@@ -15,11 +15,10 @@
 
 package aritzh.waywia.core;
 
+import aritzh.waywia.core.states.ErrorState;
 import aritzh.waywia.core.states.InGameState;
 import aritzh.waywia.core.states.MenuState;
 import aritzh.waywia.core.states.WaywiaState;
-import aritzh.waywia.entity.Entity;
-import aritzh.waywia.entity.QuadEntity;
 import aritzh.waywia.gui.components.GUI;
 import aritzh.waywia.i18n.I18N;
 import aritzh.waywia.input.Keyboard;
@@ -45,6 +44,7 @@ public class Game extends StateBasedGame {
 	private final EventBus BUS;
 	private GameContainer gc = null;
 	public WaywiaState menuState, inGameState;
+	public ErrorState errorState;
 
 	public Game(File baseDir) throws IOException {
 		super(GameLib.FULL_NAME);
@@ -79,8 +79,7 @@ public class Game extends StateBasedGame {
 
 		this.addState(this.menuState = new MenuState(this));
 		this.addState(this.inGameState = new InGameState(this));
-
-		Entity.registerEntity(QuadEntity.class);
+		this.addState(this.errorState = new ErrorState(this));
 	}
 
 	@Override

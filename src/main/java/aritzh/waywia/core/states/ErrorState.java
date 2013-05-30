@@ -16,51 +16,53 @@
 package aritzh.waywia.core.states;
 
 import aritzh.waywia.core.Game;
-import aritzh.waywia.core.GameLogger;
-import aritzh.waywia.entity.Entity;
-import aritzh.waywia.entity.QuadEntity;
-import aritzh.waywia.universe.Universe;
 import org.newdawn.slick.Graphics;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class InGameState extends WaywiaState {
+public class ErrorState extends WaywiaState {
 
-	private Universe universe;
+	private String when;
+	private Throwable throwable;
 
-	public InGameState(Game game) {
-		super(game, "In-Game");
+	public ErrorState(Game game) {
+		super(game, "ErrorState");
 	}
 
 	@Override
 	public int getID() {
-		return 1;
+		return 3;
+	}
+
+	/**
+	 * Sets the throwable and moment, so that the error can be printed to the user
+	 *
+	 * @param when A string identifying when the error occured
+	 * @param t    The throwable that describes the error
+	 * @return The StateID of ErrorState, so that it can be used like Game.enterState(ErrorState.setError(...))
+	 */
+	public int setError(String when, Throwable t) {
+		if (t == null || when == null) throw new IllegalArgumentException("When and throwable must not be null!");
+		this.when = when;
+		throwable = t;
+		return this.getID();
 	}
 
 	@Override
-	public void init(Game Game) {
-		Entity.registerEntity(QuadEntity.class);
+	public void init(Game game) {
 	}
 
 	@Override
 	public void render(Graphics g) {
+		if (this.when == null || this.throwable == null)
+			throw new IllegalStateException("Error state was not correctly initialized");
 	}
 
 	@Override
 	public void update(int delta) {
-		if (this.universe == null) {
-			try {
-				this.universe = new Universe("uniBase", new File(this.getGame().savesDir, "uniBase"));
-			} catch (IOException e) {
-				GameLogger.logAndThrowAsRuntime("Error opening universe \"unibase\"", e);
-				return;
-			}
-		}
-		this.universe.update(delta);
+		if (this.when == null || this.throwable == null)
+			throw new IllegalStateException("Error state was not correctly initialized using ErrorState.setError()");
 	}
 }

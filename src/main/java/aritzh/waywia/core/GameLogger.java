@@ -90,6 +90,14 @@ public class GameLogger {
 		GameLogger.debug(String.format(format, args));
 	}
 
+	public static void severe(String message) {
+		GameLogger.logger.severe(message);
+	}
+
+	public static void severe(String format, Object... args) {
+		GameLogger.severe(String.format(format, args));
+	}
+
 	public static void logTranslated(Level level, String message) {
 		GameLogger.log(level, I18N.translate(message));
 	}
@@ -115,12 +123,18 @@ public class GameLogger {
 	}
 
 	public static void exception(String message, Throwable throwable) {
-		GameLogger.logger.severe(message + "\n" + throwable.getLocalizedMessage());
+		GameLogger.logger.severe(message);
+		throwable.printStackTrace();
 	}
 
 	public static void logAndThrowAsRuntime(String message, Throwable throwable) {
 		GameLogger.exception(message, throwable);
 		throw new RuntimeException(message, throwable);
+	}
+
+	public static void logAndThrowAsRuntime(String s) {
+		GameLogger.severe(s);
+		throw new RuntimeException(s);
 	}
 
 	private static class SimpleFormat extends Formatter {
