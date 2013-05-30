@@ -120,7 +120,7 @@ public class World implements BDSStorable {
 		ret.add(players);
 
 		BDSCompound blocks = new BDSCompound("Blocks");
-		blocks.addAll(this.blocks.runForEach(blockSave));
+		blocks.addAll(this.blocks.runForEach(blockSave).toFlatArrayList());
 		ret.add(blocks);
 		return ret;
 	}

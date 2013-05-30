@@ -15,9 +15,6 @@
 
 package aritzh.waywia.util;
 
-import org.newdawn.slick.geom.Shape;
-import org.newdawn.slick.geom.Transform;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -26,6 +23,8 @@ import java.io.IOException;
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public class Util {
+
+	public static EnumOS OS = null;
 
 	public static boolean delete(File f) {
 		if (f == null || !f.exists()) return true;
@@ -42,10 +41,6 @@ public class Util {
 
 	public static String repeatString(String s, int n) {
 		return new String(new char[n]).replace("\0", s);
-	}
-
-	public static Shape move(Shape source, float x, float y) {
-		return source.transform(Transform.createTranslateTransform(x, y));
 	}
 
 	public static File getAppDir(String name) throws IOException {
@@ -80,15 +75,17 @@ public class Util {
 		}
 	}
 
-	private static EnumOS getOs() {
+	public static EnumOS getOs() {
+		if (Util.OS != null) return OS;
+
 		String s = System.getProperty("os.name").toLowerCase();
-		return s.contains("win") ? EnumOS.WINDOWS :
+		return Util.OS = s.contains("win") ? EnumOS.WINDOWS :
 				(s.contains("mac") ? EnumOS.MACOS :
 						(s.contains("solaris") || s.contains("sunos") || s.contains("linux") || s.contains("unix") ? EnumOS.UNIX :
 								EnumOS.UNKNOWN));
 	}
 
-	private static enum EnumOS {
+	static enum EnumOS {
 
 		WINDOWS(0),
 		UNIX(1),

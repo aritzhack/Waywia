@@ -15,21 +15,18 @@
 
 package aritzh.waywia.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class Matrix<E> implements Iterable<ArrayList<E>> {
+@SuppressWarnings({"NullableProblems", "SuspiciousMethodCalls"})
+public class Matrix<E> implements Collection<ArrayList<E>> {
 
 
-	E defaultElement = null;
-	List<ArrayList<E>> columns;
-	ParametrizedFunction function;
+	protected E defaultElement = null;
+	protected List<ArrayList<E>> columns;
 
 	/**
 	 * Creates a new matrix, with the default size of 5x5
@@ -46,6 +43,14 @@ public class Matrix<E> implements Iterable<ArrayList<E>> {
 	 */
 	public <D extends E> Matrix(int startWidth, int startHeight, D defaultElement) {
 		this.defaultElement = defaultElement;
+		this.init(startWidth, startHeight);
+	}
+
+	public Matrix(int startWidth, int startHeight) {
+		this(startWidth, startHeight, null);
+	}
+
+	private void init(int startWidth, int startHeight) {
 		this.columns = new ArrayList<>();
 		for (int x = 0; x < startWidth; x++) {
 			this.columns.add(new ArrayList<E>(startHeight));
@@ -53,10 +58,6 @@ public class Matrix<E> implements Iterable<ArrayList<E>> {
 				this.columns.get(x).add(this.defaultElement);
 			}
 		}
-	}
-
-	public Matrix(int startWidth, int startHeight) {
-		this(startWidth, startHeight, null);
 	}
 
 	/**
@@ -118,19 +119,54 @@ public class Matrix<E> implements Iterable<ArrayList<E>> {
 	 * @param <R>      The return value for the function. Must be the same as the return value of {@code function}
 	 * @return A list containing all the return values
 	 */
-	public <R> List<R> runForEach(ParametrizedFunction<E, R> function, Object... args) {
-		List<R> ret = new ArrayList<>();
+	public <R> Matrix<R> runForEach(ParametrizedFunction<E, R> function, Object... args) {
+		Matrix<R> ret;
+		try {
+			ret = new Matrix<>(this.columns.size(), this.columns.get(0).size());
+		} catch (Exception ignored) {
+			ret = new Matrix<>();
+		}
 		for (int x = 0; x < this.columns.size(); x++) {
 			ArrayList<E> col = this.columns.get(x);
 			for (int y = 0; y < col.size(); y++) {
 				if (col.get(y) == null) continue;
 				R obj = function.apply(col.get(y), x, y, args);
-				if (obj != null) ret.add(obj);
+				ret.set(obj, x, y);
 			}
 		}
 		return ret;
 	}
 
+	/**
+	 * Flattens the matrix, column-after-column, so that it can
+	 * be used as a common collection
+	 */
+	public ArrayList<E> toFlatArrayList() {
+		ArrayList<E> ret = new ArrayList<>();
+		for (ArrayList<E> list : this) {
+			ret.addAll(list);
+		}
+		return ret;
+	}
+
+	@Override
+	public int size() {
+		try {
+			return this.columns.size() * this.columns.get(0).size();
+		} catch (Exception ignored) {
+			return 0;
+		}
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return false;
+	}
+
+	@Override
+	public boolean contains(Object o) {
+		return false;
+	}
 
 	/**
 	 * Returns an iterator for this matrix.
@@ -142,6 +178,106 @@ public class Matrix<E> implements Iterable<ArrayList<E>> {
 	@Override
 	public Iterator<ArrayList<E>> iterator() {
 		return new MatrixIterator(this);
+	}
+
+	@Override
+	public Object[] toArray() {
+		return this.toFlatArrayList().toArray();
+	}
+
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		// TODO Find out what this makes
+		return null;
+	}
+
+	@Override
+	public boolean add(ArrayList<E> es) {
+		return this.columns.add(es);
+	}
+
+	@Override
+	public boolean remove(Object o) {
+		if (this.columns.remove(o)) return true;
+
+		for (ArrayList<E> list : this) {
+			if (list.remove(o)) return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		List<?> missing = new ArrayList<>(c);
+
+		A:
+		for (Object o : missing) {
+			if (columns.contains(o)) {
+				missing.remove(o);
+				continue;
+			}
+			for (ArrayList<E> list : this) {
+				if (list.contains(o)) {
+					missing.remove(o);
+					continue A;
+				}
+			}
+		}
+		return missing.isEmpty();
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends ArrayList<E>> c) {
+		return this.columns.addAll(c);
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		List<?> missing = new ArrayList<>(c);
+		A:
+		for (Object o : missing) {
+			if (columns.contains(o)) {
+				columns.remove(o);
+				missing.remove(o);
+				continue;
+			}
+			for (ArrayList<E> list : this) {
+				if (list.contains(o)) {
+					list.remove(o);
+					missing.remove(o);
+					continue A;
+				}
+			}
+		}
+		return missing.isEmpty();
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		boolean ret = false;
+		for (ArrayList<E> list : this) {
+			if (!c.contains(list)) {
+				this.columns.remove(list);
+				ret = true;
+				continue;
+			}
+			for (E e : list) {
+				if (!c.contains(e)) {
+					list.remove(e);
+					ret = true;
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Sets this matrix to a 1x1 matrix with the {@code defaultElement} as the only element
+	 */
+	@Override
+	public void clear() {
+		this.init(1, 1);
 	}
 
 	private class MatrixIterator implements Iterator<ArrayList<E>> {
