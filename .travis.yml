@@ -10,6 +10,8 @@ before_install:
   - git clone git://github.com/nguillaumin/slick2d-maven.git
   - cd slick2d-maven
   - mvn clean install -q
+  - cd ..
+  - rm -rf slick2d-maven
 
 env:
   global:
