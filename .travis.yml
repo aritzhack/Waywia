@@ -7,6 +7,15 @@ before_install:
   - git clone git://github.com/nguillaumin/slick2d-maven.git
   - cd slick2d-maven
   - mvn clean install
+  - wget -Pdownload http://download.oracle.com/otn-pub/java/javaws/1.2/javaws-1_2-rc-samples.zip
+  - cd download
+  - sudo apt-get install unzip
+  - unzip javaws-1_2-rc-samples.zip
+  - cd lib
+  - cp jnlp.jar $JAVA_HOME/sample/jnlp/servlet/
+  - cd ..
+  - cd ..
+  - rm -rf download
 
 env:
   global:
