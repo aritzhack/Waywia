@@ -36,7 +36,7 @@ public class MenuState extends WaywiaState {
 	}
 
 	@Override
-	public void init(Game game) {
+	public void init() {
 		this.currGui = new MainMenuGUI(this);
 	}
 

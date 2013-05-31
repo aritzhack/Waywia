@@ -46,6 +46,8 @@ public class MatrixTest {
 				return null;
 			}
 		};
+
+		mat.runForEach(pFunc);
 	}
 
 	public static Matrix<Integer> newMultiplicationTable(int x, int y) {

@@ -39,7 +39,7 @@ public class ErrorState extends WaywiaState {
 	/**
 	 * Sets the throwable and moment, so that the error can be printed to the user
 	 *
-	 * @param when A string identifying when the error occured
+	 * @param when A string identifying when the error occurred
 	 * @param t    The throwable that describes the error
 	 * @return The StateID of ErrorState, so that it can be used like Game.enterState(ErrorState.setError(...))
 	 */
@@ -51,7 +51,7 @@ public class ErrorState extends WaywiaState {
 	}
 
 	@Override
-	public void init(Game game) {
+	public void init() {
 	}
 
 	@Override

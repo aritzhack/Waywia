@@ -26,7 +26,7 @@ import java.util.List;
  */
 public abstract class EntityNPC extends Entity {
 
-	private List<AI> ais = new ArrayList<>();
+	protected List<AI> ais = new ArrayList<>();
 
 	public EntityNPC() {
 		super();

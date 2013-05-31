@@ -19,7 +19,7 @@ import aritzh.waywia.core.GameLogger;
 import aritzh.waywia.core.states.MenuState;
 import aritzh.waywia.gui.components.Button;
 import aritzh.waywia.gui.components.GUI;
-import aritzh.waywia.gui.components.Inputbox;
+import aritzh.waywia.gui.components.InputBox;
 import aritzh.waywia.gui.components.Label;
 
 /**
@@ -29,7 +29,7 @@ import aritzh.waywia.gui.components.Label;
 public class NewUniverseGUI extends GUI {
 
 	private Button newButton, backButton;
-	private Inputbox worldName;
+	private InputBox worldName;
 	private Label title;
 
 	public NewUniverseGUI(MenuState menuState) {
@@ -38,7 +38,7 @@ public class NewUniverseGUI extends GUI {
 		this.addElement(newButton = new Button("Create", -this.width / 2 + 75, this.height - 50));
 		this.addElement(backButton = new Button("Back", -this.width / 2 - 75, this.height - 50));
 
-		this.addElement(worldName = new Inputbox(-this.width / 2, -this.height / 2, 200));
+		this.addElement(worldName = new InputBox(-this.width / 2, -this.height / 2, 200));
 
 		this.addElement(title = new Label("Hola!", -this.width / 2, -this.height / 2 + 100, 200));
 	}

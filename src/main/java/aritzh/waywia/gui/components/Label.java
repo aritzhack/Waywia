@@ -19,7 +19,7 @@ package aritzh.waywia.gui.components;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class Label extends Inputbox {
+public class Label extends InputBox {
 
 	public Label(String text, int x, int y, int width) {
 		super(x, y, width);

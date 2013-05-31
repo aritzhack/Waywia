@@ -92,7 +92,7 @@ public class Util {
 		MACOS(2),
 		UNKNOWN(3);
 
-		private int id;
+		private final int id;
 
 		EnumOS(int id) {
 

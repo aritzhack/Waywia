@@ -31,8 +31,8 @@ public class UtilTest {
 	public void deleteTest() {
 		try {
 			File folder1 = new File("folder1");
-			boolean created = true;
-			created &= folder1.mkdirs();
+
+			boolean created = folder1.mkdirs();
 
 			File folder11 = new File(folder1, "folder11");
 			created &= folder11.mkdirs();
@@ -48,7 +48,7 @@ public class UtilTest {
 			assert file1.exists() : "File1 does not exist";
 			assert file11.exists() : "File11 does not exist";
 
-			Util.delete(folder1);
+			assert Util.delete(folder1) : "Folder could not be deleted";
 
 			assert !folder1.exists() : "Folder1 exists";
 			assert !folder11.exists() : "Folder11 exists";
@@ -90,7 +90,7 @@ public class UtilTest {
 		try {
 			switch (Util.getOs()) {
 				case WINDOWS:
-					assert !f.getCanonicalPath().startsWith("/") : "Windows canonnical paths cannot start with /";
+					assert !f.getCanonicalPath().startsWith("/") : "Windows canonical paths cannot start with /";
 					return;
 				case UNIX:
 				case MACOS:

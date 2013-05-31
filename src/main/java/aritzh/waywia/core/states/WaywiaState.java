@@ -31,7 +31,7 @@ public abstract class WaywiaState extends BasicGameState {
 
 	protected GUI currGui;
 	protected Game game;
-	protected String name;
+	protected final String name;
 
 	public WaywiaState(Game game, String name) {
 		this.game = game;
@@ -59,7 +59,7 @@ public abstract class WaywiaState extends BasicGameState {
 	public final void init(GameContainer container, StateBasedGame game) throws SlickException {
 		this.game = (Game) game;
 		try {
-			this.init((Game) game);
+			this.init();
 		} catch (Throwable t) {
 			this.game.enterState(this.game.errorState.setError("init", t));
 		}
@@ -83,7 +83,7 @@ public abstract class WaywiaState extends BasicGameState {
 		}
 	}
 
-	public abstract void init(Game game);
+	public abstract void init();
 
 	public abstract void render(Graphics g);
 

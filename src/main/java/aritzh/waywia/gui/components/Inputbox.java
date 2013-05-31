@@ -21,7 +21,7 @@ import org.newdawn.slick.Graphics;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class Inputbox extends Button {
+public class InputBox extends Button {
 
 	private boolean hasFocus = false;
 	private int cursorBlinkCooldown = 0;
@@ -33,7 +33,7 @@ public class Inputbox extends Button {
 	 * @param x x coordinate. If negative, button will be centered around it
 	 * @param y y coordinate. If negative, button will be centered around it
 	 */
-	public Inputbox(int x, int y, int w) {
+	public InputBox(int x, int y, int w) {
 		super("Placeholder", x, y, w);
 		this.text = "";
 	}
