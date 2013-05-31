@@ -82,7 +82,9 @@ public abstract class Entity implements BDSStorable {
 		if (clazz == null) throw new IllegalArgumentException("Null entity class cannot be registered");
 		try {
 			Entity.stringToEntity.put(clazz.newInstance().getName(), clazz);
-		} catch (InstantiationException | IllegalAccessException | ExceptionInInitializerError e) {
+		} catch (InstantiationException | IllegalAccessException | ExceptionInInitializerError ex) {
+			InstantiationException e = new InstantiationException("Could not register entity");
+			e.initCause(ex.getCause());
 			GameLogger.exception("Failed to register entity class " + clazz, e);
 		}
 	}
