@@ -32,9 +32,9 @@ import org.newdawn.slick.Graphics;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Aritz Lopez
@@ -42,7 +42,6 @@ import java.util.List;
  */
 public class World implements BDSStorable {
 
-	private final Universe universe;
 	private final File root;
 
 	private Multimap<String, Entity> entities = ArrayListMultimap.create();
@@ -53,17 +52,15 @@ public class World implements BDSStorable {
 
 	private String worldName;
 
-	public World(String name, Universe universe, File root) throws IOException {
+	public World(String name, File root) throws IOException {
 		this.worldName = name;
 		this.root = root;
 		if (!(this.root.exists() || this.root.mkdirs()))
 			throw new IOException("Couldn't make root folder for world " + this);
-		this.universe = universe;
 		this.toBDS().writeToFile(new File(root, "world.dat"));
 	}
 
-	public World(Universe universe, BDSCompound data, File root) {
-		this.universe = universe;
+	public World(BDSCompound data, File root) {
 		this.root = root;
 		this.parseWorldData(data);
 		this.spanwEntity(new QuadEntity(200, 200));
@@ -137,8 +134,8 @@ public class World implements BDSStorable {
 		this.entities.remove(e.getName(), e);
 	}
 
-	public static List<World> getWorldList(Universe univ, File root) {
-		List<World> ret = new ArrayList<>();
+	public static Set<World> getWorlds(File root) {
+		Set<World> ret = new HashSet<>();
 		for (File folder : root.listFiles(Universe.onlyFolders)) {
 			File f = new File(folder, "world.dat");
 			if (!f.exists()) continue;
@@ -148,7 +145,7 @@ public class World implements BDSStorable {
 			} catch (Exception ignored) {
 				continue; // Couldn't parse file -> not valid -> Skip
 			}
-			ret.add(new World(univ, data, folder));
+			ret.add(new World(data, folder));
 		}
 		return ret;
 	}
@@ -157,7 +154,7 @@ public class World implements BDSStorable {
 		return worldName;
 	}
 
-	private static ParametrizedFunction<Block, Object> blockUpdate = new ParametrizedFunction<Block, Object>() {
+	private static final ParametrizedFunction<Block, Object> blockUpdate = new ParametrizedFunction<Block, Object>() {
 		@Override
 		public Object apply(Block input, Object... args) {
 			input.update((int) args[0], (int) args[1], (int) args[2]);
@@ -165,7 +162,7 @@ public class World implements BDSStorable {
 		}
 	};
 
-	private static ParametrizedFunction<Block, BDSCompound> blockSave = new ParametrizedFunction<Block, BDSCompound>() {
+	private static final ParametrizedFunction<Block, BDSCompound> blockSave = new ParametrizedFunction<Block, BDSCompound>() {
 		@Override
 		public BDSCompound apply(Block input, Object... args) {
 			BDSCompound ret = input.toBDS();
@@ -175,7 +172,7 @@ public class World implements BDSStorable {
 		}
 	};
 
-	private static ParametrizedFunction<Block, Object> blockRender = new ParametrizedFunction<Block, Object>() {
+	private static final ParametrizedFunction<Block, Object> blockRender = new ParametrizedFunction<Block, Object>() {
 		@Override
 		public Object apply(Block input, Object... args) {
 			input.render((int) args[0], (int) args[1], (Graphics) args[2]);

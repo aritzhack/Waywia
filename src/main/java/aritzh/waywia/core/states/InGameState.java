@@ -43,7 +43,7 @@ public class InGameState extends WaywiaState {
 	}
 
 	@Override
-	public void init(Game Game) {
+	public void init() {
 		Entity.registerEntity(QuadEntity.class);
 	}
 
@@ -53,14 +53,18 @@ public class InGameState extends WaywiaState {
 
 	@Override
 	public void update(int delta) {
-		if (this.universe == null) {
-			try {
-				this.universe = new Universe("uniBase", new File(this.getGame().savesDir, "uniBase"));
-			} catch (IOException e) {
-				GameLogger.logAndThrowAsRuntime("Error opening universe \"unibase\"", e);
-				return;
+
+		if (this.universe != null) this.universe.update(delta);
+		else {
+			this.universe = Universe.loadUniverseFromFolder(new File(this.game.savesDir, "uniBase"));
+			if (this.universe == null) {
+				try {
+					this.universe = Universe.createNewUniverse("UniBase", this.game.savesDir, "UniWorld");
+				} catch (IOException e) {
+					GameLogger.logAndThrowAsRuntime("Could not create universe UniBase", e);
+				}
 			}
 		}
-		this.universe.update(delta);
+
 	}
 }
