@@ -60,6 +60,8 @@ public class Game extends StateBasedGame {
 
 		this.BUS = new EventBus("MainBus");
 		this.registerEventHandler(this);
+
+		Config.init();
 		I18N.init(this.baseDir);
 	}
 

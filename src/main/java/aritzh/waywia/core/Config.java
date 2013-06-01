@@ -40,9 +40,7 @@ public class Config {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassCastException e) {
-			// Should not happen...
 			throw new AssertionError(e);
 		}
-
 	}
 }

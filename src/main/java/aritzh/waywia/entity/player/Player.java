@@ -58,7 +58,6 @@ public class Player extends Entity {
 
 	@Override
 	public BDSCompound toBDS() {
-		// TODO Is there any special data per-player
 		// TODO Maybe friends list?
 		return super.toBDS();
 	}
