@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
+import static junit.framework.Assert.*;
+
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
@@ -43,24 +45,23 @@ public class UtilTest {
 			File file11 = new File(folder11, "file11.txt");
 			created &= file11.createNewFile();
 
-			assert folder1.exists() : "Folder1 does not exist";
-			assert folder11.exists() : "Folder11 does not exist";
-			assert file1.exists() : "File1 does not exist";
-			assert file11.exists() : "File11 does not exist";
+			assertTrue(folder1.exists());
+			assertTrue(folder11.exists());
+			assertTrue(file1.exists());
+			assertTrue(file11.exists());
 
-			assert Util.delete(folder1) : "Folder could not be deleted";
+			boolean deleted = Util.delete(folder1);
 
-			assert !folder1.exists() : "Folder1 exists";
-			assert !folder11.exists() : "Folder11 exists";
-			assert !file1.exists() : "File1 exists";
-			assert !file11.exists() : "File11 exists";
+			assertTrue(deleted);
 
-			// Leave this the last, since it doesn't describe which one hasn't been described
-			assert created : "One of the files or folders could not be created";
+			assertFalse(folder1.exists());
+			assertFalse(folder11.exists());
+			assertFalse(file1.exists());
+			assertFalse(file11.exists());
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			assert false : "IOException thrown";
+			fail();
 		}
 	}
 
@@ -79,29 +80,31 @@ public class UtilTest {
 		String got = Util.repeatString(start, times);
 		String expected = b.toString();
 
-		assert got.equals(expected) : "Strings " + expected + " and " + got + " are not equal!";
+		assertEquals(expected, got);
 	}
 
 	@Test
 	public void getOsTest() {
 
 		File f = new File(".");
-
-		try {
-			switch (Util.getOs()) {
-				case WINDOWS:
-					assert !f.getCanonicalPath().startsWith("/") : "Windows canonical paths cannot start with /";
-					return;
-				case UNIX:
-				case MACOS:
-					assert f.getCanonicalPath().startsWith("/") : "Non-windows canonical paths must start with /";
-					return;
-				case UNKNOWN:
-					assert false : "Unknown OS: " + System.getProperty("os.name").toLowerCase();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			assert false : "IOException was thrown";
+		switch (Util.getOs()) {
+			case WINDOWS:
+				try {
+					assertFalse(f.getCanonicalPath().startsWith("/"));
+				} catch (IOException e) {
+					assertFalse(f.getAbsolutePath().startsWith("/"));
+				}
+				return;
+			case UNIX:
+			case MACOS:
+				try {
+					assertTrue(f.getCanonicalPath().startsWith("/"));
+				} catch (IOException e) {
+					assertTrue(f.getAbsolutePath().startsWith("/"));
+				}
+				return;
+			case UNKNOWN:
+				fail("Unknown OS: " + System.getProperty("os.name").toLowerCase());
 		}
 	}
 }

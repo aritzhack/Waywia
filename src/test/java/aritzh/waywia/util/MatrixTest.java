@@ -17,6 +17,8 @@ package aritzh.waywia.util;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
@@ -28,7 +30,7 @@ public class MatrixTest {
 		Matrix<Integer> mat = MatrixTest.newMultiplicationTable(10, 10);
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 10; y++) {
-				assert mat.get(x, y) == x * y : "Matrix element at (" + x + "," + y + ") shouldn't be " + mat.get(x, y);
+				assertEquals("For coords (" + x + ", " + y + ")", x * y, mat.get(x, y).intValue());
 			}
 		}
 	}
@@ -42,7 +44,7 @@ public class MatrixTest {
 			public Object apply(Integer input, Object... args) {
 				int x = (int) args[0];
 				int y = (int) args[1];
-				assert input == x * y : "Matrix element at (" + x + "," + y + ") shouldn't be " + input;
+				assertEquals("For coords (" + x + ", " + y + ")", x * y, input.intValue());
 				return null;
 			}
 		};

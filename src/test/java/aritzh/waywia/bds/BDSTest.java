@@ -17,6 +17,8 @@ package aritzh.waywia.bds;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
@@ -27,7 +29,7 @@ public class BDSTest {
 		for (int i = Integer.MIN_VALUE / 2; i <= Integer.MAX_VALUE / 2; i += 10000) {
 			byte[] data = new BDSInt(i, Integer.toString(i)).getBytes();
 			int out = new BDSInt(data).getData();
-			assert out == i : "Integer " + out + " didn't match " + i;
+			assertEquals(i, out);
 		}
 	}
 
@@ -36,7 +38,7 @@ public class BDSTest {
 		for (short s = Short.MIN_VALUE; s < Short.MAX_VALUE; s++) {
 			byte[] data = new BDSShort(s, Short.toString(s)).getBytes();
 			short out = new BDSShort(data).getData();
-			assert out == s : "Short " + out + " didn't match " + s;
+			assertEquals(s, out);
 		}
 	}
 
@@ -45,7 +47,7 @@ public class BDSTest {
 		for (byte b = Byte.MIN_VALUE; b < Byte.MAX_VALUE; b++) {
 			byte[] data = new BDSByte(b, Byte.toString(b)).getBytes();
 			byte out = new BDSByte(data).getData();
-			assert out == b : "Byte " + out + " didn't match " + b;
+			assertEquals(b, out);
 		}
 	}
 
@@ -57,9 +59,9 @@ public class BDSTest {
 			BDSString string = new BDSString(new BDSString(dataBefore, nameBefore).getBytes());
 			String nameAfter = string.getName();
 			String dataAfter = string.getData();
-			assert nameAfter.equals(nameBefore) && dataAfter.equals(dataBefore)
-					: "Name should be " + nameBefore + " and is " + nameAfter + "\n"
-					+ "Data should be " + dataBefore + " and is " + dataAfter;
+
+			assertEquals(nameBefore, nameAfter);
+			assertEquals(dataBefore, dataAfter);
 		}
 	}
 
@@ -104,17 +106,17 @@ public class BDSTest {
 		BDSShort afterNestedShortBDS = nestedComp.getShort(0);
 		BDSInt afterNestedIntBDS = nestedComp.getInt(0);
 
-		assert beforeComp.equals(afterComp) : "Objects are not equal!";
+		assertEquals(beforeComp, afterComp);
 
-		assert beforeString.equals(afterStringBDS.getData()) : "String not equal";
-		assert beforeByte == afterByteBDS.getData() : "Byte not equal";
-		assert beforeShort == afterShortBDS.getData() : "Short not equal";
-		assert beforeInt == afterIntBDS.getData() : "Int not equal";
+		assertEquals(beforeString, afterStringBDS.getData());
+		assertEquals(beforeByte, afterByteBDS.getData().byteValue());
+		assertEquals(beforeShort, afterShortBDS.getData().shortValue());
+		assertEquals(beforeInt, afterIntBDS.getData().intValue());
 
-		assert beforeString.equals(afterNestedStringBDS.getData()) : "Nested String not equal";
-		assert beforeByte == afterNestedByteBDS.getData() : "Nested Byte not equal";
-		assert beforeShort == afterNestedShortBDS.getData() : "Nested Short not equal";
-		assert beforeInt == afterNestedIntBDS.getData() : "Nested Int not equal";
+		assertEquals(beforeString, afterNestedStringBDS.getData());
+		assertEquals(beforeByte, afterNestedByteBDS.getData().byteValue());
+		assertEquals(beforeShort, afterNestedShortBDS.getData().shortValue());
+		assertEquals(beforeInt, afterNestedIntBDS.getData().intValue());
 
 	}
 }
