@@ -19,7 +19,10 @@ import aritzh.waywia.bds.BDSCompound;
 import aritzh.waywia.bds.BDSStorable;
 import aritzh.waywia.bds.BDSString;
 import aritzh.waywia.core.GameLogger;
+import com.google.common.collect.Maps;
 import org.newdawn.slick.Graphics;
+
+import java.util.Map;
 
 /**
  * @author Aritz Lopez
@@ -27,7 +30,34 @@ import org.newdawn.slick.Graphics;
  */
 public abstract class Block implements BDSStorable {
 
-	int hardness;
+	private static Map<String, Class<? extends Block>> stringToBlock = Maps.newHashMap();
+
+	public static void registerBlock(Class<? extends Block> clazz) {
+		if (clazz == null) throw new IllegalArgumentException("Null block class cannot be registered");
+		try {
+			Block.stringToBlock.put(clazz.newInstance().getName(), clazz);
+		} catch (InstantiationException | IllegalAccessException | ExceptionInInitializerError ex) {
+			InstantiationException e = new InstantiationException("Could not register block");
+			e.initCause(ex.getCause());
+			GameLogger.exception("Failed to register block class " + clazz, e);
+		}
+	}
+
+	private static Block newBlockFromName(String name) {
+		try {
+			return Block.stringToBlock.get(name).newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			GameLogger.exception("Could not instantiate block with name \"" + name + "\"", e);
+		} catch (NullPointerException e) {
+			throw new IllegalArgumentException("Block type \"" + name + "\" is not registered. This is a bug!");
+		}
+		return null;
+	}
+
+	public static Block fromBDS(BDSCompound comp) {
+		String name = comp.getString("Name", 0).getData();
+		return Block.newBlockFromName(name);
+	}
 
 	public abstract void render(int x, int y, Graphics g);
 
@@ -39,10 +69,5 @@ public abstract class Block implements BDSStorable {
 
 	public BDSCompound toBDS() {
 		return new BDSCompound("Block").add(new BDSString(this.getName(), "Name"));
-	}
-
-	public static Block fromBDS(BDSCompound blockBDS) {
-		// TODO Parse block
-		return null;  //To change body of created methods use File | Settings | File Templates.
 	}
 }

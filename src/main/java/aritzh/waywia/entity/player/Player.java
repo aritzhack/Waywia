@@ -28,14 +28,14 @@ public class Player extends Entity {
 
 	String username;
 
-	public Player(String username, int posX, int posY) {
+	public Player(String username, float posX, float posY) {
 		super(posX, posY);
 		this.username = username;
 	}
 
-//	public Player(BDSCompound data) {
-//
-//	}
+	public Player() {
+		super();
+	}
 
 	@Override
 	public Shape getBoundingShape() {
@@ -49,6 +49,10 @@ public class Player extends Entity {
 
 	@Override
 	public String getName() {
+		return "Player";
+	}
+
+	public String getUsername() {
 		return this.username;
 	}
 
@@ -62,5 +66,11 @@ public class Player extends Entity {
 	@Override
 	public int getMaxHealth() {
 		return 10;
+	}
+
+	public static Player fromBDS(BDSCompound comp) {
+		Player p = (Player) Entity.fromBDS(comp);
+		p.username = comp.getString("Username", 0).getData();
+		return p;
 	}
 }

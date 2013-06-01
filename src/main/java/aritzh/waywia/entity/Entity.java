@@ -19,10 +19,12 @@ import aritzh.waywia.bds.BDSCompound;
 import aritzh.waywia.bds.BDSStorable;
 import aritzh.waywia.bds.BDSString;
 import aritzh.waywia.core.GameLogger;
+import aritzh.waywia.entity.player.Player;
+import com.google.common.collect.Maps;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Shape;
+import org.newdawn.slick.geom.Vector2f;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -31,15 +33,15 @@ import java.util.Map;
  */
 public abstract class Entity implements BDSStorable {
 
-	float posX, posY;
-	float velX = 0, velY = 0;
-	int health;
-	private BDSCompound customData = new BDSCompound("CustomData");
-	private static Map<String, Class<? extends Entity>> stringToEntity = new HashMap<>();
+	protected float posX = 0;
+	protected float posY = 0;
+	protected float velX = 0;
+	protected float velY = 0;
+	protected int health;
+	protected BDSCompound customData = new BDSCompound("CustomData");
+	private static Map<String, Class<? extends Entity>> stringToEntity = Maps.newHashMap();
 
 	public Entity() {
-		this.posX = 0;
-		this.posY = 0;
 		this.health = this.getMaxHealth();
 	}
 
@@ -52,8 +54,8 @@ public abstract class Entity implements BDSStorable {
 	public abstract int getMaxHealth();
 
 	public void update(int delta) {
-		this.posX += this.velX * delta;
-		this.posY += this.velY * delta;
+		this.posX = this.posX + this.velX * delta;
+		this.posY = this.posY + this.velY * delta;
 
 		// TODO Collision
 	}
@@ -70,7 +72,7 @@ public abstract class Entity implements BDSStorable {
 
 	public BDSCompound toBDS() {
 		return new BDSCompound("Entity")
-				.add(new BDSString(this.getName(), "EntityName"))
+				.add(new BDSString(this.getName(), "Name"))
 				.add(new BDSString(Float.toString(posX), "posX"))
 				.add(new BDSString(Float.toString(posY), "posY"))
 				.add(new BDSString(Float.toString(velX), "velX"))
@@ -90,13 +92,60 @@ public abstract class Entity implements BDSStorable {
 	}
 
 	public static Entity newEntityFromName(String name) {
+		if ("Player".equals(name)) return new Player();
 		try {
 			return Entity.stringToEntity.get(name).newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
 			GameLogger.exception("Could not instantiate entity with name \"" + name + "\"", e);
 		} catch (NullPointerException e) {
-			throw new IllegalArgumentException("Entity type \"" + name + "\" not registered. This is a bug!");
+			throw new IllegalArgumentException("Entity type \"" + name + "\" is not registered. This is a bug!");
 		}
 		return null;
+	}
+
+	public static Entity fromBDS(BDSCompound comp) {
+		String name = comp.getString("Name", 0).getData();
+
+		float posX = Float.valueOf(comp.getString("posX", 0).getData());
+		float posY = Float.valueOf(comp.getString("posY", 0).getData());
+
+		float velX = Float.valueOf(comp.getString("velX", 0).getData());
+		float velY = Float.valueOf(comp.getString("velY", 0).getData());
+
+
+		Entity e = Entity.newEntityFromName(name);
+
+		e.setPosition(posX, posY);
+		e.setVelocity(velX, velY);
+
+		return e;
+	}
+
+	public Vector2f getPosition() {
+		return new Vector2f(posX, posY);
+	}
+
+	public Vector2f getVelocity() {
+		return new Vector2f(velX, velY);
+	}
+
+	public void setPosition(float x, float y) {
+		this.posX = x;
+		this.posY = y;
+	}
+
+	public void setVelocity(float vx, float vy) {
+		this.velX = vx;
+		this.velY = vy;
+	}
+
+	public void setPosition(Vector2f pos) {
+		this.posX = pos.getX();
+		this.posY = pos.getY();
+	}
+
+	public void setVelocity(Vector2f vel) {
+		this.velX = vel.getX();
+		this.velY = vel.getY();
 	}
 }
