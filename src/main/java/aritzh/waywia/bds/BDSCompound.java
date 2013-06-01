@@ -125,6 +125,7 @@ public class BDSCompound extends BDS {
 	private void parse(ByteArrayDataInput input, boolean withType) {
 		if (input == null) {
 			this.name = "";
+			return;
 		}
 		try {
 			if (withType) input.readByte();
