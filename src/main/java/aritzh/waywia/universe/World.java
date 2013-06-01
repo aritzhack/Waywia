@@ -86,45 +86,59 @@ public class World implements BDSStorable {
 			String name = worldComp.getString("Name", 0).getData();
 			BDSCompound data = worldComp.getComp("CustomData", 0);
 
-			Matrix<Block> blocks = new Matrix<Block>(100, 100, new BackgroundBlock());
-			for (BDSCompound comp : worldComp.getComp("Blocks", 0).getAllCompounds()) {
-				if (!comp.getName().equals("Block")) continue;
+			Matrix<Block> blocks = World.readBlocks(worldComp.getComp("Blocks", 0));
 
-				int x = comp.getInt("x", 0).getData();
-				int y = comp.getInt("y", 0).getData();
+			Multimap<String, Entity> entities = World.readEntities(worldComp.getComp("Entities", 0));
 
-				Block b = Block.fromBDS(comp);
-				if (b != null) blocks.set(b, x, y);
-			}
-
-			Multimap<String, Entity> entities = ArrayListMultimap.create();
-			for (BDSCompound comp : worldComp.getComp("Entities", 0).getAllCompounds()) {
-				if (!comp.getName().equals("Entity")) continue;
-				try {
-					Entity e = Entity.fromBDS(comp);
-
-					if (e != null) entities.put(e.getName(), e);
-				} catch (Exception ignored) {
-				}
-			}
-
-			HashMap<String, Player> players = Maps.newHashMap();
-			for (BDSCompound comp : worldComp.getComp("Players", 0).getAllCompounds()) {
-				if (!comp.getName().equals("Player")) continue;
-				try {
-					Player p = Player.fromBDS(comp);
-
-					if (p != null) players.put(p.getUsername(), p);
-				} catch (Exception ignored) {
-				}
-			}
-
+			HashMap<String, Player> players = World.readPlayers(worldComp.getComp("Players", 0));
 
 			return new World(name, root, data, entities, players, blocks);
 		} catch (NullPointerException ignored) {
 		}
 
 		return null;
+	}
+
+	private static Multimap<String, Entity> readEntities(BDSCompound entitiesComp) {
+		Multimap<String, Entity> entities = ArrayListMultimap.create();
+		for (BDSCompound comp : entitiesComp.getAllCompounds()) {
+			if (!comp.getName().equals("Entity")) continue;
+			try {
+				Entity e = Entity.fromBDS(comp);
+
+				if (e != null) entities.put(e.getName(), e);
+			} catch (Exception ignored) {
+			}
+		}
+		return entities;
+	}
+
+	private static HashMap<String, Player> readPlayers(BDSCompound playersComp) {
+		HashMap<String, Player> players = Maps.newHashMap();
+		for (BDSCompound comp : playersComp.getAllCompounds()) {
+			if (!comp.getName().equals("Player")) continue;
+			try {
+				Player p = Player.fromBDS(comp);
+
+				if (p != null) players.put(p.getUsername(), p);
+			} catch (Exception ignored) {
+			}
+		}
+		return players;
+	}
+
+	private static Matrix<Block> readBlocks(BDSCompound blockComp) {
+		Matrix<Block> blocks = new Matrix<Block>(100, 100, new BackgroundBlock());
+		for (BDSCompound comp : blockComp.getAllCompounds()) {
+			if (!comp.getName().equals("Block")) continue;
+
+			int x = comp.getInt("x", 0).getData();
+			int y = comp.getInt("y", 0).getData();
+
+			Block b = Block.fromBDS(comp);
+			if (b != null) blocks.set(b, x, y);
+		}
+		return blocks;
 	}
 
 	private static BDSCompound getCompoundFromFolder(File folder) {
