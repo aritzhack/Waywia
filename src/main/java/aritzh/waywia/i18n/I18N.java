@@ -82,7 +82,7 @@ public class I18N {
 				throw new IllegalArgumentException("Error loading I18N: Locale not specified and file didn't contain key \"locale\"");
 			}
 			props.remove("locale");
-			if (locale != null) {
+			if (locales.get(locale) != null) {
 				I18N.mergeLocales(locale, props);
 			}
 		} catch (IOException e) {
@@ -112,22 +112,11 @@ public class I18N {
 		if (!basedir.isDirectory()) {
 			throw new IllegalArgumentException("Base directory for I18N must be a directory!");
 		}
-		FilenameFilter propFiles = new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".lang");
-			}
-		};
-		FilenameFilter xmlFiles = new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".lang.xml");
-			}
-		};
-		for (File f : basedir.listFiles(propFiles)) {
+
+		for (File f : basedir.listFiles(I18N.propFiles)) {
 			I18N.readLocale(f, false, null);
 		}
-		for (File f : basedir.listFiles(xmlFiles)) {
+		for (File f : basedir.listFiles(I18N.xmlFiles)) {
 			I18N.readLocale(f, true, null);
 		}
 	}
@@ -137,4 +126,17 @@ public class I18N {
 			return I18N.locales.get(I18N.currentLocale).getProperty(key);
 		return key;
 	}
+
+	private static final FilenameFilter propFiles = new FilenameFilter() {
+		@Override
+		public boolean accept(File dir, String name) {
+			return name.endsWith(".lang");
+		}
+	};
+	private static final FilenameFilter xmlFiles = new FilenameFilter() {
+		@Override
+		public boolean accept(File dir, String name) {
+			return name.endsWith(".lang.xml");
+		}
+	};
 }
