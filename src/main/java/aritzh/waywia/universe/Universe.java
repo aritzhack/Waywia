@@ -56,39 +56,42 @@ public class Universe implements BDSStorable {
 		this.root = root;
 		this.worlds = worlds;
 		this.customData = customData;
-		this.currentWorld = (currentWorld != null ? currentWorld : this.worlds.iterator().next());
-		if (this.currentWorld == null)
-			throw new IllegalArgumentException("Set of worlds must contain at least a not-null world!");
+		this.currentWorld = currentWorld;
 		if (!this.worlds.contains(this.currentWorld)) this.worlds.add(this.currentWorld);
-		this.toBDS().writeToFile(new File(this.root, "universe.dat"));
 	}
 
-	public static Universe createNewUniverse(String name, File saveFolder, String defaultWorldName) throws IOException {
+	public static Universe newUniverse(String name, File saveFolder, String defaultWorldName) throws IOException {
 		String folderName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
 		File root = new File(saveFolder, folderName);
 
 		Set<World> worlds = new HashSet<>();
 		String worldName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, defaultWorldName);
-		World defaultWorld = new World(defaultWorldName, new File(root, worldName));
+		World defaultWorld = World.newWorld(worldName, root);
 
 		BDSCompound comp = new BDSCompound("CustomData");
 
-		return new Universe(name, root, worlds, defaultWorld, comp);
+		Universe u = new Universe(name, root, worlds, defaultWorld, comp);
+		u.toBDS().writeToFile(new File(root, "universe.dat"));
+		return u;
 	}
 
-	public static Universe loadUniverseFromFolder(File root) {
+	public static Universe loadUniverse(File root) {
 		BDSCompound uniComp = Universe.getCompoundFromFolder(root);
 		if (uniComp == null) return null;
 		try {
 			String name = uniComp.getString("Name", 0).getData();
 			BDSCompound data = uniComp.getComp("CustomData", 0);
-			Set<World> worlds = World.getWorlds(root);
+			Set<World> worlds = World.listWorldsInFolder(root);
+			if (worlds.isEmpty()) return null;
 			String currWorldName = uniComp.getString("CurrWorldName", 0).getData();
 			World currW = null;
 			for (World w : worlds) {
 				if (w.getName().equals(currWorldName)) currW = w;
 			}
-			return new Universe(name, root, worlds, currW, data);
+			if (currW == null) currW = worlds.iterator().next();
+			Universe u = new Universe(name, root, worlds, currW, data);
+			u.toBDS().writeToFile(new File(root, "universe.dat"));
+			return u;
 		} catch (NullPointerException ignored) {
 		}
 		return null;
@@ -113,7 +116,7 @@ public class Universe implements BDSStorable {
 		List<Universe> ret = new ArrayList<>();
 
 		for (File folder : savesFolder.listFiles(onlyFolders)) {
-			Universe u = Universe.loadUniverseFromFolder(folder);
+			Universe u = Universe.loadUniverse(folder);
 			if (u == null) {
 				try {
 					GameLogger.warning("Folder " + folder.getCanonicalPath() + " is not a valid universe folder");

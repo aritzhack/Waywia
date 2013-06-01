@@ -15,6 +15,8 @@
 
 package aritzh.waywia.core.states;
 
+import aritzh.waywia.blocks.BackgroundBlock;
+import aritzh.waywia.blocks.Block;
 import aritzh.waywia.core.Game;
 import aritzh.waywia.core.GameLogger;
 import aritzh.waywia.entity.Entity;
@@ -45,6 +47,7 @@ public class InGameState extends WaywiaState {
 	@Override
 	public void init() {
 		Entity.registerEntity(QuadEntity.class);
+		Block.registerBlock(BackgroundBlock.class);
 	}
 
 	@Override
@@ -56,10 +59,10 @@ public class InGameState extends WaywiaState {
 
 		if (this.universe != null) this.universe.update(delta);
 		else {
-			this.universe = Universe.loadUniverseFromFolder(new File(this.game.savesDir, "uniBase"));
+			this.universe = Universe.loadUniverse(new File(this.game.savesDir, "uniBase"));
 			if (this.universe == null) {
 				try {
-					this.universe = Universe.createNewUniverse("UniBase", this.game.savesDir, "UniWorld");
+					this.universe = Universe.newUniverse("UniBase", this.game.savesDir, "UniWorld");
 				} catch (IOException e) {
 					GameLogger.logAndThrowAsRuntime("Could not create universe UniBase", e);
 				}

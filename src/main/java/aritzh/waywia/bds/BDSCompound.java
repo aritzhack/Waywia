@@ -233,6 +233,16 @@ public class BDSCompound extends BDS {
 		return null;
 	}
 
+	public List<BDSString> getAllStrings() {
+		List<BDSString> ret = new ArrayList<>();
+		for (BDS bds : this.items) {
+			if (bds instanceof BDSString) {
+				ret.add((BDSString) bds);
+			}
+		}
+		return ret;
+	}
+
 	/**
 	 * Returns the {@code offset}'th BDSByte from the list
 	 *
@@ -247,6 +257,16 @@ public class BDSCompound extends BDS {
 			}
 		}
 		return null;
+	}
+
+	public List<BDSByte> getAllBytes() {
+		List<BDSByte> ret = new ArrayList<>();
+		for (BDS bds : this.items) {
+			if (bds instanceof BDSByte) {
+				ret.add((BDSByte) bds);
+			}
+		}
+		return ret;
 	}
 
 	/**
@@ -265,6 +285,16 @@ public class BDSCompound extends BDS {
 		return null;
 	}
 
+	public List<BDSShort> getAllShorts() {
+		List<BDSShort> ret = new ArrayList<>();
+		for (BDS bds : this.items) {
+			if (bds instanceof BDSShort) {
+				ret.add((BDSShort) bds);
+			}
+		}
+		return ret;
+	}
+
 	/**
 	 * Returns the {@code offset}'th BDSInt from the list
 	 *
@@ -281,6 +311,16 @@ public class BDSCompound extends BDS {
 		return null;
 	}
 
+	public List<BDSInt> getAllInts() {
+		List<BDSInt> ret = new ArrayList<>();
+		for (BDS bds : this.items) {
+			if (bds instanceof BDSInt) {
+				ret.add((BDSInt) bds);
+			}
+		}
+		return ret;
+	}
+
 	/**
 	 * Returns the {@code offset}th BDSCompound from the list
 	 *
@@ -295,6 +335,16 @@ public class BDSCompound extends BDS {
 			}
 		}
 		return null;
+	}
+
+	public List<BDSCompound> getAllCompounds() {
+		List<BDSCompound> ret = new ArrayList<>();
+		for (BDS bds : this.items) {
+			if (bds instanceof BDSCompound) {
+				ret.add((BDSCompound) bds);
+			}
+		}
+		return ret;
 	}
 
 	/**

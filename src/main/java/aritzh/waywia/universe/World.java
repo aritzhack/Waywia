@@ -21,12 +21,14 @@ import aritzh.waywia.bds.BDSStorable;
 import aritzh.waywia.bds.BDSString;
 import aritzh.waywia.blocks.BackgroundBlock;
 import aritzh.waywia.blocks.Block;
+import aritzh.waywia.core.GameLogger;
 import aritzh.waywia.entity.Entity;
-import aritzh.waywia.entity.QuadEntity;
 import aritzh.waywia.entity.player.Player;
 import aritzh.waywia.util.Matrix;
 import aritzh.waywia.util.ParametrizedFunction;
+import com.google.common.base.CaseFormat;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import org.newdawn.slick.Graphics;
 
@@ -44,55 +46,115 @@ public class World implements BDSStorable {
 
 	private final File root;
 
-	private Multimap<String, Entity> entities = ArrayListMultimap.create();
-	private HashMap<String, Player> players = new HashMap<>();
-	private Matrix<Block> blocks = new Matrix<Block>(100, 100, new BackgroundBlock());
+	private Multimap<String, Entity> entities;
+	private HashMap<String, Player> players;
+	private Matrix<Block> blocks;
 
 	private BDSCompound customData = new BDSCompound("CustomData");
 
 	private String worldName;
 
-	public World(String name, File root) throws IOException {
+	private World(String name, File root, BDSCompound customData, Multimap<String, Entity> entities, HashMap<String, Player> players, Matrix<Block> blocks) {
 		this.worldName = name;
 		this.root = root;
-		if (!(this.root.exists() || this.root.mkdirs()))
-			throw new IOException("Couldn't make root folder for world " + this);
-		this.toBDS().writeToFile(new File(root, "world.dat"));
+		this.customData = customData;
+		this.entities = entities;
+		this.players = players;
+		this.blocks = blocks;
 	}
 
-	public World(BDSCompound data, File root) {
-		this.root = root;
-		this.parseWorldData(data);
-		this.spanwEntity(new QuadEntity(200, 200));
+	public static World newWorld(String name, File universeFolder) {
+		String folderName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
+		File root = new File(universeFolder, folderName);
+
+		BDSCompound customData = new BDSCompound("CustomData");
+
+		Multimap<String, Entity> entities = ArrayListMultimap.create();
+
+		HashMap<String, Player> player = Maps.newHashMap();
+
+		Matrix<Block> blocks = new Matrix<Block>(100, 100, new BackgroundBlock());
+
+		return new World(name, root, customData, entities, player, blocks);
 	}
 
-	private void parseWorldData(BDSCompound compound) {
-		BDSString nameBDS = compound.getString("Name", 0);
-		this.worldName = (nameBDS != null ? nameBDS.getData() : "World " + root.getName());
-		this.customData = compound.getComp("CustomData", 0);
-		BDSCompound blocksBDS = compound.getComp("Blocks", 0);
-		if (blocksBDS != null) {
-			int i = 0;
-			BDSCompound blockBDS;
-			while ((blockBDS = blocksBDS.getComp("Block", i)) != null) {
-				int x = blockBDS.getInt("x", 0).getData();
-				int y = blockBDS.getInt("y", 0).getData();
-				this.blocks.set(Block.fromBDS(blockBDS), x, y);
-				i++;
+	public static World loadWorld(File root) {
+		BDSCompound worldComp = World.getCompoundFromFolder(root);
+		if (worldComp == null) return null;
+
+		try {
+			String name = worldComp.getString("Name", 0).getData();
+			BDSCompound data = worldComp.getComp("CustomData", 0);
+
+			Matrix<Block> blocks = new Matrix<Block>(100, 100, new BackgroundBlock());
+			for (BDSCompound comp : worldComp.getComp("Blocks", 0).getAllCompounds()) {
+				if (!comp.getName().equals("Block")) continue;
+
+				int x = comp.getInt("x", 0).getData();
+				int y = comp.getInt("y", 0).getData();
+
+				Block b = Block.fromBDS(comp);
+				if (b != null) blocks.set(b, x, y);
+			}
+
+			Multimap<String, Entity> entities = ArrayListMultimap.create();
+			for (BDSCompound comp : worldComp.getComp("Entities", 0).getAllCompounds()) {
+				if (!comp.getName().equals("Entity")) continue;
+				try {
+					Entity e = Entity.fromBDS(comp);
+
+					if (e != null) entities.put(e.getName(), e);
+				} catch (Exception ignored) {
+				}
+			}
+
+			HashMap<String, Player> players = Maps.newHashMap();
+			for (BDSCompound comp : worldComp.getComp("Players", 0).getAllCompounds()) {
+				if (!comp.getName().equals("Player")) continue;
+				try {
+					Player p = Player.fromBDS(comp);
+
+					if (p != null) players.put(p.getUsername(), p);
+				} catch (Exception ignored) {
+				}
+			}
+
+
+			return new World(name, root, data, entities, players, blocks);
+		} catch (NullPointerException ignored) {
+		}
+
+		return null;
+	}
+
+	private static BDSCompound getCompoundFromFolder(File folder) {
+		File f;
+		if (folder.exists() && (f = new File(folder, "world.dat")).exists()) {
+			try {
+				return new BDSCompound(f);
+			} catch (IOException ignored) {
 			}
 		}
-		// TODO Parse players and entities
+		return null;
 	}
 
 	public void spanwEntity(Entity e) {
 		this.entities.put(e.getName(), e);
 	}
 
+	public void removeEntity(Entity e) {
+		this.entities.remove(e.getName(), e);
+	}
+
 	public void update(final int delta) {
 		this.blocks.runForEach(World.blockUpdate, delta);
 
-		for (Entity e : entities.values()) {
+		for (Entity e : this.entities.values()) {
 			e.update(delta);
+		}
+
+		for (Player p : this.players.values()) {
+			p.update(delta);
 		}
 	}
 
@@ -128,24 +190,25 @@ public class World implements BDSStorable {
 		for (Entity e : entities.values()) {
 			e.render(g);
 		}
+
+		for (Player p : this.players.values()) {
+			p.render(g);
+		}
 	}
 
-	public void removeEntity(Entity e) {
-		this.entities.remove(e.getName(), e);
-	}
-
-	public static Set<World> getWorlds(File root) {
+	public static Set<World> listWorldsInFolder(File root) {
 		Set<World> ret = new HashSet<>();
 		for (File folder : root.listFiles(Universe.onlyFolders)) {
-			File f = new File(folder, "world.dat");
-			if (!f.exists()) continue;
-			BDSCompound data;
-			try {
-				data = new BDSCompound(f);
-			} catch (Exception ignored) {
-				continue; // Couldn't parse file -> not valid -> Skip
+			World w = World.loadWorld(folder);
+			if (w == null) {
+				try {
+					GameLogger.warning("Folder " + folder.getCanonicalPath() + " is not a valid world folder");
+				} catch (IOException e) {
+					GameLogger.warning("Folder " + folder.getAbsolutePath() + " is not a valid world folder");
+				}
+				continue;
 			}
-			ret.add(new World(data, folder));
+			ret.add(w);
 		}
 		return ret;
 	}
