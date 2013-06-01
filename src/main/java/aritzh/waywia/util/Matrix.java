@@ -15,6 +15,7 @@
 
 package aritzh.waywia.util;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -188,8 +189,19 @@ public class Matrix<E> implements Collection<ArrayList<E>> {
 
 	@Override
 	public <T> T[] toArray(T[] a) {
-		// TODO Find out what this makes
-		return null;
+		try {
+			Object[] oa = this.toArray();
+
+			T[] ret = (a.length > oa.length ? a : (T[]) Array.newInstance(a.getClass().getComponentType(), oa.length));
+
+			for (int i = 0; i < oa.length; i++) {
+				ret[i] = (T) oa[i];
+			}
+
+			return ret;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	@Override
