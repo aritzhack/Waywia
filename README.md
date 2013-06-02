@@ -10,7 +10,7 @@ Waywia is a open source 2D game made by aritzhack and distributed under the term
 
 1. You'll need [slick2d-maven] (https://github.com/nguillaumin/slick2d-maven "Slick2D-Maven") so that the project can build using maven
 2. In the root folder of the source (where `pom.xml` is located) run `mvn install`
-3. Set up your environment so that java runs with `-Djava.library.path=target/natives`
+3. Set up your environment so that java runs with `-Djava.library.path=target/natives` and project language level to `7.0` (or `1.7`) at least (needed because I use the diamond operator, multi-catch and try-with-resources, which need that language level)
 
 ### Contributing
 
