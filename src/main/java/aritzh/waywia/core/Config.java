@@ -15,32 +15,30 @@
 
 package aritzh.waywia.core;
 
+import aritzh.waywia.lib.GameLib;
+import aritzh.waywia.util.Configuration;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public class Config {
-	private static Map<String, String> data = new HashMap<>();
 
-	public static void init() {
-		// DOING CONFIG!!!!
-		Properties p = new Properties();
-		try {
-			p.load(new FileInputStream(new File("config.cfg")));
-			for (Map.Entry e : p.entrySet()) {
-				data.put((String) e.getKey(), (String) e.getValue());
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassCastException e) {
-			throw new AssertionError(e);
+	public static final Configuration GAME;
+
+	static {
+		File configFile = new File("config.cfg");
+		boolean init = !configFile.exists();
+		GAME = Configuration.loadConfig(configFile);
+		if (init) {
+			GAME.setProperty("Main", "Version", GameLib.VERSION);
 		}
+		GAME.save();
+	}
+
+	// For the static initializer to run
+	public static void init() {
 	}
 }
