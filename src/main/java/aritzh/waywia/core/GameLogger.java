@@ -58,6 +58,10 @@ public class GameLogger {
 		init = true;
 	}
 
+	// So that static initializer runs when expected
+	public static void init() {
+	}
+
 	public static void log(String s) {
 		GameLogger.logger.log(DEFAULT_LOG_LEVEL, s);
 	}

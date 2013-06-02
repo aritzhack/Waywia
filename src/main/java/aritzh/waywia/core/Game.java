@@ -48,6 +48,7 @@ public class Game extends StateBasedGame {
 
 	public Game(File baseDir) throws IOException {
 		super(GameLib.FULL_NAME);
+		GameLogger.init();
 
 		if (baseDir == null) baseDir = new File(System.getProperty("user.dir"));
 
