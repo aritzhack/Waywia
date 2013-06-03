@@ -45,10 +45,15 @@ public class Game extends StateBasedGame {
 	private GameContainer gc = null;
 	public WaywiaState menuState, inGameState;
 	public ErrorState errorState;
+	private final boolean loggedIn;
 
-	public Game(File baseDir) throws IOException {
+	public Game(File baseDir, boolean loggedIn) throws IOException {
 		super(GameLib.FULL_NAME);
+		this.loggedIn = loggedIn;
 		GameLogger.init();
+
+		if (!this.loggedIn) GameLogger.warning("Game running in not-logged-in mode!");
+		else GameLogger.log("Successfully logged in");
 
 		if (baseDir == null) baseDir = new File(System.getProperty("user.dir"));
 

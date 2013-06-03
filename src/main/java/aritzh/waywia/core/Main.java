@@ -19,6 +19,7 @@ import aritzh.waywia.util.Util;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -29,7 +30,15 @@ public class Main {
 
 	public static void main(String[] args) throws SlickException {
 		try {
-			Game g = new Game(Util.getAppDir("waywia"));
+			File root = Util.getAppDir("waywia");
+			Game g;
+			if (args.length < 2) g = new Game(root, false);
+			else if (Login.isCorrect(args[0], args[1])) {
+				g = new Game(root, true);
+			} else {
+				GameLogger.severe("Incorrect log-in information!");
+				g = new Game(root, false);
+			}
 			AppGameContainer gc = new AppGameContainer(g, 800, 600, false);
 			gc.setShowFPS(false);
 			gc.start();
