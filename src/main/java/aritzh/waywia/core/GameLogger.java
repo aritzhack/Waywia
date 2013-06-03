@@ -66,6 +66,10 @@ public class GameLogger {
 		GameLogger.logger.log(DEFAULT_LOG_LEVEL, s);
 	}
 
+	public static void debug(Object o) {
+		GameLogger.logger.fine(String.valueOf(o));
+	}
+
 	public static void log(Level level, String message) {
 		GameLogger.logger.log(level, message);
 	}
