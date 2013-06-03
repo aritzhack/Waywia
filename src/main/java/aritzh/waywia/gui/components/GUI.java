@@ -28,12 +28,10 @@ import java.util.List;
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public abstract class GUI implements InputListener {
-	private List<GUIElement> elements = new ArrayList<>();
-	protected WaywiaState state;
-	protected int width;
+	private final List<GUIElement> elements = new ArrayList<>();
+	protected final WaywiaState state;
+	protected final int width, height;
 	private int lastID = 0;
-
-	protected int height;
 
 	public GUI(WaywiaState state) {
 		this.state = state;
@@ -50,10 +48,6 @@ public abstract class GUI implements InputListener {
 	protected final void addElement(GUIElement e) {
 		this.elements.add(e);
 		e.setID(lastID++);
-	}
-
-	protected void removeElement(GUIElement e) {
-		this.elements.remove(e);
 	}
 
 	public void mouseClicked(int button, int x, int y, int clickCount) {

@@ -83,9 +83,21 @@ public abstract class WaywiaState extends BasicGameState {
 		}
 	}
 
+	public final void closing() {
+		try {
+			this.onClosing();
+		} catch (Throwable t) {
+			this.game.enterState(this.game.errorState.setError("update", t));
+		}
+	}
+
 	public abstract void init();
 
 	public abstract void render(Graphics g);
 
 	public abstract void update(int delta);
+
+	public void onClosing() {
+
+	}
 }

@@ -22,9 +22,28 @@ import java.io.IOException;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
+@SuppressWarnings("UnusedDeclaration")
 public class Util {
 
 	public static EnumOS OS = null;
+
+	@SafeVarargs
+	@SuppressWarnings("unchecked")
+	public static <T> T[] append(T[] arr, T... lastElements) {
+		T[] ret = (T[]) new Object[arr.length + lastElements.length];
+		System.arraycopy(lastElements, 0, ret, arr.length, lastElements.length);
+		System.arraycopy(arr, 0, ret, 0, arr.length);
+		return ret;
+	}
+
+	@SafeVarargs
+	@SuppressWarnings("unchecked")
+	public static <T> T[] prepend(T[] arr, T... firstElements) {
+		T[] ret = (T[]) new Object[arr.length + firstElements.length];
+		System.arraycopy(firstElements, 0, ret, 0, firstElements.length);
+		System.arraycopy(arr, 0, ret, firstElements.length, arr.length);
+		return ret;
+	}
 
 	public static boolean delete(File f) {
 		if (f == null || !f.exists()) return true;
@@ -97,17 +116,6 @@ public class Util {
 		EnumOS(int id) {
 
 			this.id = id;
-		}
-
-		public static EnumOS getByID(int id) {
-			for (EnumOS os : EnumOS.values()) {
-				if (os.id == id) return os;
-			}
-			return UNKNOWN;
-		}
-
-		public int getId() {
-			return id;
 		}
 	}
 }

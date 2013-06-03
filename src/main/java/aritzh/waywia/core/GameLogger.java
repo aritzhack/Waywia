@@ -29,8 +29,9 @@ import java.util.logging.*;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
+@SuppressWarnings("UnusedDeclaration")
 public class GameLogger {
-	private static Logger logger = Logger.getLogger("GameLogger");
+	private static final Logger logger = Logger.getLogger("GameLogger");
 	private static final Level DEFAULT_LOG_LEVEL = Level.INFO;
 	public static final boolean init;
 
@@ -59,6 +60,7 @@ public class GameLogger {
 	}
 
 	// So that static initializer runs when expected
+	@SuppressWarnings("EmptyMethod")
 	public static void init() {
 	}
 
@@ -135,6 +137,10 @@ public class GameLogger {
 		throwable.printStackTrace();
 	}
 
+	public static void exception(Throwable throwable) {
+		GameLogger.exception(throwable.getLocalizedMessage(), throwable);
+	}
+
 	public static void logAndThrowAsRuntime(String message, Throwable throwable) {
 		GameLogger.exception(message, throwable);
 		throw new RuntimeException(message, throwable);
@@ -147,7 +153,7 @@ public class GameLogger {
 
 	private static class SimpleFormat extends Formatter {
 
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
+		final DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
 
 		@Override
 		public String format(LogRecord record) {

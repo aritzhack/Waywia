@@ -48,7 +48,7 @@ public class Universe implements BDSStorable {
 	private Set<World> worlds = new HashSet<>();
 	private World currentWorld;
 
-	private String name;
+	private final String name;
 	private BDSCompound customData;
 
 	private Universe(String name, File root, Set<World> worlds, World currentWorld, BDSCompound customData) {
@@ -63,6 +63,8 @@ public class Universe implements BDSStorable {
 	public static Universe newUniverse(String name, File saveFolder, String defaultWorldName) throws IOException {
 		String folderName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
 		File root = new File(saveFolder, folderName);
+		if (!root.exists() && !root.mkdirs())
+			throw new IOException("Could not create folder for new universe at: " + root.getAbsolutePath());
 
 		Set<World> worlds = new HashSet<>();
 		String worldName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, defaultWorldName);
@@ -90,7 +92,7 @@ public class Universe implements BDSStorable {
 			}
 			if (currW == null) currW = worlds.iterator().next();
 			Universe u = new Universe(name, root, worlds, currW, data);
-			u.toBDS().writeToFile(new File(root, "universe.dat"));
+			u.save();
 			return u;
 		} catch (NullPointerException ignored) {
 		}
@@ -141,5 +143,16 @@ public class Universe implements BDSStorable {
 
 	public void update(int delta) {
 		if (this.currentWorld != null) this.currentWorld.update(delta);
+	}
+
+	public void save() {
+		this.toBDS().writeToFile(new File(root, "universe.dat"));
+		for (World w : this.worlds) {
+			w.save();
+		}
+	}
+
+	public void clicked(int x, int y) {
+		if (this.currentWorld != null) currentWorld.clicked(x, y);
 	}
 }

@@ -62,18 +62,6 @@ public class Matrix<E> implements Collection<ArrayList<E>> {
 	}
 
 	/**
-	 * Sets the default element to be added to the list.
-	 * If this is never set, null will be added
-	 *
-	 * @param defaultElement The element to be used by default
-	 * @return {@code this}
-	 */
-	public Matrix<E> setDefaultElement(E defaultElement) {
-		this.defaultElement = defaultElement;
-		return this;
-	}
-
-	/**
 	 * Returns the element in column {@code x} and y {@code y}
 	 *
 	 * @param x The column of the element
@@ -131,7 +119,8 @@ public class Matrix<E> implements Collection<ArrayList<E>> {
 			ArrayList<E> col = this.columns.get(x);
 			for (int y = 0; y < col.size(); y++) {
 				if (col.get(y) == null) continue;
-				R obj = function.apply(col.get(y), x, y, args);
+				Object[] params = Util.prepend(args, x, y);
+				R obj = function.apply(col.get(y), params);
 				ret.set(obj, x, y);
 			}
 		}
@@ -188,6 +177,7 @@ public class Matrix<E> implements Collection<ArrayList<E>> {
 
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public <T> T[] toArray(T[] a) {
 		try {
 			Object[] oa = this.toArray();
@@ -199,9 +189,9 @@ public class Matrix<E> implements Collection<ArrayList<E>> {
 			}
 
 			return ret;
-		} catch (Exception e) {
-			return null;
+		} catch (Exception ignored) {
 		}
+		return a;
 	}
 
 	@Override
@@ -295,7 +285,7 @@ public class Matrix<E> implements Collection<ArrayList<E>> {
 	private class MatrixIterator implements Iterator<ArrayList<E>> {
 
 		int current = 0;
-		private Matrix<E> matrix;
+		private final Matrix<E> matrix;
 
 		public MatrixIterator(Matrix<E> matrix) {
 			this.matrix = matrix;

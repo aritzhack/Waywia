@@ -52,7 +52,7 @@ public class World implements BDSStorable {
 
 	private BDSCompound customData = new BDSCompound("CustomData");
 
-	private String worldName;
+	private final String worldName;
 
 	private World(String name, File root, BDSCompound customData, Multimap<String, Entity> entities, HashMap<String, Player> players, Matrix<Block> blocks) {
 		this.worldName = name;
@@ -63,9 +63,12 @@ public class World implements BDSStorable {
 		this.blocks = blocks;
 	}
 
-	public static World newWorld(String name, File universeFolder) {
+	public static World newWorld(String name, File universeFolder) throws IOException {
 		String folderName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
 		File root = new File(universeFolder, folderName);
+
+		if (!root.exists() && !root.mkdirs())
+			throw new IOException("Could not create folder for new world at: " + root.getAbsolutePath());
 
 		BDSCompound customData = new BDSCompound("CustomData");
 
@@ -73,7 +76,7 @@ public class World implements BDSStorable {
 
 		HashMap<String, Player> player = Maps.newHashMap();
 
-		Matrix<Block> blocks = new Matrix<Block>(100, 100, new BackgroundBlock());
+		Matrix<Block> blocks = new Matrix<Block>(50, 38, new BackgroundBlock());
 
 		return new World(name, root, customData, entities, player, blocks);
 	}
@@ -160,7 +163,7 @@ public class World implements BDSStorable {
 		this.entities.remove(e.getName(), e);
 	}
 
-	public void update(final int delta) {
+	public void update(int delta) {
 		this.blocks.runForEach(World.blockUpdate, delta);
 
 		for (Entity e : this.entities.values()) {
@@ -256,4 +259,14 @@ public class World implements BDSStorable {
 			return null;
 		}
 	};
+
+	public void save() {
+		this.toBDS().writeToFile(new File(this.root, "world.dat"));
+	}
+
+	public void clicked(int x, int y) {
+		x /= 16;
+		y /= 16;
+		this.blocks.get(x, y).clicked(x, y);
+	}
 }

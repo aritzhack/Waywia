@@ -20,6 +20,7 @@ import aritzh.waywia.bds.BDSStorable;
 import aritzh.waywia.bds.BDSString;
 import aritzh.waywia.core.GameLogger;
 import com.google.common.collect.Maps;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 import java.util.Map;
@@ -30,7 +31,9 @@ import java.util.Map;
  */
 public abstract class Block implements BDSStorable {
 
-	private static Map<String, Class<? extends Block>> stringToBlock = Maps.newHashMap();
+	private static final Map<String, Class<? extends Block>> stringToBlock = Maps.newHashMap();
+
+	public static final int SIZE = 16;
 
 	public static void registerBlock(Class<? extends Block> clazz) {
 		if (clazz == null) throw new IllegalArgumentException("Null block class cannot be registered");
@@ -59,15 +62,24 @@ public abstract class Block implements BDSStorable {
 		return Block.newBlockFromName(name);
 	}
 
-	public abstract void render(int x, int y, Graphics g);
-
-	public void update(int x, int y, int delta) {
-		GameLogger.debug("Updated: (" + x + ", " + y + "), after " + delta);
+	public void render(int x, int y, Graphics g) {
+		Color c = g.getColor();
+		g.setColor(Color.blue);
+		g.fillRect(x * Block.SIZE, y * Block.SIZE, Block.SIZE, Block.SIZE);
+		g.setColor(Color.white);
+		g.drawRect(x * Block.SIZE, y * Block.SIZE, Block.SIZE, Block.SIZE);
+		g.setColor(c);
 	}
 
 	public abstract String getName();
 
 	public BDSCompound toBDS() {
 		return new BDSCompound("Block").add(new BDSString(this.getName(), "Name"));
+	}
+
+	public void clicked(int x, int y) {
+	}
+
+	public void update(int x, int y, int delta) {
 	}
 }

@@ -16,6 +16,7 @@
 package aritzh.waywia.core.states;
 
 import aritzh.waywia.core.Game;
+import aritzh.waywia.core.GameLogger;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -26,6 +27,7 @@ public class ErrorState extends WaywiaState {
 
 	private String when;
 	private Throwable throwable;
+	private boolean logged = false;
 
 	public ErrorState(Game game) {
 		super(game, "ErrorState");
@@ -47,6 +49,7 @@ public class ErrorState extends WaywiaState {
 		if (t == null || when == null) throw new IllegalArgumentException("When and throwable must not be null!");
 		this.when = when;
 		throwable = t;
+		logged = false;
 		return this.getID();
 	}
 
@@ -64,5 +67,10 @@ public class ErrorState extends WaywiaState {
 	public void update(int delta) {
 		if (this.when == null || this.throwable == null)
 			throw new IllegalStateException("Error state was not correctly initialized using ErrorState.setError()");
+
+		if (!logged) {
+			GameLogger.exception(throwable);
+			logged = true;
+		}
 	}
 }

@@ -15,8 +15,7 @@
 
 package aritzh.waywia.blocks;
 
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
+import aritzh.waywia.core.GameLogger;
 
 /**
  * @author Aritz Lopez
@@ -25,11 +24,8 @@ import org.newdawn.slick.Graphics;
 public class BackgroundBlock extends Block {
 
 	@Override
-	public void render(int x, int y, Graphics g) {
-		Color c = g.getColor();
-		g.setColor(Color.blue);
-		g.fillRect(x * 16, y * 16, (x + 1) * 16, (y + 1) * 16);
-		g.setColor(c);
+	public void clicked(int x, int y) {
+		GameLogger.debug("Clicked block at (" + x + "," + y + ")");
 	}
 
 	@Override

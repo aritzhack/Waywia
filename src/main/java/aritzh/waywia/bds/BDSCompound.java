@@ -36,9 +36,10 @@ import java.util.zip.GZIPOutputStream;
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
+@SuppressWarnings("UnusedDeclaration")
 public class BDSCompound extends BDS {
 
-	private List<BDS> items = new ArrayList<>();
+	private final List<BDS> items = new ArrayList<>();
 	private String name;
 
 	/**
@@ -516,12 +517,18 @@ public class BDSCompound extends BDS {
 	}
 
 	public void writeToFile(File f) {
+		if (!f.exists()) try {
+			if (!f.createNewFile())
+				GameLogger.logAndThrowAsRuntime("Could not write BDSCompound to file " + f.getAbsolutePath());
+		} catch (IOException e) {
+			GameLogger.logAndThrowAsRuntime("Could not write BDSCompound to file " + f.getAbsolutePath(), e);
+		}
 		try (FileOutputStream fos = new FileOutputStream(f)) {
 			fos.write(this.getBytes());
 			fos.flush();
 			fos.close();
 		} catch (IOException e) {
-			GameLogger.logAndThrowAsRuntime("Could not write BDSCompound to file!", e);
+			GameLogger.logAndThrowAsRuntime("Could not write BDSCompound to file " + f.getAbsolutePath(), e);
 		}
 	}
 
@@ -533,14 +540,14 @@ public class BDSCompound extends BDS {
 	public String toString(int level) {
 		StringBuilder builder = new StringBuilder();
 
-		builder.append(Util.repeatString("    ", level) + this.getType().toString() + ":" + this.getName());
+		builder.append(Util.repeatString("    ", level)).append(this.getType().toString()).append(":").append(this.getName());
 		boolean some = false;
 		for (BDS b : this.items) {
 			some = true;
 			if (b instanceof BDSCompEnd) continue;
-			builder.append("\n" + b.toString(level + 1));
+			builder.append("\n").append(b.toString(level + 1));
 		}
-		if (!some) builder.append("\n" + Util.repeatString("    ", level + 1) + "EMPTY COMPOUND");
+		if (!some) builder.append("\n").append(Util.repeatString("    ", level + 1)).append("EMPTY COMPOUND");
 
 		return builder.toString();
 	}

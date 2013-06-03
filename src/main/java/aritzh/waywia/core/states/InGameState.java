@@ -51,7 +51,13 @@ public class InGameState extends WaywiaState {
 	}
 
 	@Override
+	public void mousePressed(int button, int x, int y) {
+		universe.clicked(x, y);
+	}
+
+	@Override
 	public void render(Graphics g) {
+		if (this.universe != null) this.universe.render(g);
 	}
 
 	@Override
@@ -69,5 +75,10 @@ public class InGameState extends WaywiaState {
 			}
 		}
 
+	}
+
+	@Override
+	public void onClosing() {
+		if (this.universe != null) this.universe.save();
 	}
 }

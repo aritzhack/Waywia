@@ -73,6 +73,7 @@ public class Game extends StateBasedGame {
 
 	@Override
 	public boolean closeRequested() {
+		((WaywiaState) this.getCurrentState()).closing();
 		return super.closeRequested();
 	}
 
