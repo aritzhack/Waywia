@@ -38,7 +38,7 @@ public class MainMenuGUI extends GUI {
 	public void clicked(int id) {
 		super.clicked(id);
 		if (id == exitButton.getID()) {
-			this.state.getGame().getGc().exit();
+			this.state.getGame().exit();
 		} else if (id == newGameButton.getID()) {
 			((MenuState) this.state).openGUI(new NewUniverseGUI((MenuState) this.state));
 		} else if (id == loadButton.getID()) {

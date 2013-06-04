@@ -15,23 +15,28 @@
 
 package aritzh.waywia.core;
 
-import aritzh.waywia.core.states.ErrorState;
-import aritzh.waywia.core.states.InGameState;
-import aritzh.waywia.core.states.MenuState;
-import aritzh.waywia.core.states.WaywiaState;
+import aritzh.waywia.core.states.*;
 import aritzh.waywia.gui.components.GUI;
 import aritzh.waywia.i18n.I18N;
 import aritzh.waywia.input.Keyboard;
 import aritzh.waywia.input.Mouse;
 import aritzh.waywia.lib.GameLib;
+import aritzh.waywia.mod.Mod;
+import aritzh.waywia.util.ReflectionUtil;
+import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import org.lwjgl.opengl.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
+import org.reflections.Reflections;
 
 import java.io.File;
 import java.io.IOException;
+
+import static aritzh.waywia.mod.events.ModEvent.ModUnloadEvent;
 
 /**
  * @author Aritz Lopez
@@ -43,9 +48,10 @@ public class Game extends StateBasedGame {
 	public final File savesDir;
 	private final EventBus BUS = new EventBus("MainBus");
 	private GameContainer gc = null;
-	public WaywiaState menuState, inGameState;
+	public WaywiaState menuState, inGameState, loadingState;
 	public ErrorState errorState;
 	private final boolean loggedIn;
+	private boolean initMods = false;
 
 	public Game(File root, boolean loggedIn) throws IOException {
 		super(GameLib.FULL_NAME);
@@ -74,7 +80,15 @@ public class Game extends StateBasedGame {
 	public boolean closeRequested() {
 		((WaywiaState) this.getCurrentState()).closing();
 		Config.GAME.save();
+		this.BUS.post(new ModUnloadEvent(this));
+		Display.destroy();
 		return super.closeRequested();
+	}
+
+	public void exit() {
+		this.closeRequested();
+		this.getGc().exit();
+		System.exit(0);
 	}
 
 	@Override
@@ -86,9 +100,33 @@ public class Game extends StateBasedGame {
 
 		container.getInput().poll(container.getWidth(), container.getHeight());
 
+		this.addState(this.loadingState = new LoadingState(this));
 		this.addState(this.menuState = new MenuState(this));
 		this.addState(this.inGameState = new InGameState(this));
 		this.addState(this.errorState = new ErrorState(this));
+	}
+
+	@Subscribe
+	public void catchDeadEvents(DeadEvent e) {
+		GameLogger.debug("Caught dead event: " + e.getEvent());
+	}
+
+	public void loadMods() {
+		if (initMods) return;
+		initMods = true;
+		try {
+			File modsFolder = new File(baseDir, "mods");
+			ReflectionUtil.addFolderToClasspath(modsFolder);
+			Reflections reflections = new Reflections(ClassLoader.getSystemClassLoader());
+
+			for (Class c : reflections.getTypesAnnotatedWith(Mod.class)) {
+				Object o = c.newInstance();
+				GameLogger.debug("Found mod class: " + c.getName() + "; Instance: " + o);
+				this.registerEventHandler(o);
+			}
+		} catch (InstantiationException | IllegalAccessException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
