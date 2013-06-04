@@ -35,8 +35,10 @@ public class GameLogger {
 	private static final Logger logger = Logger.getLogger("GameLogger");
 	private static final Level DEFAULT_LOG_LEVEL = Level.INFO;
 
+	private static boolean init;
+
 	public static void init(File root) throws IOException {
-		if (!root.mkdirs()) throw new IOException("Couldn't make folder for logs!");
+		if (!root.exists() && !root.mkdirs()) throw new IOException("Couldn't make folder for logs!");
 		GameLogger.logger.setLevel(Level.ALL);
 		GameLogger.logger.setUseParentHandlers(false);
 
@@ -57,6 +59,11 @@ public class GameLogger {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		init = true;
+	}
+
+	public static boolean isInit() {
+		return init;
 	}
 
 	public static void log(String s) {
@@ -138,7 +145,9 @@ public class GameLogger {
 
 	public static void logAndThrowAsRuntime(String message, Throwable throwable) {
 		GameLogger.exception(message, throwable);
-		throw new RuntimeException(message, throwable);
+		if (throwable instanceof RuntimeException) {
+			throw (RuntimeException) throwable;
+		} else throw new RuntimeException(message, throwable);
 	}
 
 	public static void logAndThrowAsRuntime(String s) {

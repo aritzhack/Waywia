@@ -37,9 +37,9 @@ public abstract class Block implements BDSStorable {
 	public static int registerBlock(Block block) {
 		if (Block.blocks.contains(block))
 			throw new IllegalArgumentException("Block " + block + " was already registered");
-		if (Block.blocks.get(block.getID()) != null)
+		if (Block.blocks.size() > block.getID() && Block.blocks.get(block.getID()) != null)
 			throw new IllegalArgumentException("Block id " + block.getID() + "is occupied by " + Block.blocks.get(block.getID()) + " when adding " + block);
-		Block.blocks.set(block.getID(), block);
+		Block.blocks.add(block.getID(), block);
 
 		return Block.blocks.indexOf(block);
 	}

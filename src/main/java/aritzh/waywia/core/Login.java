@@ -47,6 +47,8 @@ public class Login {
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			connection.setDoInput(true);
+			connection.setConnectTimeout(20000);
+			connection.setReadTimeout(20000);
 			connection.setInstanceFollowRedirects(false);
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -77,9 +79,7 @@ public class Login {
 			dig.reset();
 			dig.update(toEncode.getBytes("UTF-8"));
 			return byteToHex(dig.digest());
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		return "";
