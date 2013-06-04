@@ -56,23 +56,18 @@ public class Player extends Entity {
 
 	@Override
 	public BDSCompound toBDS() {
-		// TODO Maybe friends list?
+		// Maybe friends list?
 		return super.toBDS();
 	}
 
 	@Override
 	public int getMaxHealth() {
-		return 10;
+		return 20;
 	}
 
 	public static Player fromBDS(BDSCompound comp) {
 		Player p = (Player) Entity.fromBDS(comp);
 		p.username = comp.getString("Username", 0).getData();
 		return p;
-	}
-
-	@Override
-	public int getID() {
-		return 0;
 	}
 }

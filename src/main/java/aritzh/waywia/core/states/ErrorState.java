@@ -19,6 +19,8 @@ import aritzh.waywia.core.Game;
 import aritzh.waywia.core.GameLogger;
 import org.newdawn.slick.Graphics;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
@@ -46,10 +48,11 @@ public class ErrorState extends WaywiaState {
 	 * @return The StateID of ErrorState, so that it can be used like Game.enterState(ErrorState.setError(...))
 	 */
 	public int setError(String when, Throwable t) {
-		if (t == null || when == null) throw new IllegalArgumentException("When and throwable must not be null!");
+		checkArgument(t != null, "Throwable must not be null!");
+		checkArgument(when != null, "When must not be null!");
 		this.when = when;
-		throwable = t;
-		logged = false;
+		this.throwable = t;
+		this.logged = false;
 		return this.getID();
 	}
 
@@ -60,7 +63,8 @@ public class ErrorState extends WaywiaState {
 	@Override
 	public void render(Graphics g) {
 		if (this.when == null || this.throwable == null)
-			throw new IllegalStateException("Error state was not correctly initialized");
+			throw new IllegalStateException("Error state was not correctly initialized using ErrorState.setError()");
+		g.drawString(this.throwable.getLocalizedMessage(), 0, 0);
 	}
 
 	@Override

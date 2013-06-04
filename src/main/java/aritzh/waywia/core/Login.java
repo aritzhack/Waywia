@@ -65,7 +65,7 @@ public class Login {
 			String s = r.readLine();
 			r.close();
 			connection.disconnect();
-			return s.equals(getHash(username, password));
+			return getHash(username, password).equals(s);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

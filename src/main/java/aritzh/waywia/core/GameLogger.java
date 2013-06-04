@@ -44,18 +44,18 @@ public class GameLogger {
 
 		Log.setLogSystem(new NullLogSystem());
 
-		ConsoleHandler ch = new ConsoleHandler();
-		Formatter f = new SimpleFormat();
+		ConsoleHandler consoleHandler = new ConsoleHandler();
+		Formatter formatter = new SimpleFormat();
 
-		ch.setFormatter(f);
-		ch.setLevel(Level.ALL);
+		consoleHandler.setFormatter(formatter);
+		consoleHandler.setLevel(Level.ALL);
 
-		GameLogger.logger.addHandler(ch);
+		GameLogger.logger.addHandler(consoleHandler);
 
 		try {
-			FileHandler fh = new FileHandler(root.getAbsolutePath() + File.separator + "log%g.log", 1, 4, false);
-			fh.setFormatter(f);
-			GameLogger.logger.addHandler(fh);
+			FileHandler fileHandler = new FileHandler(root.getAbsolutePath() + File.separator + "log%g.log", 1, 4, false);
+			fileHandler.setFormatter(formatter);
+			GameLogger.logger.addHandler(fileHandler);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -68,10 +68,6 @@ public class GameLogger {
 
 	public static void log(String s) {
 		GameLogger.logger.log(DEFAULT_LOG_LEVEL, s);
-	}
-
-	public static void debug(Object o) {
-		GameLogger.logger.fine(String.valueOf(o));
 	}
 
 	public static void log(Level level, String message) {
@@ -100,6 +96,10 @@ public class GameLogger {
 
 	public static void debug(String format, Object... args) {
 		GameLogger.debug(String.format(format, args));
+	}
+
+	public static void debug(Object o) {
+		GameLogger.logger.fine(String.valueOf(o));
 	}
 
 	public static void severe(String message) {

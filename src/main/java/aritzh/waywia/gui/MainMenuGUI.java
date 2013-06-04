@@ -25,7 +25,7 @@ import aritzh.waywia.gui.components.GUI;
  */
 public class MainMenuGUI extends GUI {
 
-	private Button newGameButton, loadButton, exitButton;
+	private final Button newGameButton, loadButton, exitButton;
 
 	public MainMenuGUI(MenuState state) {
 		super(state);
@@ -40,9 +40,9 @@ public class MainMenuGUI extends GUI {
 		if (id == exitButton.getID()) {
 			this.state.getGame().exit();
 		} else if (id == newGameButton.getID()) {
-			((MenuState) this.state).openGUI(new NewUniverseGUI((MenuState) this.state));
+			this.state.openGUI(new NewUniverseGUI((MenuState) this.state));
 		} else if (id == loadButton.getID()) {
-			((MenuState) this.state).openGUI(new UniverseListGUI((MenuState) this.state));
+			this.state.openGUI(new UniverseListGUI((MenuState) this.state));
 		}
 	}
 }

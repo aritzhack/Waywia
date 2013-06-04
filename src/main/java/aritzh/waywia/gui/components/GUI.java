@@ -31,7 +31,7 @@ public abstract class GUI implements InputListener {
 	private final List<GUIElement> elements = new ArrayList<>();
 	protected final WaywiaState state;
 	protected final int width, height;
-	private int lastID = 0;
+	private int lastElementID = 0;
 
 	public GUI(WaywiaState state) {
 		this.state = state;
@@ -47,7 +47,7 @@ public abstract class GUI implements InputListener {
 
 	protected final void addElement(GUIElement e) {
 		this.elements.add(e);
-		e.setID(lastID++);
+		e.setID(lastElementID++);
 	}
 
 	public void mouseClicked(int button, int x, int y, int clickCount) {
@@ -113,6 +113,8 @@ public abstract class GUI implements InputListener {
 	 */
 	public void clicked(int id) {
 	}
+
+	// InputListener methods not used at this level
 
 	@Override
 	public void setInput(Input input) {

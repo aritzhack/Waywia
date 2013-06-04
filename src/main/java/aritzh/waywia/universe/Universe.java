@@ -36,20 +36,12 @@ import java.util.Set;
  */
 public class Universe implements BDSStorable {
 
-	public static final FileFilter onlyFolders = new FileFilter() {
-		@Override
-		public boolean accept(File file) {
-			return file.isDirectory();
-		}
-	};
-
 	private final File root;
-
-	private Set<World> worlds = new HashSet<>();
-	private World currentWorld;
-
+	private final Set<World> worlds;
 	private final String name;
-	private BDSCompound customData;
+	private final BDSCompound customData;
+
+	private World currentWorld;
 
 	private Universe(String name, File root, Set<World> worlds, World currentWorld, BDSCompound customData) {
 		this.name = name;
@@ -120,11 +112,7 @@ public class Universe implements BDSStorable {
 		for (File folder : savesFolder.listFiles(onlyFolders)) {
 			Universe u = Universe.loadUniverse(folder);
 			if (u == null) {
-				try {
-					GameLogger.warning("Folder " + folder.getCanonicalPath() + " is not a valid universe folder");
-				} catch (IOException e) {
-					GameLogger.warning("Folder " + folder.getAbsolutePath() + " is not a valid universe folder");
-				}
+				GameLogger.warning("Folder " + folder.getAbsolutePath() + " is not a valid universe folder");
 				continue;
 			}
 			ret.add(u);
@@ -155,4 +143,11 @@ public class Universe implements BDSStorable {
 	public void clicked(int x, int y) {
 		if (this.currentWorld != null) currentWorld.clicked(x, y);
 	}
+
+	public static final FileFilter onlyFolders = new FileFilter() {
+		@Override
+		public boolean accept(File file) {
+			return file.isDirectory();
+		}
+	};
 }

@@ -18,6 +18,7 @@ package aritzh.waywia.blocks;
 import aritzh.waywia.bds.BDSCompound;
 import aritzh.waywia.bds.BDSInt;
 import aritzh.waywia.bds.BDSStorable;
+import aritzh.waywia.universe.World;
 import com.google.common.collect.Lists;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -34,14 +35,12 @@ public abstract class Block implements BDSStorable {
 
 	public static final int SIZE = 16;
 
-	public static int registerBlock(Block block) {
+	public static void registerBlock(Block block) {
 		if (Block.blocks.contains(block))
 			throw new IllegalArgumentException("Block " + block + " was already registered");
 		if (Block.blocks.size() > block.getID() && Block.blocks.get(block.getID()) != null)
 			throw new IllegalArgumentException("Block id " + block.getID() + "is occupied by " + Block.blocks.get(block.getID()) + " when adding " + block);
 		Block.blocks.add(block.getID(), block);
-
-		return Block.blocks.indexOf(block);
 	}
 
 	public static Block getBlock(int id) {
@@ -49,11 +48,15 @@ public abstract class Block implements BDSStorable {
 	}
 
 	public static Block fromBDS(BDSCompound comp) {
-		int id = comp.getInt("ID", 0).getData();
-		return Block.getBlock(id);
+		try {
+			int id = comp.getInt("ID", 0).getData();
+			return Block.getBlock(id);
+		} catch (NullPointerException ignored) {
+			return null;
+		}
 	}
 
-	public void render(int x, int y, Graphics g) {
+	public void render(int x, int y, Graphics g, World world) {
 		Color c = g.getColor();
 		g.setColor(Color.blue);
 		g.fillRect(x * Block.SIZE, y * Block.SIZE, Block.SIZE, Block.SIZE);
@@ -62,8 +65,6 @@ public abstract class Block implements BDSStorable {
 		g.setColor(c);
 	}
 
-	public abstract String getName();
-
 	public BDSCompound toBDS() {
 		return new BDSCompound("Block").add(new BDSInt(this.getID(), "ID"));
 	}
@@ -71,8 +72,10 @@ public abstract class Block implements BDSStorable {
 	public void clicked(int x, int y) {
 	}
 
-	public void update(int x, int y, int delta) {
+	public void update(int x, int y, int delta, World arg) {
 	}
 
 	public abstract int getID();
+
+	public abstract String getName();
 }

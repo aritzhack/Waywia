@@ -78,7 +78,7 @@ public class BDSTest {
 		BDSByte beforeByteBDS = new BDSByte(beforeByte, "byte");
 		BDSInt beforeIntBDS = new BDSInt(beforeInt, "int");
 		BDSShort beforeShortBDS = new BDSShort(beforeShort, "short");
-		BDSCompound beforeNestedBDS = new BDSCompound("myComp").add(beforeStringBDS)
+		BDSCompound beforeNestedBDS = new BDSCompound("nestedComp").add(beforeStringBDS)
 				.add(beforeByteBDS)
 				.add(beforeShortBDS)
 				.add(beforeIntBDS);
@@ -93,18 +93,18 @@ public class BDSTest {
 
 		BDSCompound afterComp = new BDSCompound(beforeComp.getBytes());
 
-		BDSString afterStringBDS = afterComp.getString(0);
-		BDSByte afterByteBDS = afterComp.getByte(0);
-		BDSShort afterShortBDS = afterComp.getShort(0);
-		BDSInt afterIntBDS = afterComp.getInt(0);
+		BDSString afterStringBDS = afterComp.getString("string", 0);
+		BDSByte afterByteBDS = afterComp.getByte("byte", 0);
+		BDSShort afterShortBDS = afterComp.getShort("short", 0);
+		BDSInt afterIntBDS = afterComp.getInt("int", 0);
 
 
-		BDSCompound nestedComp = afterComp.getComp(0);
+		BDSCompound nestedComp = afterComp.getComp("nestedComp", 0);
 
-		BDSString afterNestedStringBDS = nestedComp.getString(0);
-		BDSByte afterNestedByteBDS = nestedComp.getByte(0);
-		BDSShort afterNestedShortBDS = nestedComp.getShort(0);
-		BDSInt afterNestedIntBDS = nestedComp.getInt(0);
+		BDSString afterNestedStringBDS = nestedComp.getString("string", 0);
+		BDSByte afterNestedByteBDS = nestedComp.getByte("byte", 0);
+		BDSShort afterNestedShortBDS = nestedComp.getShort("short", 0);
+		BDSInt afterNestedIntBDS = nestedComp.getInt("int", 0);
 
 		assertEquals(beforeComp, afterComp);
 

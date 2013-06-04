@@ -26,10 +26,8 @@ import java.io.IOException;
 public class BDSFileReader {
 
 	public static void main(String[] args) throws IOException {
-		File f;
-		if ((f = chooseFile()) == null) {
-			System.exit(0);
-		}
+		File f = chooseFile();
+		if (f == null) System.exit(0);
 
 		BDSCompound c = new BDSCompound(f);
 		System.out.println(c.toString());
@@ -44,7 +42,6 @@ public class BDSFileReader {
 		if (result == JFileChooser.APPROVE_OPTION) {
 			return fileChooser.getSelectedFile();
 		}
-
 		return null;
 	}
 }

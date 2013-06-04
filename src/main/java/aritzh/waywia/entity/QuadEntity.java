@@ -27,7 +27,7 @@ import org.newdawn.slick.geom.Shape;
  */
 public class QuadEntity extends EntityNPC {
 
-	static Image texture = RenderUtil.getImage("quadEntity");
+	private static final Image texture = RenderUtil.getImage("quadEntity");
 
 	public QuadEntity() {
 		super();
@@ -55,10 +55,5 @@ public class QuadEntity extends EntityNPC {
 	@Override
 	public String getName() {
 		return "QuadEntity";
-	}
-
-	@Override
-	public int getID() {
-		return 1;
 	}
 }

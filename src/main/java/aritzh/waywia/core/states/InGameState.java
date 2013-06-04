@@ -70,7 +70,6 @@ public class InGameState extends WaywiaState {
 
 	@Override
 	public void update(int delta) {
-
 		if (this.universe != null) this.universe.update(delta);
 		else {
 			this.universe = Universe.loadUniverse(new File(this.game.savesDir, "uniBase"));
@@ -82,7 +81,6 @@ public class InGameState extends WaywiaState {
 				}
 			}
 		}
-
 	}
 
 	@Override

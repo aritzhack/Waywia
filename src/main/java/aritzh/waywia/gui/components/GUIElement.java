@@ -26,15 +26,8 @@ import org.newdawn.slick.geom.Rectangle;
  */
 public abstract class GUIElement implements InputListener {
 
-	protected boolean render = true;
-
-	protected boolean hover = false;
-	protected boolean pressed;
-
+	protected boolean render = true, hover = false, pressed = false;
 	private int id = -1;
-
-	public abstract void render(Graphics g);
-
 
 	public void setRender(boolean render) {
 		this.render = render;
@@ -43,8 +36,6 @@ public abstract class GUIElement implements InputListener {
 	public boolean shouldRender() {
 		return render;
 	}
-
-	public abstract Rectangle getBBox();
 
 	public int getID() {
 		return this.id;
@@ -61,6 +52,31 @@ public abstract class GUIElement implements InputListener {
 	public void setID(int id) {
 		this.id = id;
 	}
+
+	public abstract void render(Graphics g);
+
+	public abstract Rectangle getBBox();
+
+	@Override
+	public void mousePressed(int button, int x, int y) {
+		if (this.getBBox().contains(x, y)) {
+			this.setPressed(true);
+		}
+	}
+
+	@Override
+	public void mouseReleased(int button, int x, int y) {
+		if (this.getBBox().contains(x, y)) {
+			this.setPressed(false);
+		}
+	}
+
+	@Override
+	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
+		this.setHover(this.getBBox().contains(newx, newy));
+	}
+
+	// InputListener methods not used at this level
 
 	@Override
 	public void controllerLeftPressed(int controller) {
@@ -116,25 +132,6 @@ public abstract class GUIElement implements InputListener {
 
 	@Override
 	public void mouseClicked(int button, int x, int y, int clickCount) {
-	}
-
-	@Override
-	public void mousePressed(int button, int x, int y) {
-		if (this.getBBox().contains(x, y)) {
-			this.setPressed(true);
-		}
-	}
-
-	@Override
-	public void mouseReleased(int button, int x, int y) {
-		if (this.getBBox().contains(x, y)) {
-			this.setPressed(false);
-		}
-	}
-
-	@Override
-	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-		this.setHover(this.getBBox().contains(newx, newy));
 	}
 
 	@Override

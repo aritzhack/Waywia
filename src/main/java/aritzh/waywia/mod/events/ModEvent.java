@@ -19,6 +19,8 @@ import aritzh.waywia.core.Game;
 import aritzh.waywia.event.WaywiaEvent;
 
 /**
+ * Root for all {@link WaywiaEvent} related to mods
+ *
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */

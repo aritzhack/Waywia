@@ -41,10 +41,8 @@ public class LoadingState extends WaywiaState {
 	public void render(Graphics g) {
 		switch (step) {
 			case 0:
-				Color c = g.getColor();
 				g.setColor(Color.pink);
 				g.fillRect(0, 0, this.game.getGc().getWidth(), this.game.getGc().getHeight());
-				g.setColor(c);
 				break;
 			case 1:
 				this.game.loadMods();

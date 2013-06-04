@@ -48,10 +48,8 @@ public class BDSString extends BDS {
 		try {
 			this.name = input.readUTF();
 			this.data = input.readUTF();
-		} catch (IllegalArgumentException e) {
-			throw e;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Could not parse BDSString\n" + e.getLocalizedMessage());
+			throw new IllegalArgumentException("Could not parse BDSString", e);
 		}
 	}
 

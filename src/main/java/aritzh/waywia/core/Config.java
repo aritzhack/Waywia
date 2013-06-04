@@ -33,9 +33,9 @@ public class Config {
 		boolean init = !configFile.exists();
 		GAME = Configuration.loadConfig(configFile);
 		if (init) {
-			GAME.setProperty("Main", "Version", GameLib.VERSION);
+			Config.GAME.setProperty("Main", "Version", GameLib.VERSION);
 		}
-		GAME.save();
+		Config.GAME.save();
 	}
 
 	// For the static initializer to run

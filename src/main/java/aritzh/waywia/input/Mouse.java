@@ -25,7 +25,7 @@ import org.newdawn.slick.MouseListener;
  */
 public class Mouse implements MouseListener {
 
-	private Game game;
+	private final Game game;
 
 	public Mouse(Game game) {
 		this.game = game;

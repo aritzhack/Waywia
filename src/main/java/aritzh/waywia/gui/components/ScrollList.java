@@ -32,7 +32,7 @@ public class ScrollList<T> extends GUIElement {
 	private java.util.List<T> items = new ArrayList<>();
 	private T selected;
 	private float x, y, width, height;
-	private Rectangle bbox;
+	private final Rectangle bbox;
 	private int scrollPercent = 0;
 
 	private Image backGround;

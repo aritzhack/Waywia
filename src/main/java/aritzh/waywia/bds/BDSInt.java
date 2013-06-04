@@ -35,11 +35,11 @@ public class BDSInt extends BDS {
 		this.name = name;
 	}
 
-	public BDSInt(byte[] data) {
+	protected BDSInt(byte[] data) {
 		this(ByteStreams.newDataInput(Arrays.copyOfRange(data, 1, data.length)));
 	}
 
-	public BDSInt(ByteArrayDataInput input) {
+	protected BDSInt(ByteArrayDataInput input) {
 		if (input == null) {
 			this.data = 0;
 			this.name = "";
@@ -48,10 +48,8 @@ public class BDSInt extends BDS {
 		try {
 			this.name = input.readUTF();
 			this.data = input.readInt();
-		} catch (IllegalArgumentException e) {
-			throw e;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Could not parse BDSInt\n" + e.getLocalizedMessage());
+			throw new IllegalArgumentException("Could not parse BDSInt", e);
 		}
 	}
 

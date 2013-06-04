@@ -36,11 +36,11 @@ public class BDSShort extends BDS {
 		this.name = name;
 	}
 
-	public BDSShort(byte[] data) {
+	protected BDSShort(byte[] data) {
 		this(ByteStreams.newDataInput(Arrays.copyOfRange(data, 1, data.length)));
 	}
 
-	public BDSShort(ByteArrayDataInput input) {
+	protected BDSShort(ByteArrayDataInput input) {
 		if (input == null) {
 			this.data = 0;
 			this.name = "";
@@ -49,10 +49,8 @@ public class BDSShort extends BDS {
 		try {
 			this.name = input.readUTF();
 			this.data = input.readShort();
-		} catch (IllegalArgumentException e) {
-			throw e;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Could not parse BDSShort\n" + e.getLocalizedMessage());
+			throw new IllegalArgumentException("Could not parse BDSShort", e);
 		}
 	}
 

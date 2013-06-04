@@ -32,12 +32,13 @@ import java.util.Properties;
  */
 public class I18N {
 
-	private static Map<Locale, Properties> locales = new HashMap<>();
+	private static final Map<Locale, Properties> locales = new HashMap<>();
 	private static Locale currentLocale = Locale.US;
 
 	public static void addLocale(Locale locale, Properties properties) {
 		if (I18N.locales.containsKey(locale)) {
 			GameLogger.warning("Tried to add locale " + locale.toString() + " when it was already added!");
+			return;
 		}
 		I18N.locales.put(locale, properties);
 	}
@@ -108,7 +109,9 @@ public class I18N {
 		I18N.readLocale(new File(file), xml, locale);
 	}
 
-	public static void init(File basedir) {
+	public static void init(File basedir) throws IOException {
+		if (!basedir.exists() && !basedir.mkdirs())
+			throw new IOException("Couldn't create folder for localization files");
 		if (!basedir.isDirectory()) {
 			throw new IllegalArgumentException("Base directory for I18N must be a directory!");
 		}

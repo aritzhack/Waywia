@@ -28,15 +28,14 @@ public class Button extends GUIElement {
 
 	protected static Font defaultFont;
 
-	protected float x, y;
-	protected int width, height;
-	protected float textX, textY;
+	protected final float x, y, textX, textY;
+	protected final int width, height;
 	protected String text;
 
 	/**
 	 * Brightest to darkest
 	 */
-	protected static Color[] colors = new Color[3];
+	protected static final Color[] colors = new Color[3];
 
 	static {
 		Button.colors[0] = new Color(196, 196, 196);

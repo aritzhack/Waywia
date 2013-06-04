@@ -16,9 +16,12 @@
 package aritzh.waywia.event;
 
 /**
+ * Whether the result of an {@link WaywiaEvent} is to continue its execution, or to stop. <br />
+ * For this to work, the {@link WaywiaEvent} must have the {@link Cancelable} annotation
+ *
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public enum Result {
-	CONTINUE, CANCEL;
+	CONTINUE, CANCEL
 }

@@ -19,12 +19,13 @@ import aritzh.waywia.util.Util;
 
 /**
  * Binary Data Storage
- * Used to store different data types in byte arrays, and the data from them
+ * Used to store different data types in byte arrays,
+ * write them to a file, and then read them back
  *
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public abstract class BDS { // Binary Data Storage
+public abstract class BDS {
 
 	/**
 	 * Returns the data representing this BDS
@@ -58,7 +59,7 @@ public abstract class BDS { // Binary Data Storage
 		return this.toString(0);
 	}
 
-	public String toString(int level) {
+	String toString(int level) {
 		return Util.repeatString("    ", level) + this.getType() + ":" + this.getName() + ":" + this.getData();
 	}
 }

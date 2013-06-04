@@ -39,7 +39,7 @@ public class BDSByte extends BDS {
 		this(ByteStreams.newDataInput(Arrays.copyOfRange(data, 1, data.length)));
 	}
 
-	public BDSByte(ByteArrayDataInput input) {
+	protected BDSByte(ByteArrayDataInput input) {
 		if (input == null) {
 			this.data = 0;
 			this.name = "";
@@ -48,10 +48,8 @@ public class BDSByte extends BDS {
 		try {
 			this.name = input.readUTF();
 			this.data = input.readByte();
-		} catch (IllegalArgumentException e) {
-			throw e;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Could not parse BDSByte\n" + e.getLocalizedMessage());
+			throw new IllegalArgumentException("Could not parse BDSByte", e);
 		}
 	}
 

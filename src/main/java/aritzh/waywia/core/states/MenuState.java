@@ -17,7 +17,6 @@ package aritzh.waywia.core.states;
 
 import aritzh.waywia.core.Game;
 import aritzh.waywia.gui.MainMenuGUI;
-import aritzh.waywia.gui.components.GUI;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -42,14 +41,9 @@ public class MenuState extends WaywiaState {
 
 	@Override
 	public void render(Graphics g) {
-		if (this.isGuiOpen()) this.currGui.render(g);
 	}
 
 	@Override
 	public void update(int delta) {
-	}
-
-	public void openGUI(GUI gui) {
-		this.currGui = gui;
 	}
 }

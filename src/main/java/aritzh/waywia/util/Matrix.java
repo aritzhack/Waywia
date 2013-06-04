@@ -19,6 +19,9 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 /**
+ * Bidimensional resizable array (Internally {@code ArrayList<ArrayList<E>>}) <br />
+ * which also adds some useful methods e.g. {@link Matrix#runForEach(ParametrizedFunction, Object...)}
+ *
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
@@ -30,7 +33,8 @@ public class Matrix<E> implements Collection<ArrayList<E>> {
 	protected List<ArrayList<E>> columns;
 
 	/**
-	 * Creates a new matrix, with the default size of 5x5
+	 * Creates a new matrix, with the default size of 5x5 <br />
+	 * <b>Note: this will initialize all elements to null!</b>
 	 */
 	public Matrix() {
 		this(5, 5);
@@ -39,15 +43,16 @@ public class Matrix<E> implements Collection<ArrayList<E>> {
 	/**
 	 * Creates a new empty matrix, with the specified starting size
 	 *
-	 * @param startWidth  The amount of columns
-	 * @param startHeight The amount of rows
+	 * @param startWidth     The amount of columns
+	 * @param startHeight    The amount of rows
+	 * @param defaultElement The object to set all elements to
 	 */
 	public <D extends E> Matrix(int startWidth, int startHeight, D defaultElement) {
 		this.defaultElement = defaultElement;
 		this.init(startWidth, startHeight);
 	}
 
-	public Matrix(int startWidth, int startHeight) {
+	private Matrix(int startWidth, int startHeight) {
 		this(startWidth, startHeight, null);
 	}
 
@@ -181,13 +186,10 @@ public class Matrix<E> implements Collection<ArrayList<E>> {
 	public <T> T[] toArray(T[] a) {
 		try {
 			Object[] oa = this.toArray();
-
 			T[] ret = (a.length > oa.length ? a : (T[]) Array.newInstance(a.getClass().getComponentType(), oa.length));
-
 			for (int i = 0; i < oa.length; i++) {
 				ret[i] = (T) oa[i];
 			}
-
 			return ret;
 		} catch (Exception ignored) {
 		}

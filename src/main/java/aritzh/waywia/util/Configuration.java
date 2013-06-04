@@ -16,6 +16,7 @@
 package aritzh.waywia.util;
 
 import aritzh.waywia.core.GameLogger;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import java.io.*;
@@ -26,23 +27,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Kind of {@link java.util.Properties}, but with category names, and returning {@link String}, not
+ * {@link Object}
+ *
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public class Configuration {
-
-	private final Map<String, LinkedHashMap<String, String>> categories = Maps.newLinkedHashMap();
 
 	public static final Pattern CATEGORY_REGEX = Pattern.compile("^\\s*\\[(?:\\s*(?=\\w+))(.+)\\s*\\]\\s*$");
 	public static final Pattern PROP_REGEX = Pattern.compile("^\\s*(\\w+)\\s*=(?:\\s*(?=\\w+))(.*)\\s*$");
 	public static final Pattern SKIP_REGEX = Pattern.compile("(^\\s*$)|(^\\s*#.*$)");
 
 	private final File configFile;
-	private boolean compressedSpaces = false;
-
-	private Configuration(File configFile) {
-		this.configFile = configFile;
-	}
+	private final boolean compressedSpaces;
+	private final Map<String, LinkedHashMap<String, String>> categories = Maps.newLinkedHashMap();
 
 	/**
 	 * Loads the configuration file, without compressing spaces see {@link #loadConfig(java.io.File, boolean)} <br />
@@ -63,12 +62,9 @@ public class Configuration {
 	 */
 	public static Configuration loadConfig(File configFile, boolean compressSpaces) {
 		if (!configFile.exists()) {
-			Configuration c = Configuration.newConfig(configFile);
-			c.compressedSpaces = compressSpaces;
-			return c;
+			return Configuration.newConfig(configFile);
 		}
-		Configuration config = new Configuration(configFile);
-		config.compressedSpaces = compressSpaces;
+		Configuration config = new Configuration(configFile, compressSpaces);
 		String currentLine;
 
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(configFile)))) {
@@ -104,7 +100,12 @@ public class Configuration {
 	 * @return A new empty configuration object
 	 */
 	public static Configuration newConfig(File configFile) {
-		return new Configuration(configFile);
+		return new Configuration(configFile, false);
+	}
+
+	private Configuration(File configFile, boolean compressedSpaces) {
+		this.configFile = configFile;
+		this.compressedSpaces = compressedSpaces;
 	}
 
 	private void addProperty(Matcher m, String category) {
@@ -128,7 +129,7 @@ public class Configuration {
 	 *
 	 * @param category The category in which the property is
 	 * @param key      The key of the property
-	 * @return The value associated with {@code key} in {@code category}, or {@code ""}(an empty string) if not found
+	 * @return The value associated with {@code key} in {@code category}, or {@code ""} (an empty string) if not found
 	 */
 	public String getProperty(String category, String key) {
 		return this.getProperty(category, key, "");
@@ -209,6 +210,7 @@ public class Configuration {
 	 * @param configFile The file to save the configuration to
 	 */
 	private void save(File configFile) {
+		Preconditions.checkNotNull(configFile, "Cannot save to null file!!");
 		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(configFile)))) {
 			writer.write("# Last edit: " + new Date().toString());
 			writer.newLine();
@@ -223,7 +225,7 @@ public class Configuration {
 			}
 			writer.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			GameLogger.logAndThrowAsRuntime("Could not save configuration to file " + configFile.getAbsolutePath(), e);
 		}
 	}
 }

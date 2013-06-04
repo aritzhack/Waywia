@@ -26,7 +26,6 @@ import aritzh.waywia.util.ReflectionUtil;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import org.lwjgl.opengl.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
@@ -44,10 +43,10 @@ import static aritzh.waywia.mod.events.ModEvent.ModUnloadEvent;
  */
 public class Game extends StateBasedGame {
 
-	public final File baseDir;
+	public final File root;
 	public final File savesDir;
 	private final EventBus BUS = new EventBus("MainBus");
-	private GameContainer gc = null;
+	private AppGameContainer gc = null;
 	public WaywiaState menuState, inGameState, loadingState;
 	public ErrorState errorState;
 	private final boolean loggedIn;
@@ -63,17 +62,17 @@ public class Game extends StateBasedGame {
 
 		if (root == null) root = new File(System.getProperty("user.dir"));
 
-		this.baseDir = root;
-		if (!this.baseDir.exists() && !this.baseDir.mkdirs())
+		this.root = root;
+		if (!this.root.exists() && !this.root.mkdirs())
 			throw new IOException("Couldn't make folder for the game");
 
-		this.savesDir = new File(this.baseDir, "saves");
+		this.savesDir = new File(this.root, "saves");
 		if (!this.savesDir.exists() && !savesDir.mkdirs()) throw new IOException("Couldn't make the saves' folder");
 
 		this.registerEventHandler(this);
 
 		Config.init();
-		I18N.init(this.baseDir);
+		I18N.init(new File(this.root, "locales"));
 	}
 
 	@Override
@@ -81,7 +80,6 @@ public class Game extends StateBasedGame {
 		((WaywiaState) this.getCurrentState()).closing();
 		Config.GAME.save();
 		this.BUS.post(new ModUnloadEvent(this));
-		Display.destroy();
 		return super.closeRequested();
 	}
 
@@ -93,7 +91,7 @@ public class Game extends StateBasedGame {
 
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
-		this.gc = container;
+		this.gc = (AppGameContainer) container;
 
 		container.getInput().addKeyListener(new Keyboard(this));
 		container.getInput().addMouseListener(new Mouse(this));
@@ -115,14 +113,15 @@ public class Game extends StateBasedGame {
 		if (initMods) return;
 		initMods = true;
 		try {
-			File modsFolder = new File(baseDir, "mods");
+			File modsFolder = new File(root, "mods");
 			ReflectionUtil.addFolderToClasspath(modsFolder);
 			Reflections reflections = new Reflections(ClassLoader.getSystemClassLoader());
 
 			for (Class c : reflections.getTypesAnnotatedWith(Mod.class)) {
-				Object o = c.newInstance();
-				GameLogger.debug("Found mod class: " + c.getName() + "; Instance: " + o);
-				this.registerEventHandler(o);
+				Object mod = c.newInstance();
+				GameLogger.debug("Found mod class: " + c.getName() + "; Instance: " + mod);
+				// TODO Add a Mods class, and call Mods.register(mod), and save it to a list or something
+				this.registerEventHandler(mod);
 			}
 		} catch (InstantiationException | IllegalAccessException | IOException e) {
 			e.printStackTrace();
@@ -131,10 +130,10 @@ public class Game extends StateBasedGame {
 
 	@Override
 	protected void preUpdateState(GameContainer container, int delta) throws SlickException {
-		((AppGameContainer) gc).setTitle(GameLib.FULL_NAME + " - " + gc.getFPS() + " FPS - " + this.getCurrentState().toString());
+		gc.setTitle(GameLib.FULL_NAME + " - " + gc.getFPS() + " FPS - " + this.getCurrentState().toString());
 	}
 
-	public GameContainer getGc() {
+	public AppGameContainer getGc() {
 		return gc;
 	}
 

@@ -28,9 +28,9 @@ import aritzh.waywia.gui.components.Label;
  */
 public class NewUniverseGUI extends GUI {
 
-	private Button newButton, backButton;
-	private InputBox worldName;
-	private Label title;
+	private final Button newButton, backButton;
+	private final InputBox worldName;
+	private final Label title;
 
 	public NewUniverseGUI(MenuState menuState) {
 		super(menuState);
@@ -48,7 +48,7 @@ public class NewUniverseGUI extends GUI {
 		if (id == this.newButton.getID() && !this.worldName.getText().trim().equals("")) {
 			GameLogger.debug("Creating world: " + this.worldName.getText().trim());
 		} else if (id == this.backButton.getID()) {
-			((MenuState) this.state).openGUI(new MainMenuGUI((MenuState) this.state));
+			this.state.openGUI(new MainMenuGUI((MenuState) this.state));
 		}
 	}
 }

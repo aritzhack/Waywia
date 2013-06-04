@@ -23,7 +23,7 @@ import aritzh.waywia.entity.EntityNPC;
  */
 public abstract class AI {
 
-	String name;
+	final String name;
 
 	public AI(String name) {
 		this.name = name;

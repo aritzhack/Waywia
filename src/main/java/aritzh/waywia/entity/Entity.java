@@ -37,8 +37,8 @@ public abstract class Entity implements BDSStorable {
 	protected float velX = 0;
 	protected float velY = 0;
 	protected int health;
-	protected BDSCompound customData = new BDSCompound("CustomData");
-	private static BiMap<Integer, Class<? extends Entity>> entities = HashBiMap.create();
+	protected final BDSCompound customData = new BDSCompound("CustomData");
+	private static final BiMap<Integer, Class<? extends Entity>> entities = HashBiMap.create();
 
 	public Entity() {
 		this.health = this.getMaxHealth();
@@ -75,14 +75,13 @@ public abstract class Entity implements BDSStorable {
 				.add(this.customData);
 	}
 
-	public static int registerEntity(Class<? extends Entity> clazz, int id) {
+	public static void registerEntity(Class<? extends Entity> clazz, int id) {
 		if (Entity.entities.containsValue(clazz))
 			throw new IllegalArgumentException("Entity class " + clazz + "was already registered!");
 		if (Entity.entities.containsKey(id))
 			throw new IllegalArgumentException("Entity ID " + id + "was already in use by " + Entity.entities.get(id) + " when adding " + clazz);
 
 		Entity.entities.put(id, clazz);
-		return id;
 	}
 
 	public static Entity getNewEntity(int id) {
@@ -104,7 +103,6 @@ public abstract class Entity implements BDSStorable {
 
 		float velX = Float.valueOf(comp.getString("velX", 0).getData());
 		float velY = Float.valueOf(comp.getString("velY", 0).getData());
-
 
 		Entity e = Entity.getNewEntity(id);
 
@@ -141,6 +139,4 @@ public abstract class Entity implements BDSStorable {
 		this.velX = vel.getX();
 		this.velY = vel.getY();
 	}
-
-	public abstract int getID();
 }

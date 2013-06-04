@@ -35,8 +35,8 @@ import java.util.Set;
 public class ReflectionUtil {
 
 	public static void addFolderToClasspath(File folder) throws IOException {
-		URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-		Class<? extends URLClassLoader> sysclass = URLClassLoader.class;
+		URLClassLoader sysURLClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+		Class<? extends URLClassLoader> classLoaderClass = URLClassLoader.class;
 
 		FileFilter jarAndZips = new FileFilter() {
 			@Override
@@ -46,16 +46,15 @@ public class ReflectionUtil {
 		};
 
 		try {
-			Method method = sysclass.getDeclaredMethod("addURL", URL.class);
+			Method method = classLoaderClass.getDeclaredMethod("addURL", URL.class);
 			method.setAccessible(true);
 			for (File f : folder.listFiles(jarAndZips)) {
 				GameLogger.debug("Found mod file: " + f.getAbsolutePath());
-				method.invoke(sysloader, f.toURI().toURL());
+				method.invoke(sysURLClassLoader, f.toURI().toURL());
 			}
 
 		} catch (Throwable t) {
-			t.printStackTrace();
-			throw new IOException("Error, could not add URL to system classloader");
+			throw new IOException("Error, could not add URL to system classLoader", t);
 		}
 	}
 

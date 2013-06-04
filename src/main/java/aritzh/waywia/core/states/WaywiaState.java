@@ -42,6 +42,10 @@ public abstract class WaywiaState extends BasicGameState {
 		return currGui;
 	}
 
+	public void openGUI(GUI gui) {
+		this.currGui = gui;
+	}
+
 	public boolean isGuiOpen() {
 		return currGui != null;
 	}
@@ -68,6 +72,7 @@ public abstract class WaywiaState extends BasicGameState {
 	@Override
 	public final void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		try {
+			if (this.isGuiOpen()) this.currGui.render(g);
 			this.render(g);
 		} catch (Throwable t) {
 			this.game.enterState(this.game.errorState.setError("render", t));

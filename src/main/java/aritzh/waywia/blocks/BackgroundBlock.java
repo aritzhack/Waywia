@@ -16,6 +16,7 @@
 package aritzh.waywia.blocks;
 
 import aritzh.waywia.core.GameLogger;
+import aritzh.waywia.universe.World;
 
 /**
  * @author Aritz Lopez
@@ -24,8 +25,8 @@ import aritzh.waywia.core.GameLogger;
 public class BackgroundBlock extends Block {
 
 	@Override
-	public void update(int x, int y, int delta) {
-		super.update(x, y, delta);
+	public void update(int x, int y, int delta, World arg) {
+		super.update(x, y, delta, arg);
 	}
 
 	@Override

@@ -45,23 +45,11 @@ import java.util.Set;
 public class World implements BDSStorable {
 
 	private final File root;
-
-	private Multimap<String, Entity> entities;
-	private HashMap<String, Player> players;
-	private Matrix<Block> blocks;
-
-	private BDSCompound customData = new BDSCompound("CustomData");
-
+	private final Multimap<String, Entity> entities;
+	private final HashMap<String, Player> players;
+	private final Matrix<Block> blocks;
+	private final BDSCompound customData;
 	private final String worldName;
-
-	private World(String name, File root, BDSCompound customData, Multimap<String, Entity> entities, HashMap<String, Player> players, Matrix<Block> blocks) {
-		this.worldName = name;
-		this.root = root;
-		this.customData = customData;
-		this.entities = entities;
-		this.players = players;
-		this.blocks = blocks;
-	}
 
 	public static World newWorld(String name, File universeFolder) throws IOException {
 		String folderName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
@@ -71,11 +59,8 @@ public class World implements BDSStorable {
 			throw new IOException("Could not create folder for new world at: " + root.getAbsolutePath());
 
 		BDSCompound customData = new BDSCompound("CustomData");
-
 		Multimap<String, Entity> entities = ArrayListMultimap.create();
-
 		HashMap<String, Player> player = Maps.newHashMap();
-
 		Matrix<Block> blocks = new Matrix<Block>(50, 38, new BackgroundBlock());
 
 		return new World(name, root, customData, entities, player, blocks);
@@ -88,11 +73,8 @@ public class World implements BDSStorable {
 		try {
 			String name = worldComp.getString("Name", 0).getData();
 			BDSCompound data = worldComp.getComp("CustomData", 0);
-
 			Matrix<Block> blocks = World.readBlocks(worldComp.getComp("Blocks", 0));
-
 			Multimap<String, Entity> entities = World.readEntities(worldComp.getComp("Entities", 0));
-
 			HashMap<String, Player> players = World.readPlayers(worldComp.getComp("Players", 0));
 
 			return new World(name, root, data, entities, players, blocks);
@@ -120,12 +102,9 @@ public class World implements BDSStorable {
 		HashMap<String, Player> players = Maps.newHashMap();
 		for (BDSCompound comp : playersComp.getAllCompounds()) {
 			if (!comp.getName().equals("Player")) continue;
-			try {
-				Player p = Player.fromBDS(comp);
 
-				if (p != null) players.put(p.getUsername(), p);
-			} catch (Exception ignored) {
-			}
+			Player p = Player.fromBDS(comp);
+			if (p != null) players.put(p.getUsername(), p);
 		}
 		return players;
 	}
@@ -155,6 +134,32 @@ public class World implements BDSStorable {
 		return null;
 	}
 
+	public static Set<World> listWorldsInFolder(File root) {
+		Set<World> ret = new HashSet<>();
+		for (File folder : root.listFiles(Universe.onlyFolders)) {
+			World w = World.loadWorld(folder);
+			if (w == null) {
+				try {
+					GameLogger.warning("Folder " + folder.getCanonicalPath() + " is not a valid world folder");
+				} catch (IOException e) {
+					GameLogger.warning("Folder " + folder.getAbsolutePath() + " is not a valid world folder");
+				}
+				continue;
+			}
+			ret.add(w);
+		}
+		return ret;
+	}
+
+	private World(String name, File root, BDSCompound customData, Multimap<String, Entity> entities, HashMap<String, Player> players, Matrix<Block> blocks) {
+		this.worldName = name;
+		this.root = root;
+		this.customData = customData;
+		this.entities = entities;
+		this.players = players;
+		this.blocks = blocks;
+	}
+
 	public void spanwEntity(Entity e) {
 		this.entities.put(e.getName(), e);
 	}
@@ -164,7 +169,7 @@ public class World implements BDSStorable {
 	}
 
 	public void update(int delta) {
-		this.blocks.runForEach(World.blockUpdate, delta);
+		this.blocks.runForEach(World.blockUpdate, delta, this);
 
 		for (Entity e : this.entities.values()) {
 			e.update(delta);
@@ -172,6 +177,18 @@ public class World implements BDSStorable {
 
 		for (Player p : this.players.values()) {
 			p.update(delta);
+		}
+	}
+
+	public void render(Graphics g) {
+		this.blocks.runForEach(World.blockRender, g, this);
+
+		for (Entity e : entities.values()) {
+			e.render(g);
+		}
+
+		for (Player p : this.players.values()) {
+			p.render(g);
 		}
 	}
 
@@ -201,43 +218,24 @@ public class World implements BDSStorable {
 		return ret;
 	}
 
-	public void render(Graphics g) {
-		this.blocks.runForEach(World.blockRender, g);
-
-		for (Entity e : entities.values()) {
-			e.render(g);
-		}
-
-		for (Player p : this.players.values()) {
-			p.render(g);
-		}
-	}
-
-	public static Set<World> listWorldsInFolder(File root) {
-		Set<World> ret = new HashSet<>();
-		for (File folder : root.listFiles(Universe.onlyFolders)) {
-			World w = World.loadWorld(folder);
-			if (w == null) {
-				try {
-					GameLogger.warning("Folder " + folder.getCanonicalPath() + " is not a valid world folder");
-				} catch (IOException e) {
-					GameLogger.warning("Folder " + folder.getAbsolutePath() + " is not a valid world folder");
-				}
-				continue;
-			}
-			ret.add(w);
-		}
-		return ret;
-	}
-
 	public String getName() {
 		return worldName;
+	}
+
+	public void save() {
+		this.toBDS().writeToFile(new File(this.root, "world.dat"));
+	}
+
+	public void clicked(int x, int y) {
+		x /= 16;
+		y /= 16;
+		this.blocks.get(x, y).clicked(x, y);
 	}
 
 	private static final ParametrizedFunction<Block, Object> blockUpdate = new ParametrizedFunction<Block, Object>() {
 		@Override
 		public Object apply(Block input, Object... args) {
-			input.update((int) args[0], (int) args[1], (int) args[2]);
+			input.update((int) args[0], (int) args[1], (int) args[2], (World) args[3]);
 			return null;
 		}
 	};
@@ -255,18 +253,8 @@ public class World implements BDSStorable {
 	private static final ParametrizedFunction<Block, Object> blockRender = new ParametrizedFunction<Block, Object>() {
 		@Override
 		public Object apply(Block input, Object... args) {
-			input.render((int) args[0], (int) args[1], (Graphics) args[2]);
+			input.render((int) args[0], (int) args[1], (Graphics) args[2], (World) args[3]);
 			return null;
 		}
 	};
-
-	public void save() {
-		this.toBDS().writeToFile(new File(this.root, "world.dat"));
-	}
-
-	public void clicked(int x, int y) {
-		x /= 16;
-		y /= 16;
-		this.blocks.get(x, y).clicked(x, y);
-	}
 }

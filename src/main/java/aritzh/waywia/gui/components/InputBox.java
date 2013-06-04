@@ -35,17 +35,6 @@ public class InputBox extends Button {
 	 */
 	public InputBox(int x, int y, int w) {
 		super("Placeholder", x, y, w);
-		this.text = "";
-	}
-
-	@Override
-	// To avoid the image change
-	public void setHover(boolean hover) {
-	}
-
-	@Override
-	// To avoid the image change
-	public void setPressed(boolean pressed) {
 	}
 
 	@Override
@@ -69,7 +58,7 @@ public class InputBox extends Button {
 
 	public void keyPressed(int key, char c) {
 		if (!this.hasFocus()) return;
-		if (c == 8 && !this.text.equals("")) {
+		if (c == 8 && !this.text.equals("")) { // Backspace char
 			this.text = this.text.substring(0, this.text.length() - 1);
 			return;
 		} else if (c == ' ') {
@@ -95,5 +84,13 @@ public class InputBox extends Button {
 
 	public String getText() {
 		return this.text;
+	}
+
+	@Override
+	public void setHover(boolean hover) {
+	}
+
+	@Override
+	public void setPressed(boolean pressed) {
 	}
 }

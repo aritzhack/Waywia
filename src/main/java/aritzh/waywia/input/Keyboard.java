@@ -26,7 +26,7 @@ import org.newdawn.slick.imageout.ImageOut;
  */
 public class Keyboard implements KeyListener {
 
-	private Game game;
+	private final Game game;
 
 	public Keyboard(Game game) {
 		this.game = game;
@@ -54,7 +54,7 @@ public class Keyboard implements KeyListener {
 
 	@Override
 	public void keyReleased(int key, char c) {
-		if (this.game.isGuiOpen()) this.game.getCurrentGui().keyPressed(key, c);
+		if (this.game.isGuiOpen()) this.game.getCurrentGui().keyReleased(key, c);
 	}
 
 	@Override

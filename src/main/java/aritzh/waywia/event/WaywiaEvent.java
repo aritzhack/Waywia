@@ -18,6 +18,8 @@ package aritzh.waywia.event;
 import aritzh.waywia.util.ReflectionUtil;
 
 /**
+ * Root of all events. Listen to this in order to handle all events
+ *
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
