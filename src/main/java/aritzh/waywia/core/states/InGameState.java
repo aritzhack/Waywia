@@ -46,8 +46,16 @@ public class InGameState extends WaywiaState {
 
 	@Override
 	public void init() {
-		Entity.registerEntity(QuadEntity.class);
-		Block.registerBlock(BackgroundBlock.class);
+		InGameState.registerEntities();
+		InGameState.registerBlocks();
+	}
+
+	private static void registerBlocks() {
+		Block.registerBlock(new BackgroundBlock());
+	}
+
+	private static void registerEntities() {
+		Entity.registerEntity(QuadEntity.class, 0);
 	}
 
 	@Override

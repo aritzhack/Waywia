@@ -24,6 +24,16 @@ import aritzh.waywia.core.GameLogger;
 public class BackgroundBlock extends Block {
 
 	@Override
+	public void update(int x, int y, int delta) {
+		super.update(x, y, delta);
+	}
+
+	@Override
+	public int getID() {
+		return 0;
+	}
+
+	@Override
 	public void clicked(int x, int y) {
 		GameLogger.debug("Clicked block at (" + x + "," + y + ")");
 	}

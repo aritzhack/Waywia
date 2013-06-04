@@ -28,13 +28,11 @@ public class Player extends Entity {
 
 	String username;
 
-	public Player(String username, float posX, float posY) {
-		super(posX, posY);
+	public Player(String username) {
 		this.username = username;
 	}
 
 	public Player() {
-		super();
 	}
 
 	@Override
@@ -71,5 +69,10 @@ public class Player extends Entity {
 		Player p = (Player) Entity.fromBDS(comp);
 		p.username = comp.getString("Username", 0).getData();
 		return p;
+	}
+
+	@Override
+	public int getID() {
+		return 0;
 	}
 }

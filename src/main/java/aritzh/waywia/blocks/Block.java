@@ -16,14 +16,13 @@
 package aritzh.waywia.blocks;
 
 import aritzh.waywia.bds.BDSCompound;
+import aritzh.waywia.bds.BDSInt;
 import aritzh.waywia.bds.BDSStorable;
-import aritzh.waywia.bds.BDSString;
-import aritzh.waywia.core.GameLogger;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author Aritz Lopez
@@ -31,35 +30,27 @@ import java.util.Map;
  */
 public abstract class Block implements BDSStorable {
 
-	private static final Map<String, Class<? extends Block>> stringToBlock = Maps.newHashMap();
+	private static final List<Block> blocks = Lists.newArrayList();
 
 	public static final int SIZE = 16;
 
-	public static void registerBlock(Class<? extends Block> clazz) {
-		if (clazz == null) throw new IllegalArgumentException("Null block class cannot be registered");
-		try {
-			Block.stringToBlock.put(clazz.newInstance().getName(), clazz);
-		} catch (InstantiationException | IllegalAccessException | ExceptionInInitializerError ex) {
-			InstantiationException e = new InstantiationException("Could not register block");
-			e.initCause(ex.getCause());
-			GameLogger.exception("Failed to register block class " + clazz, e);
-		}
+	public static int registerBlock(Block block) {
+		if (Block.blocks.contains(block))
+			throw new IllegalArgumentException("Block " + block + " was already registered");
+		if (Block.blocks.get(block.getID()) != null)
+			throw new IllegalArgumentException("Block id " + block.getID() + "is occupied by " + Block.blocks.get(block.getID()) + " when adding " + block);
+		Block.blocks.set(block.getID(), block);
+
+		return Block.blocks.indexOf(block);
 	}
 
-	private static Block newBlockFromName(String name) {
-		try {
-			return Block.stringToBlock.get(name).newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			GameLogger.exception("Could not instantiate block with name \"" + name + "\"", e);
-		} catch (NullPointerException e) {
-			throw new IllegalArgumentException("Block type \"" + name + "\" is not registered. This is a bug!");
-		}
-		return null;
+	public static Block getBlock(int id) {
+		return Block.blocks.get(id);
 	}
 
 	public static Block fromBDS(BDSCompound comp) {
-		String name = comp.getString("Name", 0).getData();
-		return Block.newBlockFromName(name);
+		int id = comp.getInt("ID", 0).getData();
+		return Block.getBlock(id);
 	}
 
 	public void render(int x, int y, Graphics g) {
@@ -74,7 +65,7 @@ public abstract class Block implements BDSStorable {
 	public abstract String getName();
 
 	public BDSCompound toBDS() {
-		return new BDSCompound("Block").add(new BDSString(this.getName(), "Name"));
+		return new BDSCompound("Block").add(new BDSInt(this.getID(), "ID"));
 	}
 
 	public void clicked(int x, int y) {
@@ -82,4 +73,6 @@ public abstract class Block implements BDSStorable {
 
 	public void update(int x, int y, int delta) {
 	}
+
+	public abstract int getID();
 }

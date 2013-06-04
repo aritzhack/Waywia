@@ -174,6 +174,28 @@ public class Configuration {
 	}
 
 	/**
+	 * Sets a property in the configuration
+	 *
+	 * @param category The category of the property
+	 * @param key      The key to identify the property
+	 * @param value    The value associated with it
+	 */
+	public void setProperty(String category, String key, Object value) {
+		this.setProperty(category, key, value.toString());
+	}
+
+	/**
+	 * Checks whether the specified key is present in the specified category
+	 *
+	 * @param category The category to look into for the key
+	 * @param key      The key to look for
+	 * @return {@code true} if the key was found in the category, {@code false} otherwise
+	 */
+	public boolean hasProperty(String category, String key) {
+		return this.categories.containsKey(category) && this.categories.get(category).containsKey(key);
+	}
+
+	/**
 	 * Saves the configuration to the file it was created with <br />
 	 * Equivalent to calling {@code config.save(configFile)}, if {@code config} was created with {@code configFile}
 	 */

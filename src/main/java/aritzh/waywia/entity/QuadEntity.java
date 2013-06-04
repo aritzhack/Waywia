@@ -56,4 +56,9 @@ public class QuadEntity extends EntityNPC {
 	public String getName() {
 		return "QuadEntity";
 	}
+
+	@Override
+	public int getID() {
+		return 1;
+	}
 }

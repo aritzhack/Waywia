@@ -43,9 +43,7 @@ public class Main {
 			gc.setShowFPS(false);
 			gc.start();
 		} catch (IOException e) {
-			if (GameLogger.init) {
-				GameLogger.logAndThrowAsRuntime("Could not initialize Waywia", e);
-			}
+			GameLogger.logAndThrowAsRuntime("Could not initialize Waywia", e);
 			System.exit(1);
 		}
 	}

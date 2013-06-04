@@ -19,6 +19,7 @@ import aritzh.waywia.i18n.I18N;
 import org.newdawn.slick.util.Log;
 import org.newdawn.slick.util.LogSystem;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,9 +34,9 @@ import java.util.logging.*;
 public class GameLogger {
 	private static final Logger logger = Logger.getLogger("GameLogger");
 	private static final Level DEFAULT_LOG_LEVEL = Level.INFO;
-	public static final boolean init;
 
-	static {
+	public static void init(File root) throws IOException {
+		if (!root.mkdirs()) throw new IOException("Couldn't make folder for logs!");
 		GameLogger.logger.setLevel(Level.ALL);
 		GameLogger.logger.setUseParentHandlers(false);
 
@@ -50,18 +51,12 @@ public class GameLogger {
 		GameLogger.logger.addHandler(ch);
 
 		try {
-			FileHandler fh = new FileHandler("log%g.log", 1, 4, false);
+			FileHandler fh = new FileHandler(root.getAbsolutePath() + File.separator + "log%g.log", 1, 4, false);
 			fh.setFormatter(f);
 			GameLogger.logger.addHandler(fh);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		init = true;
-	}
-
-	// So that static initializer runs when expected
-	@SuppressWarnings("EmptyMethod")
-	public static void init() {
 	}
 
 	public static void log(String s) {

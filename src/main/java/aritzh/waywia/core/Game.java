@@ -41,30 +41,29 @@ public class Game extends StateBasedGame {
 
 	public final File baseDir;
 	public final File savesDir;
-	private final EventBus BUS;
+	private final EventBus BUS = new EventBus("MainBus");
 	private GameContainer gc = null;
 	public WaywiaState menuState, inGameState;
 	public ErrorState errorState;
 	private final boolean loggedIn;
 
-	public Game(File baseDir, boolean loggedIn) throws IOException {
+	public Game(File root, boolean loggedIn) throws IOException {
 		super(GameLib.FULL_NAME);
 		this.loggedIn = loggedIn;
-		GameLogger.init();
+		GameLogger.init(new File(root, "logs"));
 
 		if (!this.loggedIn) GameLogger.warning("Game running in not-logged-in mode!");
 		else GameLogger.log("Successfully logged in");
 
-		if (baseDir == null) baseDir = new File(System.getProperty("user.dir"));
+		if (root == null) root = new File(System.getProperty("user.dir"));
 
-		this.baseDir = baseDir;
+		this.baseDir = root;
 		if (!this.baseDir.exists() && !this.baseDir.mkdirs())
 			throw new IOException("Couldn't make folder for the game");
 
 		this.savesDir = new File(this.baseDir, "saves");
 		if (!this.savesDir.exists() && !savesDir.mkdirs()) throw new IOException("Couldn't make the saves' folder");
 
-		this.BUS = new EventBus("MainBus");
 		this.registerEventHandler(this);
 
 		Config.init();
@@ -74,6 +73,7 @@ public class Game extends StateBasedGame {
 	@Override
 	public boolean closeRequested() {
 		((WaywiaState) this.getCurrentState()).closing();
+		Config.GAME.save();
 		return super.closeRequested();
 	}
 

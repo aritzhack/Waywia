@@ -33,7 +33,7 @@ public abstract class EntityNPC extends Entity {
 	}
 
 	public EntityNPC(int posX, int posY) {
-		super(posX, posY);
+		this.setPosition(posX, posY);
 	}
 
 	@Override
