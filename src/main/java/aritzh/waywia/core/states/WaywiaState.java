@@ -72,8 +72,8 @@ public abstract class WaywiaState extends BasicGameState {
 	@Override
 	public final void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		try {
+			if (!this.isGuiOpen() || this.currGui.hasTransparentBackGround()) this.render(g);
 			if (this.isGuiOpen()) this.currGui.render(g);
-			this.render(g);
 		} catch (Throwable t) {
 			this.game.enterState(this.game.errorState.setError("render", t));
 		}
@@ -82,7 +82,7 @@ public abstract class WaywiaState extends BasicGameState {
 	@Override
 	public final void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		try {
-			this.update(delta);
+			if (!this.isGuiOpen() || !this.currGui.stopsGame()) this.update(delta);
 		} catch (Throwable t) {
 			this.game.enterState(this.game.errorState.setError("update", t));
 		}
@@ -103,6 +103,47 @@ public abstract class WaywiaState extends BasicGameState {
 	public abstract void update(int delta);
 
 	public void onClosing() {
+	}
 
+	// Input handling
+
+	@Override
+	public void mouseClicked(int button, int x, int y, int clickCount) {
+		if (this.isGuiOpen()) this.currGui.mouseClicked(button, x, y, clickCount);
+	}
+
+	@Override
+	public void mouseDragged(int oldx, int oldy, int newx, int newy) {
+		if (this.isGuiOpen()) this.currGui.mouseDragged(oldx, oldy, newx, newy);
+	}
+
+	@Override
+	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
+		if (this.isGuiOpen()) this.currGui.mouseMoved(oldx, oldy, newx, newy);
+	}
+
+	@Override
+	public void mousePressed(int button, int x, int y) {
+		if (this.isGuiOpen()) this.currGui.mousePressed(button, x, y);
+	}
+
+	@Override
+	public void mouseReleased(int button, int x, int y) {
+		if (this.isGuiOpen()) this.currGui.mouseReleased(button, x, y);
+	}
+
+	@Override
+	public void mouseWheelMoved(int newValue) {
+		if (this.isGuiOpen()) this.currGui.mouseWheelMoved(newValue);
+	}
+
+	@Override
+	public void keyPressed(int key, char c) {
+		if (this.isGuiOpen()) this.currGui.keyPressed(key, c);
+	}
+
+	@Override
+	public void keyReleased(int key, char c) {
+		if (this.isGuiOpen()) this.currGui.keyReleased(key, c);
 	}
 }

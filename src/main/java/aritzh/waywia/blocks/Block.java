@@ -19,9 +19,10 @@ import aritzh.waywia.bds.BDSCompound;
 import aritzh.waywia.bds.BDSInt;
 import aritzh.waywia.bds.BDSStorable;
 import aritzh.waywia.universe.World;
+import aritzh.waywia.util.RenderUtil;
 import com.google.common.collect.Lists;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 
 import java.util.List;
 
@@ -33,7 +34,9 @@ public abstract class Block implements BDSStorable {
 
 	private static final List<Block> blocks = Lists.newArrayList();
 
-	public static final int SIZE = 16;
+	Image defaulTexture = RenderUtil.getImage("defaultBlock");
+
+	public static final int SIZE = 32;
 
 	public static void registerBlock(Block block) {
 		if (Block.blocks.contains(block))
@@ -57,12 +60,7 @@ public abstract class Block implements BDSStorable {
 	}
 
 	public void render(int x, int y, Graphics g, World world) {
-		Color c = g.getColor();
-		g.setColor(Color.blue);
-		g.fillRect(x * Block.SIZE, y * Block.SIZE, Block.SIZE, Block.SIZE);
-		g.setColor(Color.white);
-		g.drawRect(x * Block.SIZE, y * Block.SIZE, Block.SIZE, Block.SIZE);
-		g.setColor(c);
+		g.drawImage(defaulTexture, x * SIZE, y * SIZE);
 	}
 
 	public BDSCompound toBDS() {

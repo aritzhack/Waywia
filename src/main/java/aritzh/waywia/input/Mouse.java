@@ -37,28 +37,28 @@ public class Mouse implements MouseListener {
 
 	@Override
 	public void mouseClicked(int button, int x, int y, int clickCount) {
-		if (this.game.isGuiOpen()) this.game.getCurrentGui().mouseClicked(button, x, y, clickCount);
+		this.game.getCurrentState().mouseClicked(button, x, y, clickCount);
 	}
 
 	@Override
 	public void mousePressed(int button, int x, int y) {
-		if (this.game.isGuiOpen()) this.game.getCurrentGui().mousePressed(button, x, y);
+		this.game.getCurrentState().mousePressed(button, x, y);
 	}
 
 	@Override
 	public void mouseReleased(int button, int x, int y) {
-		if (this.game.isGuiOpen()) this.game.getCurrentGui().mouseReleased(button, x, y);
+		this.game.getCurrentState().mouseReleased(button, x, y);
 	}
 
 	@Override
 	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-		if (this.game.isGuiOpen()) this.game.getCurrentGui().mouseMoved(oldx, oldy, newx, newy);
+		this.game.getCurrentState().mouseMoved(oldx, oldy, newx, newy);
 
 	}
 
 	@Override
 	public void mouseDragged(int oldx, int oldy, int newx, int newy) {
-		if (this.game.isGuiOpen()) this.game.getCurrentGui().mouseDragged(oldx, oldy, newx, newy);
+		this.game.getCurrentState().mouseDragged(oldx, oldy, newx, newy);
 	}
 
 	@Override

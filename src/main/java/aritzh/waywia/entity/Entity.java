@@ -34,8 +34,8 @@ public abstract class Entity implements BDSStorable {
 
 	protected float posX = 0;
 	protected float posY = 0;
-	protected float velX = 0;
-	protected float velY = 0;
+	protected float velX = 1;
+	protected float velY = 1;
 	protected int health;
 	protected final BDSCompound customData = new BDSCompound("CustomData");
 	private static final BiMap<Integer, Class<? extends Entity>> entities = HashBiMap.create();
@@ -47,12 +47,12 @@ public abstract class Entity implements BDSStorable {
 	public abstract int getMaxHealth();
 
 	public void update(int delta) {
-		float targetPosX = this.posX + this.velX * delta;
-		float targetPosY = this.posY + this.velY * delta;
+		//float targetPosX = this.posX + this.velX * delta;
+		//float targetPosY = this.posY + this.velY * delta;
 
 		// TODO Collision
 
-		this.setPosition(targetPosX, targetPosY);
+		//this.setPosition(targetPosX, targetPosY);
 	}
 
 	public abstract Shape getBoundingShape();
@@ -138,5 +138,14 @@ public abstract class Entity implements BDSStorable {
 	public void setVelocity(Vector2f vel) {
 		this.velX = vel.getX();
 		this.velY = vel.getY();
+	}
+
+	public int getHealth() {
+		return this.health;
+	}
+
+	public void hurt(int amount) {
+		this.health -= amount;
+		if (this.health < 0) this.health = 0;
 	}
 }

@@ -16,6 +16,7 @@
 package aritzh.waywia.gui.components;
 
 import aritzh.waywia.core.states.WaywiaState;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.InputListener;
@@ -40,14 +41,28 @@ public abstract class GUI implements InputListener {
 	}
 
 	public void render(Graphics g) {
+		Color c = g.getColor();
+		if (!this.hasTransparentBackGround()) {
+			g.setColor(Color.black);
+			g.fillRect(0, 0, width, height);
+		}
 		for (GUIElement e : this.elements) {
 			e.render(g);
 		}
+		g.setColor(c);
 	}
 
 	protected final void addElement(GUIElement e) {
 		this.elements.add(e);
 		e.setID(lastElementID++);
+	}
+
+	public boolean stopsGame() {
+		return false;
+	}
+
+	public boolean hasTransparentBackGround() {
+		return !stopsGame();
 	}
 
 	public void mouseClicked(int button, int x, int y, int clickCount) {

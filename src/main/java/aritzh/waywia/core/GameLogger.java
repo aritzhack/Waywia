@@ -34,6 +34,7 @@ import java.util.logging.*;
 public class GameLogger {
 	private static final Logger logger = Logger.getLogger("GameLogger");
 	private static final Level DEFAULT_LOG_LEVEL = Level.INFO;
+	private static final int LOG_FILE_COUNT = 5;
 
 	private static boolean init;
 
@@ -53,7 +54,14 @@ public class GameLogger {
 		GameLogger.logger.addHandler(consoleHandler);
 
 		try {
-			FileHandler fileHandler = new FileHandler(root.getAbsolutePath() + File.separator + "log%g.log", 1, 4, false);
+			for (int i = LOG_FILE_COUNT; i >= 0; i--) {
+				File f;
+				if ((f = new File(root, "log-" + i + ".log")).exists()) {
+					if (i == LOG_FILE_COUNT) f.delete();
+					else f.renameTo(new File(root, "log-" + (i + 1) + ".log"));
+				}
+			}
+			FileHandler fileHandler = new FileHandler(root.getAbsolutePath() + File.separator + "log-0.log", 0, 1, false);
 			fileHandler.setFormatter(formatter);
 			GameLogger.logger.addHandler(fileHandler);
 		} catch (IOException e) {
@@ -64,6 +72,13 @@ public class GameLogger {
 
 	public static boolean isInit() {
 		return init;
+	}
+
+	public static void close() {
+		for (Handler h : GameLogger.logger.getHandlers()) {
+			h.flush();
+			h.close();
+		}
 	}
 
 	public static void log(String s) {

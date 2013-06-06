@@ -19,10 +19,15 @@ import aritzh.waywia.blocks.BackgroundBlock;
 import aritzh.waywia.blocks.Block;
 import aritzh.waywia.core.Game;
 import aritzh.waywia.core.GameLogger;
+import aritzh.waywia.core.Login;
 import aritzh.waywia.entity.Entity;
 import aritzh.waywia.entity.QuadEntity;
+import aritzh.waywia.entity.player.Player;
+import aritzh.waywia.gui.HudGui;
 import aritzh.waywia.universe.Universe;
+import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Vector2f;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +39,7 @@ import java.io.IOException;
 public class InGameState extends WaywiaState {
 
 	private Universe universe;
+	private Player player;
 
 	public InGameState(Game game) {
 		super(game, "In-Game");
@@ -46,8 +52,35 @@ public class InGameState extends WaywiaState {
 
 	@Override
 	public void init() {
+		this.openGUI(new HudGui(this));
+
+		this.initUniverse();
+
 		InGameState.registerEntities();
 		InGameState.registerBlocks();
+	}
+
+	@Override
+	public void keyPressed(int key, char c) {
+		super.keyPressed(key, c);
+	}
+
+	private void initUniverse() {
+		this.universe = Universe.loadUniverse(new File(this.game.savesDir, "uniBase"), this);
+		if (this.universe == null) {
+			try {
+				this.universe = Universe.newUniverse("UniBase", this.game.savesDir, "UniWorld", this);
+			} catch (IOException e) {
+				GameLogger.logAndThrowAsRuntime("Could not create universe UniBase", e);
+			}
+		}
+		this.player = new Player(Login.getUsername(), universe);
+
+		this.universe.setPlayer(this.player);
+	}
+
+	public Player getPlayer() {
+		return player;
 	}
 
 	private static void registerBlocks() {
@@ -60,7 +93,7 @@ public class InGameState extends WaywiaState {
 
 	@Override
 	public void mousePressed(int button, int x, int y) {
-		universe.clicked(x, y);
+		if (!this.isGuiOpen() || this.currGui.hasTransparentBackGround()) universe.clicked(x, y);
 	}
 
 	@Override
@@ -70,16 +103,19 @@ public class InGameState extends WaywiaState {
 
 	@Override
 	public void update(int delta) {
-		if (this.universe != null) this.universe.update(delta);
-		else {
-			this.universe = Universe.loadUniverse(new File(this.game.savesDir, "uniBase"));
-			if (this.universe == null) {
-				try {
-					this.universe = Universe.newUniverse("UniBase", this.game.savesDir, "UniWorld");
-				} catch (IOException e) {
-					GameLogger.logAndThrowAsRuntime("Could not create universe UniBase", e);
-				}
-			}
+		this.universe.update(delta);
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+			player.move(new Vector2f(0, -1), delta);
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			player.move(new Vector2f(0, 1), delta);
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			player.move(new Vector2f(-1, 0), delta);
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			player.move(new Vector2f(1, 0), delta);
 		}
 	}
 

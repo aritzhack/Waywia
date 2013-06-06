@@ -50,6 +50,8 @@ public class World implements BDSStorable {
 	private final Matrix<Block> blocks;
 	private final BDSCompound customData;
 	private final String worldName;
+	private Player player;
+
 
 	public static World newWorld(String name, File universeFolder) throws IOException {
 		String folderName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
@@ -110,7 +112,7 @@ public class World implements BDSStorable {
 	}
 
 	private static Matrix<Block> readBlocks(BDSCompound blockComp) {
-		Matrix<Block> blocks = new Matrix<Block>(100, 100, new BackgroundBlock());
+		Matrix<Block> blocks = new Matrix<Block>(25, 19, new BackgroundBlock());
 		for (BDSCompound comp : blockComp.getAllCompounds()) {
 			if (!comp.getName().equals("Block")) continue;
 
@@ -227,8 +229,8 @@ public class World implements BDSStorable {
 	}
 
 	public void clicked(int x, int y) {
-		x /= 16;
-		y /= 16;
+		x /= Block.SIZE;
+		y /= Block.SIZE;
 		this.blocks.get(x, y).clicked(x, y);
 	}
 
@@ -257,4 +259,13 @@ public class World implements BDSStorable {
 			return null;
 		}
 	};
+
+	public Player getPlayer() {
+		return this.player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+		if (!this.players.containsValue(this.player)) this.players.put(this.player.getUsername(), this.player);
+	}
 }

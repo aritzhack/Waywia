@@ -47,6 +47,16 @@ public class Button extends GUIElement {
 		}
 	}
 
+	/**
+	 * Creates a button, with customizable position and text,
+	 * and with a width of 100. <br />
+	 * To specify the with, {@link Button#Button(String, int, int, int)}
+	 *
+	 * @param text The text inside the button
+	 * @param x    x coordinate. If negative, button will be centered around it
+	 * @param y    y coordinate. If negative, button will be centered around it
+	 * @see Button#Button(String, int, int, int)
+	 */
 	public Button(String text, int x, int y) {
 		this(text, x, y, 100);
 	}

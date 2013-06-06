@@ -49,12 +49,12 @@ public class Keyboard implements KeyListener {
 			default:
 				break;
 		}
-		if (this.game.isGuiOpen()) this.game.getCurrentGui().keyPressed(key, c);
+		this.game.getCurrentState().keyPressed(key, c);
 	}
 
 	@Override
 	public void keyReleased(int key, char c) {
-		if (this.game.isGuiOpen()) this.game.getCurrentGui().keyReleased(key, c);
+		this.game.getCurrentState().keyReleased(key, c);
 	}
 
 	@Override

@@ -18,10 +18,9 @@ package aritzh.waywia.core;
 import aritzh.waywia.core.states.*;
 import aritzh.waywia.gui.components.GUI;
 import aritzh.waywia.i18n.I18N;
-import aritzh.waywia.input.Keyboard;
-import aritzh.waywia.input.Mouse;
 import aritzh.waywia.lib.GameLib;
 import aritzh.waywia.mod.Mod;
+import aritzh.waywia.mod.events.ModEvent;
 import aritzh.waywia.util.ReflectionUtil;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
@@ -30,6 +29,8 @@ import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 import org.reflections.Reflections;
 
 import java.io.File;
@@ -49,16 +50,13 @@ public class Game extends StateBasedGame {
 	private AppGameContainer gc = null;
 	public WaywiaState menuState, inGameState, loadingState;
 	public ErrorState errorState;
-	private final boolean loggedIn;
 	private boolean initMods = false;
 
-	public Game(File root, boolean loggedIn) throws IOException {
+	public Game(File root, String username, String password) throws IOException {
 		super(GameLib.FULL_NAME);
-		this.loggedIn = loggedIn;
 		GameLogger.init(new File(root, "logs"));
 
-		if (!this.loggedIn) GameLogger.warning("Game running in not-logged-in mode!");
-		else GameLogger.log("Successfully logged in");
+		Login.logIn(username, password);
 
 		if (root == null) root = new File(System.getProperty("user.dir"));
 
@@ -73,13 +71,15 @@ public class Game extends StateBasedGame {
 
 		Config.init();
 		I18N.init(new File(this.root, "locales"));
+		GameLogger.logTranslated("test1");
 	}
 
 	@Override
 	public boolean closeRequested() {
-		((WaywiaState) this.getCurrentState()).closing();
+		this.getCurrentState().closing();
 		Config.GAME.save();
 		this.BUS.post(new ModUnloadEvent(this));
+		GameLogger.close();
 		return super.closeRequested();
 	}
 
@@ -90,11 +90,21 @@ public class Game extends StateBasedGame {
 	}
 
 	@Override
+	public WaywiaState getCurrentState() {
+		return (WaywiaState) super.getCurrentState();
+	}
+
+	@Override
+	public void enterState(int id) {
+		enterState(id, new FadeOutTransition(), new FadeInTransition());
+	}
+
+	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
 		this.gc = (AppGameContainer) container;
 
-		container.getInput().addKeyListener(new Keyboard(this));
-		container.getInput().addMouseListener(new Mouse(this));
+		//container.getInput().addKeyListener(new Keyboard(this));
+		//container.getInput().addMouseListener(new Mouse(this));
 
 		container.getInput().poll(container.getWidth(), container.getHeight());
 
@@ -110,10 +120,12 @@ public class Game extends StateBasedGame {
 	}
 
 	public void loadMods() {
+		long before = System.currentTimeMillis();
 		if (initMods) return;
 		initMods = true;
 		try {
 			File modsFolder = new File(root, "mods");
+			if (!modsFolder.exists() && !modsFolder.mkdirs()) throw new IOException("Could not create mods' folder");
 			ReflectionUtil.addFolderToClasspath(modsFolder);
 			Reflections reflections = new Reflections(ClassLoader.getSystemClassLoader());
 
@@ -124,13 +136,16 @@ public class Game extends StateBasedGame {
 				this.registerEventHandler(mod);
 			}
 		} catch (InstantiationException | IllegalAccessException | IOException e) {
-			e.printStackTrace();
+			GameLogger.exception("Error loading mods", e);
 		}
+		long delta = System.currentTimeMillis() - before;
+		this.BUS.post(new ModEvent.ModLoadEvent(this));
+		GameLogger.debug("Mod-loading lasted " + delta / 1000.0 + " seconds");
 	}
 
 	@Override
 	protected void preUpdateState(GameContainer container, int delta) throws SlickException {
-		gc.setTitle(GameLib.FULL_NAME + " - " + gc.getFPS() + " FPS - " + this.getCurrentState().toString());
+		gc.setTitle(GameLib.FULL_NAME + " - " + gc.getFPS() + " FPS - " + this.getCurrentState().toString() + " - " + Login.getUsername() + " -  Runing in " + (Login.isLoggedIn() ? "online" : "offline") + " mode");
 	}
 
 	public AppGameContainer getGc() {
@@ -143,7 +158,7 @@ public class Game extends StateBasedGame {
 
 	public GUI getCurrentGui() {
 		if (this.getCurrentState() != null && this.getCurrentState() instanceof WaywiaState) {
-			return ((WaywiaState) this.getCurrentState()).getCurrentGui();
+			return this.getCurrentState().getCurrentGui();
 		}
 		// Should not happen, but heh...
 		return null;

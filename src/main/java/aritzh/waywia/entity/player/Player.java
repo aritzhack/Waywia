@@ -17,8 +17,11 @@ package aritzh.waywia.entity.player;
 
 import aritzh.waywia.bds.BDSCompound;
 import aritzh.waywia.entity.Entity;
+import aritzh.waywia.universe.Universe;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Shape;
+import org.newdawn.slick.geom.Vector2f;
 
 /**
  * @author Aritz Lopez
@@ -27,9 +30,12 @@ import org.newdawn.slick.geom.Shape;
 public class Player extends Entity {
 
 	String username;
+	private Universe universe;
 
-	public Player(String username) {
+	public Player(String username, Universe universe) {
 		this.username = username;
+		this.universe = universe;
+		this.universe.setPlayer(this);
 	}
 
 	public Player() {
@@ -42,7 +48,8 @@ public class Player extends Entity {
 
 	@Override
 	public void render(Graphics g) {
-
+		g.setColor(Color.red);
+		g.fillRect(this.posX, this.posY, 32, 32);
 	}
 
 	@Override
@@ -69,5 +76,14 @@ public class Player extends Entity {
 		Player p = (Player) Entity.fromBDS(comp);
 		p.username = comp.getString("Username", 0).getData();
 		return p;
+	}
+
+	public void move(Vector2f vector2f, int delta) {
+		this.posX += (vector2f.x * delta * velX) / 5f;
+		this.posY += (vector2f.y * delta * velY) / 5f;
+	}
+
+	public void setUniverse(Universe universe) {
+		this.universe = universe;
 	}
 }

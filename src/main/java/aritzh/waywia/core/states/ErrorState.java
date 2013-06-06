@@ -17,7 +17,12 @@ package aritzh.waywia.core.states;
 
 import aritzh.waywia.core.Game;
 import aritzh.waywia.core.GameLogger;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -30,6 +35,7 @@ public class ErrorState extends WaywiaState {
 	private String when;
 	private Throwable throwable;
 	private boolean logged = false;
+	String stackTrace = "";
 
 	public ErrorState(Game game) {
 		super(game, "ErrorState");
@@ -53,6 +59,11 @@ public class ErrorState extends WaywiaState {
 		this.when = when;
 		this.throwable = t;
 		this.logged = false;
+		StringWriter wr = new StringWriter();
+		PrintWriter pr = new PrintWriter(wr);
+		t.printStackTrace(pr);
+		wr.flush();
+		stackTrace = wr.toString();
 		return this.getID();
 	}
 
@@ -64,7 +75,10 @@ public class ErrorState extends WaywiaState {
 	public void render(Graphics g) {
 		if (this.when == null || this.throwable == null)
 			throw new IllegalStateException("Error state was not correctly initialized using ErrorState.setError()");
-		g.drawString(this.throwable.getLocalizedMessage(), 0, 0);
+		g.setBackground(Color.black);
+		g.clear();
+		g.setColor(Color.white);
+		g.drawString(stackTrace, 0, 0);
 	}
 
 	@Override
@@ -76,5 +90,11 @@ public class ErrorState extends WaywiaState {
 			GameLogger.exception(throwable);
 			logged = true;
 		}
+	}
+
+	@Override
+	public void keyPressed(int key, char c) {
+		super.keyPressed(key, c);
+		if (key == Input.KEY_ESCAPE) this.game.exit();
 	}
 }

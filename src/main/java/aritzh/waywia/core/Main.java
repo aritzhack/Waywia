@@ -31,14 +31,19 @@ public class Main {
 	public static void main(String[] args) throws SlickException {
 		try {
 			File root = Util.getAppDir("waywia");
-			Game g;
-			if (args.length < 2) g = new Game(root, false);
-			else if (Login.isCorrect(args[0], args[1])) {
-				g = new Game(root, true);
-			} else {
-				GameLogger.severe("Incorrect log-in information!");
-				g = new Game(root, false);
+
+			if (args.length >= 3) {
+				root = new File(args[2]);
 			}
+
+			String username = "", password = "";
+			if (args.length >= 2) {
+				username = args[0];
+				password = args[1];
+			}
+
+			Game g = new Game(root, username, password);
+
 			AppGameContainer gc = new AppGameContainer(g, 800, 600, false);
 			gc.setShowFPS(false);
 			gc.start();

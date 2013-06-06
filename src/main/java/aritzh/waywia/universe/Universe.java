@@ -19,6 +19,8 @@ import aritzh.waywia.bds.BDSCompound;
 import aritzh.waywia.bds.BDSStorable;
 import aritzh.waywia.bds.BDSString;
 import aritzh.waywia.core.GameLogger;
+import aritzh.waywia.core.states.InGameState;
+import aritzh.waywia.entity.player.Player;
 import com.google.common.base.CaseFormat;
 import org.newdawn.slick.Graphics;
 
@@ -42,17 +44,19 @@ public class Universe implements BDSStorable {
 	private final BDSCompound customData;
 
 	private World currentWorld;
+	private final InGameState state;
 
-	private Universe(String name, File root, Set<World> worlds, World currentWorld, BDSCompound customData) {
+	private Universe(String name, File root, Set<World> worlds, World currentWorld, BDSCompound customData, InGameState state) {
 		this.name = name;
 		this.root = root;
 		this.worlds = worlds;
 		this.customData = customData;
 		this.currentWorld = currentWorld;
+		this.state = state;
 		if (!this.worlds.contains(this.currentWorld)) this.worlds.add(this.currentWorld);
 	}
 
-	public static Universe newUniverse(String name, File saveFolder, String defaultWorldName) throws IOException {
+	public static Universe newUniverse(String name, File saveFolder, String defaultWorldName, InGameState state) throws IOException {
 		String folderName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
 		File root = new File(saveFolder, folderName);
 		if (!root.exists() && !root.mkdirs())
@@ -64,12 +68,12 @@ public class Universe implements BDSStorable {
 
 		BDSCompound comp = new BDSCompound("CustomData");
 
-		Universe u = new Universe(name, root, worlds, defaultWorld, comp);
+		Universe u = new Universe(name, root, worlds, defaultWorld, comp, state);
 		u.toBDS().writeToFile(new File(root, "universe.dat"));
 		return u;
 	}
 
-	public static Universe loadUniverse(File root) {
+	public static Universe loadUniverse(File root, InGameState state) {
 		BDSCompound uniComp = Universe.getCompoundFromFolder(root);
 		if (uniComp == null) return null;
 		try {
@@ -83,7 +87,7 @@ public class Universe implements BDSStorable {
 				if (w.getName().equals(currWorldName)) currW = w;
 			}
 			if (currW == null) currW = worlds.iterator().next();
-			Universe u = new Universe(name, root, worlds, currW, data);
+			Universe u = new Universe(name, root, worlds, currW, data, state);
 			u.save();
 			return u;
 		} catch (NullPointerException ignored) {
@@ -106,11 +110,11 @@ public class Universe implements BDSStorable {
 		if (this.currentWorld != null) this.currentWorld.render(g);
 	}
 
-	public static List<Universe> getUniverseList(File savesFolder) {
+	public static List<Universe> getUniverseList(File savesFolder, InGameState state) {
 		List<Universe> ret = new ArrayList<>();
 
 		for (File folder : savesFolder.listFiles(onlyFolders)) {
-			Universe u = Universe.loadUniverse(folder);
+			Universe u = Universe.loadUniverse(folder, state);
 			if (u == null) {
 				GameLogger.warning("Folder " + folder.getAbsolutePath() + " is not a valid universe folder");
 				continue;
@@ -150,4 +154,8 @@ public class Universe implements BDSStorable {
 			return file.isDirectory();
 		}
 	};
+
+	public void setPlayer(Player player) {
+		this.currentWorld.setPlayer(player);
+	}
 }

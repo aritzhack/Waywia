@@ -16,6 +16,7 @@
 package aritzh.waywia.i18n;
 
 import aritzh.waywia.core.GameLogger;
+import com.google.common.base.Preconditions;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,27 +68,23 @@ public class I18N {
 	 *               a {@code locale} property to the file, and leaving this argument as null.
 	 */
 	public static void readLocale(File file, boolean xml, Locale locale) {
-		if (file == null || locale == null)
-			throw new IllegalArgumentException("Both the file and the locale must not be null");
+		Preconditions.checkNotNull(file, "Language file must not be null");
+		Preconditions.checkNotNull(locale, "Locale must not be null");
 		try {
 			FileInputStream is = new FileInputStream(file);
+
 			Properties props = new Properties();
-			if (xml) {
-				props.loadFromXML(is);
-			} else {
-				props.load(is);
-			}
-			if (locale == null && props.containsKey("locale")) {
-				locale = Locale.forLanguageTag(props.getProperty("locale"));
-			} else if (locale == null && !props.containsKey("locale")) {
-				throw new IllegalArgumentException("Error loading I18N: Locale not specified and file didn't contain key \"locale\"");
-			}
+			if (xml) props.loadFromXML(is);
+			else props.load(is);
+
 			props.remove("locale");
 			if (locales.get(locale) != null) {
 				I18N.mergeLocales(locale, props);
+			} else {
+				locales.put(locale, props);
 			}
 		} catch (IOException e) {
-			GameLogger.logAndThrowAsRuntime("Could not read locale " + locale + " from file " + file.toString(), e);
+			GameLogger.logAndThrowAsRuntime("Could not read locale " + locale + " from file " + file.getAbsolutePath(), e);
 		}
 	}
 
@@ -109,6 +106,7 @@ public class I18N {
 		I18N.readLocale(new File(file), xml, locale);
 	}
 
+
 	public static void init(File basedir) throws IOException {
 		if (!basedir.exists() && !basedir.mkdirs())
 			throw new IOException("Couldn't create folder for localization files");
@@ -117,17 +115,29 @@ public class I18N {
 		}
 
 		for (File f : basedir.listFiles(I18N.propFiles)) {
-			I18N.readLocale(f, false, null);
+			String fileName = f.getName().replace(".lang.xml", "").replace(".lang", "").replace("_", "-");
+			Locale locale = Locale.forLanguageTag(fileName);
+			if (locale == null) {
+				GameLogger.warning("File " + f.getAbsolutePath() + " doesn't have a correct language-file name syntax");
+				continue;
+			}
+			I18N.readLocale(f, false, locale);
 		}
 		for (File f : basedir.listFiles(I18N.xmlFiles)) {
-			I18N.readLocale(f, true, null);
+			String fileName = f.getName().replaceFirst("[.][^.]+$", "").replace("_", "-");
+			Locale locale = Locale.forLanguageTag(fileName);
+			if (locale == null) {
+				GameLogger.warning("File " + f.getAbsolutePath() + " doesn't have a correct language-file name syntax");
+				continue;
+			}
+			I18N.readLocale(f, true, locale);
 		}
 	}
 
 	public static String translate(String key) {
-		if (I18N.locales.get(I18N.currentLocale).containsKey(key))
+		if (I18N.locales.containsKey(I18N.currentLocale) && I18N.locales.get(I18N.currentLocale).containsKey(key))
 			return I18N.locales.get(I18N.currentLocale).getProperty(key);
-		return key;
+		else return key;
 	}
 
 	private static final FilenameFilter propFiles = new FilenameFilter() {
