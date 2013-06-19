@@ -16,6 +16,7 @@
 package aritzh.waywia.entity;
 
 import aritzh.waywia.entity.ai.AI;
+import aritzh.waywia.universe.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +38,11 @@ public abstract class EntityNPC extends Entity {
 	}
 
 	@Override
-	public void update(int delta) {
+	public void update(int delta, World world) {
 		for (AI ai : this.ais) {
 			ai.perform(this, delta);
 		}
 
-		super.update(delta);
+		super.update(delta, world);
 	}
 }

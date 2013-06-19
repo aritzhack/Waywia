@@ -19,12 +19,18 @@ import aritzh.waywia.bds.BDSCompound;
 import aritzh.waywia.bds.BDSInt;
 import aritzh.waywia.bds.BDSStorable;
 import aritzh.waywia.bds.BDSString;
+import aritzh.waywia.blocks.Block;
 import aritzh.waywia.core.GameLogger;
+import aritzh.waywia.universe.World;
+import aritzh.waywia.util.ParametrizedFunction;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Vector2f;
+
+import java.util.List;
 
 /**
  * @author Aritz Lopez
@@ -32,10 +38,9 @@ import org.newdawn.slick.geom.Vector2f;
  */
 public abstract class Entity implements BDSStorable {
 
-	protected float posX = 0;
-	protected float posY = 0;
-	protected float velX = 1;
-	protected float velY = 1;
+	protected float posX = 0, posY = 0;
+	protected float width = Block.SIZE, height = Block.SIZE;
+	protected int velX = 1, velY = 1;
 	protected int health;
 	protected final BDSCompound customData = new BDSCompound("CustomData");
 	private static final BiMap<Integer, Class<? extends Entity>> entities = HashBiMap.create();
@@ -46,19 +51,43 @@ public abstract class Entity implements BDSStorable {
 
 	public abstract int getMaxHealth();
 
-	public void update(int delta) {
-		//float targetPosX = this.posX + this.velX * delta;
-		//float targetPosY = this.posY + this.velY * delta;
+	public void update(int delta, World world) {
+		float targetPosX = this.posX + (delta * velX) / 5f;
+		float targetPosY = this.posY + (delta * velY) / 5f;
 
-		// TODO Collision
 
-		//this.setPosition(targetPosX, targetPosY);
+		if (!this.collides(world, new Rectangle(targetPosX, this.posY, Block.SIZE, Block.SIZE))) this.posX = targetPosX;
+		if (!this.collides(world, new Rectangle(this.posX, targetPosY, Block.SIZE, Block.SIZE))) this.posY = targetPosY;
 	}
 
-	public abstract Shape getBoundingShape();
+	private static final ParametrizedFunction<Block, Boolean> checkCollision = new ParametrizedFunction<Block, Boolean>() {
+		@Override
+		public Boolean apply(Block input, Object... args) {
+			int x = (int) args[0] * Block.SIZE;
+			int y = (int) args[1] * Block.SIZE;
+			Shape bbox = (Shape) args[2];
+			return input.isSolid() && bbox.intersects(new Rectangle(x, y, Block.SIZE, Block.SIZE));
+		}
+	};
+
+	private boolean collides(World world, Rectangle bbox) {
+		List<Boolean> booleanList = world.runForEachBlock(checkCollision, bbox).toFlatArrayList();
+		for (boolean bool : booleanList) {
+			if (bool) return true;
+		}
+		return false;
+	}
+
+	public Shape getBoundingShape() {
+		return new Rectangle(this.posX, this.posY, this.width, this.height);
+	}
 
 	public BDSCompound getCustomData() {
 		return this.customData;
+	}
+
+	public Shape getBoundingBox() {
+		return new Rectangle(this.posX, this.posY, Block.SIZE, Block.SIZE);
 	}
 
 	public abstract void render(Graphics g);
@@ -70,8 +99,8 @@ public abstract class Entity implements BDSStorable {
 				.add(new BDSInt(Entity.entities.inverse().get(this.getClass()), "ID"))
 				.add(new BDSString(Float.toString(posX), "posX"))
 				.add(new BDSString(Float.toString(posY), "posY"))
-				.add(new BDSString(Float.toString(velX), "velX"))
-				.add(new BDSString(Float.toString(velY), "velY"))
+				.add(new BDSInt(velX, "velX"))
+				.add(new BDSInt(velY, "velY"))
 				.add(this.customData);
 	}
 
@@ -101,8 +130,8 @@ public abstract class Entity implements BDSStorable {
 		float posX = Float.valueOf(comp.getString("posX", 0).getData());
 		float posY = Float.valueOf(comp.getString("posY", 0).getData());
 
-		float velX = Float.valueOf(comp.getString("velX", 0).getData());
-		float velY = Float.valueOf(comp.getString("velY", 0).getData());
+		int velX = comp.getInt("velX", 0).getData();
+		int velY = comp.getInt("velY", 0).getData();
 
 		Entity e = Entity.getNewEntity(id);
 
@@ -125,7 +154,7 @@ public abstract class Entity implements BDSStorable {
 		this.posY = y;
 	}
 
-	public void setVelocity(float vx, float vy) {
+	public void setVelocity(int vx, int vy) {
 		this.velX = vx;
 		this.velY = vy;
 	}
@@ -135,11 +164,6 @@ public abstract class Entity implements BDSStorable {
 		this.posY = pos.getY();
 	}
 
-	public void setVelocity(Vector2f vel) {
-		this.velX = vel.getX();
-		this.velY = vel.getY();
-	}
-
 	public int getHealth() {
 		return this.health;
 	}
@@ -147,5 +171,22 @@ public abstract class Entity implements BDSStorable {
 	public void hurt(int amount) {
 		this.health -= amount;
 		if (this.health < 0) this.health = 0;
+	}
+
+	public void setVX(int vx) {
+		this.velX = vx;
+	}
+
+	public void setVY(int vy) {
+		this.velY = vy;
+	}
+
+
+	public int getVX() {
+		return this.velX;
+	}
+
+	public int getVY() {
+		return this.velY;
 	}
 }

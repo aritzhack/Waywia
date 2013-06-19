@@ -15,8 +15,9 @@
 
 package aritzh.waywia.blocks;
 
-import aritzh.waywia.core.GameLogger;
+import aritzh.waywia.lib.BlockLib;
 import aritzh.waywia.universe.World;
+import org.newdawn.slick.geom.Rectangle;
 
 /**
  * @author Aritz Lopez
@@ -30,13 +31,9 @@ public class BackgroundBlock extends Block {
 	}
 
 	@Override
-	public int getID() {
-		return 0;
-	}
-
-	@Override
-	public void clicked(int x, int y) {
-		GameLogger.debug("Clicked block at (" + x + "," + y + ")");
+	public void clicked(int x, int y, World world) {
+		if (!world.anyEntityCollides(new Rectangle(x, y, Block.SIZE, Block.SIZE)))
+			world.setBlock(x, y, BlockLib.IDS.WALL);
 	}
 
 	@Override

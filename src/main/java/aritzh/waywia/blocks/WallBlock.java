@@ -13,36 +13,24 @@
  * game. If not, see http://www.gnu.org/licenses/.
  */
 
-package aritzh.waywia.core;
+package aritzh.waywia.blocks;
 
-import aritzh.waywia.lib.GameLib;
-import aritzh.waywia.util.Configuration;
-
-import java.io.File;
+import aritzh.waywia.util.RenderUtil;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class Config {
+public class WallBlock extends Block {
 
-	public static final Configuration GAME;
 
-	static {
-		File configFile = new File("config.cfg");
-		GAME = Configuration.loadConfig(configFile);
-
-		Config.setDefaults();
-
-		//Config.GAME.save();
+	public WallBlock() {
+		this.setSolid();
+		this.texture = RenderUtil.getImage("wallBlock");
 	}
 
-	private static void setDefaults() {
-		Config.GAME.setDefault("Main", "Version", GameLib.VERSION);
-		Config.GAME.setDefault("Mods", "loadMods", true);
-	}
-
-	// For the static initializer to run
-	public static void init() {
+	@Override
+	public String getName() {
+		return "Wall";
 	}
 }

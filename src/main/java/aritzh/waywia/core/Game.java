@@ -78,7 +78,7 @@ public class Game extends StateBasedGame {
 	public boolean closeRequested() {
 		this.getCurrentState().closing();
 		Config.GAME.save();
-		this.BUS.post(new ModUnloadEvent(this));
+		if (Config.GAME.getBoolean("Mods", "loadMods")) this.BUS.post(new ModUnloadEvent(this));
 		GameLogger.close();
 		return super.closeRequested();
 	}

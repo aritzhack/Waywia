@@ -17,6 +17,7 @@ package aritzh.waywia.core.states;
 
 import aritzh.waywia.blocks.BackgroundBlock;
 import aritzh.waywia.blocks.Block;
+import aritzh.waywia.blocks.WallBlock;
 import aritzh.waywia.core.Game;
 import aritzh.waywia.core.GameLogger;
 import aritzh.waywia.core.Login;
@@ -24,10 +25,10 @@ import aritzh.waywia.entity.Entity;
 import aritzh.waywia.entity.QuadEntity;
 import aritzh.waywia.entity.player.Player;
 import aritzh.waywia.gui.HudGui;
+import aritzh.waywia.lib.BlockLib;
 import aritzh.waywia.universe.Universe;
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Vector2f;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,7 +85,8 @@ public class InGameState extends WaywiaState {
 	}
 
 	private static void registerBlocks() {
-		Block.registerBlock(new BackgroundBlock());
+		Block.registerBlock(new BackgroundBlock(), BlockLib.IDS.BACKGROUND);
+		Block.registerBlock(new WallBlock(), BlockLib.IDS.WALL);
 	}
 
 	private static void registerEntities() {
@@ -106,16 +108,23 @@ public class InGameState extends WaywiaState {
 		this.universe.update(delta);
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			player.move(new Vector2f(0, -1), delta);
-		}
+			player.setVY(-1);
+		} else if (player.getVY() == -1) player.setVY(0);
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			player.move(new Vector2f(0, 1), delta);
-		}
+			player.setVY(1);
+		} else if (player.getVY() == 1) player.setVY(0);
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			player.move(new Vector2f(-1, 0), delta);
-		}
+			player.setVX(-1);
+		} else if (player.getVX() == -1) player.setVX(0);
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			player.move(new Vector2f(1, 0), delta);
+			player.setVX(1);
+		} else if (player.getVX() == 1) player.setVX(0);
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_W) && Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			player.setVY(0);
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_A) && Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			player.setVX(0);
 		}
 	}
 

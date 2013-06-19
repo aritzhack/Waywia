@@ -31,6 +31,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Rectangle;
 
 import java.io.File;
 import java.io.IOException;
@@ -174,11 +175,11 @@ public class World implements BDSStorable {
 		this.blocks.runForEach(World.blockUpdate, delta, this);
 
 		for (Entity e : this.entities.values()) {
-			e.update(delta);
+			e.update(delta, this);
 		}
 
 		for (Player p : this.players.values()) {
-			p.update(delta);
+			p.update(delta, this);
 		}
 	}
 
@@ -231,7 +232,7 @@ public class World implements BDSStorable {
 	public void clicked(int x, int y) {
 		x /= Block.SIZE;
 		y /= Block.SIZE;
-		this.blocks.get(x, y).clicked(x, y);
+		this.blocks.get(x, y).clicked(x, y, this);
 	}
 
 	private static final ParametrizedFunction<Block, Object> blockUpdate = new ParametrizedFunction<Block, Object>() {
@@ -266,6 +267,22 @@ public class World implements BDSStorable {
 
 	public void setPlayer(Player player) {
 		this.player = player;
+		if (!this.entities.containsValue(this.player)) this.entities.put(this.player.getUsername(), this.player);
 		if (!this.players.containsValue(this.player)) this.players.put(this.player.getUsername(), this.player);
+	}
+
+	public <R> Matrix<R> runForEachBlock(ParametrizedFunction<Block, R> function, Object... args) {
+		return this.blocks.runForEach(function, args);
+	}
+
+	public boolean anyEntityCollides(Rectangle rect) {
+		for (Entity e : this.entities.values()) {
+			if (e.getBoundingBox().intersects(rect)) return true;
+		}
+		return false;
+	}
+
+	public void setBlock(int x, int y, int id) {
+		this.blocks.set(Block.getBlock(id), x, y);
 	}
 }

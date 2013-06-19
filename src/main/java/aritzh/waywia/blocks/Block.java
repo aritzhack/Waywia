@@ -33,21 +33,21 @@ import java.util.List;
 public abstract class Block implements BDSStorable {
 
 	private static final List<Block> blocks = Lists.newArrayList();
-
-	Image defaulTexture = RenderUtil.getImage("defaultBlock");
-
+	protected Image texture = RenderUtil.getImage("defaultBlock");
 	public static final int SIZE = 32;
 
-	public static void registerBlock(Block block) {
+	private boolean solid = false;
+
+	public static void registerBlock(Block block, int id) {
 		if (Block.blocks.contains(block))
 			throw new IllegalArgumentException("Block " + block + " was already registered");
-		if (Block.blocks.size() > block.getID() && Block.blocks.get(block.getID()) != null)
-			throw new IllegalArgumentException("Block id " + block.getID() + "is occupied by " + Block.blocks.get(block.getID()) + " when adding " + block);
-		Block.blocks.add(block.getID(), block);
+		if (Block.blocks.size() > id && Block.blocks.get(id) != null)
+			throw new IllegalArgumentException("Block id " + id + "is occupied by " + Block.blocks.get(id) + " when adding " + block);
+		Block.blocks.add(id, block);
 	}
 
 	public static Block getBlock(int id) {
-		return Block.blocks.get(id);
+		return Block.blocks.size() > id ? Block.blocks.get(id) : null;
 	}
 
 	public static Block fromBDS(BDSCompound comp) {
@@ -60,20 +60,26 @@ public abstract class Block implements BDSStorable {
 	}
 
 	public void render(int x, int y, Graphics g, World world) {
-		g.drawImage(defaulTexture, x * SIZE, y * SIZE);
+		g.drawImage(texture, x * SIZE, y * SIZE);
+	}
+
+	public void setSolid() {
+		this.solid = true;
+	}
+
+	public boolean isSolid() {
+		return this.solid;
 	}
 
 	public BDSCompound toBDS() {
-		return new BDSCompound("Block").add(new BDSInt(this.getID(), "ID"));
+		return new BDSCompound("Block").add(new BDSInt(Block.blocks.indexOf(this), "ID"));
 	}
 
-	public void clicked(int x, int y) {
+	public void clicked(int x, int y, World world) {
 	}
 
 	public void update(int x, int y, int delta, World arg) {
 	}
-
-	public abstract int getID();
 
 	public abstract String getName();
 }

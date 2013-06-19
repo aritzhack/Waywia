@@ -13,36 +13,17 @@
  * game. If not, see http://www.gnu.org/licenses/.
  */
 
-package aritzh.waywia.core;
-
-import aritzh.waywia.lib.GameLib;
-import aritzh.waywia.util.Configuration;
-
-import java.io.File;
+package aritzh.waywia.lib;
 
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class Config {
+public class BlockLib {
 
-	public static final Configuration GAME;
-
-	static {
-		File configFile = new File("config.cfg");
-		GAME = Configuration.loadConfig(configFile);
-
-		Config.setDefaults();
-
-		//Config.GAME.save();
-	}
-
-	private static void setDefaults() {
-		Config.GAME.setDefault("Main", "Version", GameLib.VERSION);
-		Config.GAME.setDefault("Mods", "loadMods", true);
-	}
-
-	// For the static initializer to run
-	public static void init() {
+	public static final class IDS {
+		public static final int BACKGROUND = 0;
+		public static final int WALL = 1;
+		public static final int FLOOR = 2;
 	}
 }

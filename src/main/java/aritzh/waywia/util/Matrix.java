@@ -138,7 +138,7 @@ public class Matrix<E> implements Collection<ArrayList<E>> {
 	 */
 	public ArrayList<E> toFlatArrayList() {
 		ArrayList<E> ret = new ArrayList<>();
-		for (ArrayList<E> list : this) {
+		for (ArrayList<E> list : this.columns) {
 			ret.addAll(list);
 		}
 		return ret;

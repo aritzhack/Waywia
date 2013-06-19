@@ -197,6 +197,58 @@ public class Configuration {
 	}
 
 	/**
+	 * Sets the property, unless it already had a value
+	 *
+	 * @param category The category of the property
+	 * @param key      The identifier of the property
+	 * @param value    The value to set to the property
+	 */
+	public void setDefault(String category, String key, String value) {
+		if (this.hasProperty(category, key)) return;
+		this.setProperty(category, key, value);
+	}
+
+	public void setDefault(String category, String key, Object value) {
+		this.setDefault(category, key, String.valueOf(value));
+	}
+
+	/**
+	 * Same as {@link Configuration#getProperty(String, String)}, but a boolean is parsed.
+	 *
+	 * @param category The category of the property
+	 * @param key      The key (identifier) of the property
+	 * @return {@code true} if the property can be parsed to boolean, or equals (ignoring case) {@code "on"}
+	 */
+	public boolean getBoolean(String category, String key) {
+		String value = this.getProperty(category, key);
+		return Boolean.parseBoolean(value) || value.equalsIgnoreCase("on");
+	}
+
+	/**
+	 * Same as {@link Configuration#getProperty(String, String)}, but a integer is parsed.
+	 *
+	 * @param category The category of the property
+	 * @param key      The key (identifier) of the property
+	 * @return the integer value parsed from the property
+	 */
+	public int getInt(String category, String key) {
+		String value = this.getProperty(category, key).toLowerCase().trim();
+		return Integer.parseInt(value);
+	}
+
+	/**
+	 * Same as {@link Configuration#getProperty(String, String)}, but a double is parsed.
+	 *
+	 * @param category The category of the property
+	 * @param key      The key (identifier) of the property
+	 * @return the double value parsed from the property
+	 */
+	public double getDouble(String category, String key) {
+		String value = this.getProperty(category, key).toLowerCase().trim();
+		return Double.parseDouble(value);
+	}
+
+	/**
 	 * Saves the configuration to the file it was created with <br />
 	 * Equivalent to calling {@code config.save(configFile)}, if {@code config} was created with {@code configFile}
 	 */

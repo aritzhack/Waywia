@@ -156,6 +156,8 @@ public class Universe implements BDSStorable {
 	};
 
 	public void setPlayer(Player player) {
-		this.currentWorld.setPlayer(player);
+		for (World w : this.worlds) {
+			w.setPlayer(player);
+		}
 	}
 }

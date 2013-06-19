@@ -35,6 +35,7 @@ public class InputBox extends Button {
 	 */
 	public InputBox(int x, int y, int w) {
 		super("Placeholder", x, y, w);
+		this.text = "";
 	}
 
 	@Override
