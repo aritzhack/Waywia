@@ -15,6 +15,7 @@
 
 package aritzh.waywia.gui.components;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -26,6 +27,8 @@ public class InputBox extends Button {
 	private boolean hasFocus = false;
 	private int cursorBlinkCooldown = 0;
 	private boolean cursorVisible = true;
+	private int cursorPos = 0;
+	private boolean insert = true;
 
 	/**
 	 * Creates a button, with customizable position, text and size
@@ -41,17 +44,26 @@ public class InputBox extends Button {
 	@Override
 	public void render(Graphics g) {
 		super.render(g);
+		g.setColor(Color.white);
 		this.cursorBlinkCooldown++;
 		if (cursorBlinkCooldown == 650) {
 			cursorVisible = !cursorVisible;
 			cursorBlinkCooldown = 0;
 		}
 		if (!cursorVisible || !this.hasFocus()) return;
-		float cursorX = this.x + this.width / 2 + Button.defaultFont.getWidth(this.text) / 2;
+		float cursorX = this.textX - (Button.defaultFont.getWidth(this.text) / 2 - Button.defaultFont.getWidth(this.text.substring(0, cursorPos)));
 		float beforeW = g.getLineWidth();
 		if (Button.defaultFont.getWidth(this.text + "   ") > this.width) {
 			g.setLineWidth(4);
 			cursorX += 2;
+		}
+		if (!this.insert) {
+			int lineWidth = 10;
+			if (this.cursorPos + 1 < this.text.length()) {
+				lineWidth = Button.defaultFont.getWidth(String.valueOf(this.text.charAt(this.cursorPos + 1)));
+			}
+			g.setLineWidth(lineWidth);
+			cursorX += lineWidth / 2;
 		}
 		g.drawLine(cursorX, this.y + this.height / 2 - 10, cursorX, this.y + this.height / 2 + 10);
 		g.setLineWidth(beforeW);
@@ -59,14 +71,41 @@ public class InputBox extends Button {
 
 	public void keyPressed(int key, char c) {
 		if (!this.hasFocus()) return;
-		if (c == 8 && !this.text.equals("")) { // Backspace char
-			this.text = this.text.substring(0, this.text.length() - 1);
-			return;
-		} else if (c == ' ') {
-			c = '_';
+
+		switch (key) {
+			case 203: // <-
+				cursorPos--;
+				break;
+			case 205: // ->
+				cursorPos++;
+				break;
+			case 199: // START
+				cursorPos = 0;
+				break;
+			case 207: // END
+				cursorPos = this.text.length();
+				break;
+			case 14: // Backspace
+				if (cursorPos == 0) break; // Nothing to remove
+				this.text = this.text.substring(0, cursorPos - 1) + this.text.substring(cursorPos);
+				cursorPos--;
+				break;
+			case 211: // Delete
+				if (cursorPos == this.text.length()) break; // Nothing to delete
+				this.text = this.text.substring(0, cursorPos) + this.text.substring(cursorPos + 1);
+				break;
+			case 210:  // Insert
+				this.insert = !this.insert;
+				break;
+			default:
+				if (Button.defaultFont.getWidth(this.text + "   ") > this.width) break;
+				this.text = new StringBuilder(this.text).insert(cursorPos, c).toString();
+				cursorPos++;
+				break;
 		}
-		if (Button.defaultFont.getWidth(this.text + "   ") > this.width) return;
-		this.text += c;
+		if (cursorPos < 0) cursorPos = 0;
+		if (cursorPos > this.text.length()) cursorPos = this.text.length();
+
 	}
 
 	private void setHasFocus(boolean hasFocus) {
