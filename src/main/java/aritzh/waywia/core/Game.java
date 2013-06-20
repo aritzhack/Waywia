@@ -128,16 +128,20 @@ public class Game extends StateBasedGame {
 			if (!modsFolder.exists() && !modsFolder.mkdirs()) throw new IOException("Could not create mods' folder");
 			ReflectionUtil.addFolderToClasspath(modsFolder);
 			Reflections reflections = new Reflections(ClassLoader.getSystemClassLoader());
-
 			for (Class c : reflections.getTypesAnnotatedWith(Mod.class)) {
-				Object mod = c.newInstance();
-				GameLogger.debug("Found mod class: " + c.getName() + "; Instance: " + mod);
-				// TODO Add a Mods class, and call Mods.register(mod), and save it to a list or something
-				this.registerEventHandler(mod);
+				try {
+					Object mod = c.newInstance();
+					GameLogger.debug("Found mod class: " + c.getName() + "; Instance: " + mod);
+					// TODO Add a Mods class, and call Mods.register(mod), and save it to a list or something
+					this.registerEventHandler(mod);
+				} catch (InstantiationException | IllegalAccessException ex) {
+					GameLogger.exception("Error loading mod from class: " + c, ex);
+				}
 			}
-		} catch (InstantiationException | IllegalAccessException | IOException e) {
-			GameLogger.exception("Error loading mods", e);
+		} catch (IOException e) {
+			GameLogger.exception("Error loading mods folder", e);
 		}
+
 		long delta = System.currentTimeMillis() - before;
 		this.BUS.post(new ModEvent.ModLoadEvent(this));
 		GameLogger.debug("Mod-loading lasted " + delta / 1000.0 + " seconds");
