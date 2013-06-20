@@ -97,8 +97,6 @@ public class Button extends GUIElement {
 	public void render(Graphics g) {
 		if (!this.render) return;
 
-		Color before = g.getColor();
-
 		g.setColor(this.pressed ? Button.colors[2] : this.hover ? Button.colors[0] : Button.colors[1]);
 		g.fillRect(this.x, this.y, this.width, this.height);
 
@@ -115,7 +113,6 @@ public class Button extends GUIElement {
 		float y = textY;
 		g.setColor(Color.white);
 		g.drawString(this.text, x, y);
-		g.setColor(before);
 	}
 
 	public Rectangle getBBox() {

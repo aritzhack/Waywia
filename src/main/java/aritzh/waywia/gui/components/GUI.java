@@ -41,7 +41,6 @@ public abstract class GUI implements InputListener {
 	}
 
 	public void render(Graphics g) {
-		Color c = g.getColor();
 		if (!this.hasTransparentBackGround()) {
 			g.setColor(Color.black);
 			g.fillRect(0, 0, width, height);
@@ -49,7 +48,6 @@ public abstract class GUI implements InputListener {
 		for (GUIElement e : this.elements) {
 			e.render(g);
 		}
-		g.setColor(c);
 	}
 
 	protected final void addElement(GUIElement e) {
