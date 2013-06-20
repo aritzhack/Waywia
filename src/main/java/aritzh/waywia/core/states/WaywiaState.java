@@ -72,7 +72,7 @@ public abstract class WaywiaState extends BasicGameState {
 	@Override
 	public final void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		try {
-			if (!this.isGuiOpen() || this.currGui.hasTransparentBackGround()) this.render(g);
+			if (!(this.isGuiOpen() && !this.currGui.hasTransparentBackGround())) this.render(g);
 			if (this.isGuiOpen()) this.currGui.render(g);
 		} catch (Throwable t) {
 			this.game.enterState(this.game.errorState.setError("render", t));
