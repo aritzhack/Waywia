@@ -149,7 +149,7 @@ public class Game extends StateBasedGame {
 
 	@Override
 	protected void preUpdateState(GameContainer container, int delta) throws SlickException {
-		gc.setTitle(GameLib.FULL_NAME + " - " + gc.getFPS() + " FPS - " + this.getCurrentState().toString() + " - " + Login.getUsername() + " -  Runing in " + (Login.isLoggedIn() ? "online" : "offline") + " mode");
+		gc.setTitle(GameLib.FULL_NAME + " - " + gc.getFPS() + " FPS - " + this.getCurrentState().toString() + " - " + Login.getUsername() + " -  Running in " + (Login.isLoggedIn() ? "online" : "offline") + " mode");
 	}
 
 	public AppGameContainer getGc() {
@@ -161,7 +161,7 @@ public class Game extends StateBasedGame {
 	}
 
 	public GUI getCurrentGui() {
-		if (this.getCurrentState() != null && this.getCurrentState() instanceof WaywiaState) {
+		if (this.getCurrentState() != null) {
 			return this.getCurrentState().getCurrentGui();
 		}
 		// Should not happen, but heh...

@@ -120,7 +120,7 @@ public class Login {
 			return getHash(username, password).equals(s) ? LoginResult.SUCCESS : LoginResult.INCORRECT;
 		} catch (IOException e) {
 			if (e instanceof SocketTimeoutException && !second) return Login.isCorrectTries(username, password, true);
-			if (e instanceof SocketTimeoutException && second)
+			else if (e instanceof SocketTimeoutException)
 				GameLogger.warning("Login check connection timed out again. Check your internet connection");
 			else e.printStackTrace();
 			return LoginResult.ERROR;
