@@ -92,7 +92,7 @@ public abstract class WaywiaState extends BasicGameState {
 		try {
 			this.onClosing();
 		} catch (Throwable t) {
-			this.game.enterState(this.game.errorState.setError("update", t));
+			this.game.enterState(this.game.errorState.setError("closing", t));
 		}
 	}
 

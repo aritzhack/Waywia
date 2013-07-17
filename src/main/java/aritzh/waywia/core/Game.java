@@ -19,7 +19,8 @@ import aritzh.waywia.core.states.*;
 import aritzh.waywia.gui.components.GUI;
 import aritzh.waywia.i18n.I18N;
 import aritzh.waywia.lib.GameLib;
-import aritzh.waywia.mod.Mod;
+import aritzh.waywia.mod.ModData;
+import aritzh.waywia.mod.Mods;
 import aritzh.waywia.mod.events.ModEvent;
 import aritzh.waywia.util.ReflectionUtil;
 import com.google.common.eventbus.DeadEvent;
@@ -51,12 +52,16 @@ public class Game extends StateBasedGame {
 	public WaywiaState menuState, inGameState, loadingState;
 	public ErrorState errorState;
 	private boolean initMods = false;
+	private Mods mods;
+	public Reflections reflections = new Reflections(ClassLoader.getSystemClassLoader());
 
 	public Game(File root, String username, String password) throws IOException {
 		super(GameLib.FULL_NAME);
 		GameLogger.init(new File(root, "logs"));
 
 		Login.logIn(username, password);
+
+		this.mods = new Mods(this);
 
 		if (root == null) root = new File(System.getProperty("user.dir"));
 
@@ -126,25 +131,20 @@ public class Game extends StateBasedGame {
 		try {
 			File modsFolder = new File(root, "mods");
 			if (!modsFolder.exists() && !modsFolder.mkdirs()) throw new IOException("Could not create mods' folder");
+
 			ReflectionUtil.addFolderToClasspath(modsFolder);
-			Reflections reflections = new Reflections(ClassLoader.getSystemClassLoader());
-			for (Class c : reflections.getTypesAnnotatedWith(Mod.class)) {
-				try {
-					Object mod = c.newInstance();
-					GameLogger.debug("Found mod class: " + c.getName() + "; Instance: " + mod);
-					// TODO Add a Mods class, and call Mods.register(mod), and save it to a list or something
-					this.registerEventHandler(mod);
-				} catch (InstantiationException | IllegalAccessException ex) {
-					GameLogger.exception("Error loading mod from class: " + c, ex);
-				}
+
+			for (Class c : this.reflections.getTypesAnnotatedWith(ModData.class)) {
+				GameLogger.debug("Found mod class: " + c.getName());
+				// TODO Add a Mods class, and call Mods.register(mod), and save it to a list or something
+				this.mods.register(c);
 			}
 		} catch (IOException e) {
 			GameLogger.exception("Error loading mods folder", e);
 		}
 
-		long delta = System.currentTimeMillis() - before;
 		this.BUS.post(new ModEvent.ModLoadEvent(this));
-		GameLogger.debug("Mod-loading lasted " + delta / 1000.0 + " seconds");
+		GameLogger.debug("Mod-loading lasted " + (System.currentTimeMillis() - before) / 1000.0 + " seconds");
 	}
 
 	@Override

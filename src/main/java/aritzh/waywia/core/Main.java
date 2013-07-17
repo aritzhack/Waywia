@@ -34,6 +34,8 @@ public class Main {
 
 			if (args.length >= 3) {
 				root = new File(args[2]);
+			} else if (args.length == 1) {
+				root = new File(args[0]);
 			}
 
 			String username = "", password = "";

@@ -53,11 +53,11 @@ public class InputBox extends Button {
 		if (!cursorVisible || !this.hasFocus()) return;
 		float cursorX = this.textX - (Button.defaultFont.getWidth(this.text) / 2 - Button.defaultFont.getWidth(this.text.substring(0, cursorPos)));
 		float beforeW = g.getLineWidth();
+
 		if (Button.defaultFont.getWidth(this.text + "   ") > this.width) {
 			g.setLineWidth(4);
 			cursorX += 2;
-		}
-		if (!this.insert) {
+		} else if (!this.insert) {
 			int lineWidth = 10;
 			if (this.cursorPos + 1 < this.text.length()) {
 				lineWidth = Button.defaultFont.getWidth(String.valueOf(this.text.charAt(this.cursorPos + 1)));
@@ -65,6 +65,7 @@ public class InputBox extends Button {
 			g.setLineWidth(lineWidth);
 			cursorX += lineWidth / 2;
 		}
+
 		g.drawLine(cursorX, this.y + this.height / 2 - 10, cursorX, this.y + this.height / 2 + 10);
 		g.setLineWidth(beforeW);
 	}
@@ -74,24 +75,24 @@ public class InputBox extends Button {
 
 		switch (key) {
 			case 203: // <-
-				cursorPos--;
+				this.cursorPos--;
 				break;
 			case 205: // ->
-				cursorPos++;
+				this.cursorPos++;
 				break;
 			case 199: // START
-				cursorPos = 0;
+				this.cursorPos = 0;
 				break;
 			case 207: // END
-				cursorPos = this.text.length();
+				this.cursorPos = this.text.length();
 				break;
 			case 14: // Backspace
-				if (cursorPos == 0) break; // Nothing to remove
+				if (this.cursorPos == 0) break; // Nothing to remove
 				this.text = this.text.substring(0, cursorPos - 1) + this.text.substring(cursorPos);
 				cursorPos--;
 				break;
 			case 211: // Delete
-				if (cursorPos == this.text.length()) break; // Nothing to delete
+				if (this.cursorPos == this.text.length()) break; // Nothing to delete
 				this.text = this.text.substring(0, cursorPos) + this.text.substring(cursorPos + 1);
 				break;
 			case 210:  // Insert
@@ -99,12 +100,16 @@ public class InputBox extends Button {
 				break;
 			default:
 				if (Button.defaultFont.getWidth(this.text + "   ") > this.width) break;
-				this.text = new StringBuilder(this.text).insert(cursorPos, c).toString();
+				if (insert || this.cursorPos == this.text.length()) {
+					this.text = new StringBuilder(this.text).insert(this.cursorPos, c).toString();
+				} else {
+					this.text = new StringBuilder(this.text).deleteCharAt(this.cursorPos).insert(this.cursorPos, c).toString();
+				}
 				cursorPos++;
 				break;
 		}
-		if (cursorPos < 0) cursorPos = 0;
-		if (cursorPos > this.text.length()) cursorPos = this.text.length();
+		if (this.cursorPos < 0) cursorPos = 0;
+		if (this.cursorPos > this.text.length()) cursorPos = this.text.length();
 
 	}
 

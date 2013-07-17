@@ -13,31 +13,26 @@
  * game. If not, see http://www.gnu.org/licenses/.
  */
 
-package aritzh.waywia.util;
+package aritzh.waywia.mod;
 
-import aritzh.waywia.core.GameLogger;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
+ * All mod-classes must have this annotation in order to be loaded
+ *
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class RenderUtil {
+@Retention(value = RUNTIME)
+@Target(value = TYPE)
+public @interface ModData {
+	String version();
 
-	public static Image getImage(String filename) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(filename), "Image file name must not be null or empty!");
-		if (!filename.endsWith(".png")) filename += ".png";
-		filename = "img/" + filename;
-		try {
-			return new Image(TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(filename)));
-		} catch (Exception e) {
-			GameLogger.logAndThrowAsRuntime("Could not load image " + filename);
+	String waywiaVersion() default "0.0.0"; // Non-existing version, to skip version-check
 
-		}
-		return null;
-	}
+	String modName();
 }
