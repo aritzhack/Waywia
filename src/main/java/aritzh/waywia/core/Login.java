@@ -46,20 +46,20 @@ public class Login {
 	 */
 	public static void logIn(String username, String pass) {
 		if (username.equals("") && pass.equals("")) {
-			GameLogger.warning("Starting game in offline mode");
+			Game.logger.warning("Starting game in offline mode");
 			return;
 		}
 		switch (isCorrect(username, pass)) {
 			case SUCCESS:
 				Login.loggedIn = true;
 				Login.username = username;
-				GameLogger.log("Successfully logged in as " + username);
+				Game.logger.log("Successfully logged in as " + username);
 				break;
 			case INCORRECT:
-				GameLogger.warning("Incorrect login information");
+				Game.logger.warning("Incorrect login information");
 				break;
 			case ERROR:
-				GameLogger.warning("Error checking login information");
+				Game.logger.warning("Error checking login information");
 				break;
 		}
 	}
@@ -91,7 +91,7 @@ public class Login {
 
 	private static LoginResult isCorrectTries(String username, String password, boolean second) {
 		try {
-			if (second) GameLogger.log("Login check connection timed out, retrying...");
+			if (second) Game.logger.log("Login check connection timed out, retrying...");
 			URL url = new URL("http://waywia.hostzi.com/login/check.php");
 
 			String params = "user=" + username;
@@ -121,7 +121,7 @@ public class Login {
 		} catch (IOException e) {
 			if (e instanceof SocketTimeoutException && !second) return Login.isCorrectTries(username, password, true);
 			else if (e instanceof SocketTimeoutException)
-				GameLogger.warning("Login check connection timed out again. Check your internet connection");
+				Game.logger.warning("Login check connection timed out again. Check your internet connection");
 			else e.printStackTrace();
 			return LoginResult.ERROR;
 		}

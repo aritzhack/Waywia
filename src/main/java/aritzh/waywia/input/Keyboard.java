@@ -16,7 +16,6 @@
 package aritzh.waywia.input;
 
 import aritzh.waywia.core.Game;
-import aritzh.waywia.core.GameLogger;
 import org.newdawn.slick.*;
 import org.newdawn.slick.imageout.ImageOut;
 
@@ -43,7 +42,7 @@ public class Keyboard implements KeyListener {
 					ImageOut.write(target, "screenshot.png", false);
 					target.destroy();
 				} catch (SlickException e) {
-					GameLogger.exception("Could not save screenshot", e);
+					Game.logger.exception("Could not save screenshot", e);
 				}
 				break;
 			default:

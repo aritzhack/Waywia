@@ -19,9 +19,10 @@ import aritzh.util.ReflectionUtil;
 import aritzh.util.eventBus.DeadEvent;
 import aritzh.util.eventBus.EventBus;
 import aritzh.util.eventBus.Subscribe;
+import aritzh.util.logging.Logger;
+import aritzh.util.logging.LoggerBuilder;
 import aritzh.waywia.core.states.*;
 import aritzh.waywia.gui.components.GUI;
-import aritzh.waywia.i18n.I18N;
 import aritzh.waywia.lib.GameLib;
 import aritzh.waywia.mod.ModData;
 import aritzh.waywia.mod.Mods;
@@ -32,6 +33,8 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
+import org.newdawn.slick.util.Log;
+import org.newdawn.slick.util.LogSystem;
 import org.reflections.Reflections;
 
 import java.io.File;
@@ -55,9 +58,13 @@ public class Game extends StateBasedGame {
 	private Mods mods;
 	public final Reflections reflections = new Reflections(ClassLoader.getSystemClassLoader());
 
+	public static Logger logger = null;
+
 	public Game(File root, String username, String password) throws IOException {
 		super(GameLib.FULL_NAME);
-		GameLogger.init(new File(root, "logs"));
+		Game.logger = new LoggerBuilder("Game").toConsole().setFileAmount(5).setLogRoot(new File(root, "logs")).setResBundle("locales.lang").build();
+
+		Game.shutSlick2D();
 
 		Login.logIn(username, password);
 
@@ -75,8 +82,39 @@ public class Game extends StateBasedGame {
 		this.registerEventHandler(this);
 
 		Config.init(root);
-		I18N.init(new File(this.root, "locales"));
-		GameLogger.logTranslated("test1");
+		Game.logger.log("test1");
+	}
+
+	private static void shutSlick2D() {
+		Log.setLogSystem(new LogSystem() {
+			@Override
+			public void error(String message, Throwable e) {
+			}
+
+			@Override
+			public void error(Throwable e) {
+			}
+
+			@Override
+			public void error(String message) {
+			}
+
+			@Override
+			public void warn(String message) {
+			}
+
+			@Override
+			public void warn(String message, Throwable e) {
+			}
+
+			@Override
+			public void info(String message) {
+			}
+
+			@Override
+			public void debug(String message) {
+			}
+		});
 	}
 
 	@Override
@@ -84,7 +122,6 @@ public class Game extends StateBasedGame {
 		this.getCurrentState().closing();
 		Config.GAME.save();
 		if (Config.GAME.getBoolean("Mods", "loadMods")) this.BUS.post(new ModUnloadEvent(this));
-		GameLogger.close();
 		return super.closeRequested();
 	}
 
@@ -121,7 +158,7 @@ public class Game extends StateBasedGame {
 
 	@Subscribe
 	public void catchDeadEvents(DeadEvent e) {
-		GameLogger.debug("Caught dead event: " + e.getEvent());
+		Game.logger.debug("Caught dead event: " + e.getEvent());
 	}
 
 	public void loadMods() {
@@ -135,16 +172,17 @@ public class Game extends StateBasedGame {
 			ReflectionUtil.addFolderToClasspath(modsFolder);
 
 			for (Class c : this.reflections.getTypesAnnotatedWith(ModData.class)) {
-				GameLogger.debug("Found mod class: " + c.getName());
+				Game.logger.debug("Found mod class: " + c.getName());
 				// TODO Add a Mods class, and call Mods.register(mod), and save it to a list or something
 				this.mods.register(c);
 			}
 		} catch (IOException e) {
-			GameLogger.exception("Error loading mods folder", e);
+			Game.logger.exception("Error loading mods folder", e);
 		}
 
 		this.BUS.post(new ModEvent.ModLoadEvent(this));
-		GameLogger.debug("Mod-loading lasted " + (System.currentTimeMillis() - before) / 1000.0 + " seconds");
+		Game.logger.debug("Mod-loading lasted " + (System.currentTimeMillis() - before) / 1000.0 + " seconds");
+		Game.logger.debug("Mod-loading lasted " + (System.currentTimeMillis() - before) / 1000.0 + " seconds");
 	}
 
 	@Override

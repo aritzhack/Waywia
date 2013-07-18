@@ -15,7 +15,7 @@
 
 package aritzh.waywia.util;
 
-import aritzh.waywia.core.GameLogger;
+import aritzh.waywia.core.Game;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import org.newdawn.slick.Image;
@@ -35,7 +35,7 @@ public class RenderUtil {
 		try {
 			return new Image(TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(filename)));
 		} catch (Exception e) {
-			GameLogger.logAndThrowAsRuntime("Could not load image " + filename);
+			Game.logger.logAndThrowAsRuntime("Could not load image " + filename, e);
 
 		}
 		return null;

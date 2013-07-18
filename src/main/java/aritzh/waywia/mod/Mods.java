@@ -2,7 +2,6 @@ package aritzh.waywia.mod;
 
 import aritzh.util.ReflectionUtil;
 import aritzh.waywia.core.Game;
-import aritzh.waywia.core.GameLogger;
 import com.google.common.base.Preconditions;
 
 import java.lang.reflect.Field;
@@ -39,15 +38,15 @@ public class Mods {
 			try {
 				instance = mod.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
-				GameLogger.exception(new IllegalArgumentException("Exception when instantiating mod class", e));
+				Game.logger.exception("Exception when instantiating mod class", new IllegalArgumentException(e));
 			}
 		}
 		if (instance == null)
-			GameLogger.exception(new IllegalArgumentException("Could not load mod from class " + mod));
+			Game.logger.warning("Class " + mod + " could not be loaded as a mod class");
 		ModData data = (ModData) mod.getAnnotation(ModData.class);
 
 		Mod m = new Mod(data.modName(), data.version(), data.waywiaVersion(), instance);
 		this.mods.add(m);
-		GameLogger.log("Mod \"" + m.name + "\" successfully loaded");
+		Game.logger.log("Mod \"" + m.name + "\" successfully loaded");
 	}
 }

@@ -21,7 +21,7 @@ import aritzh.util.bds.BDSInt;
 import aritzh.util.bds.BDSStorable;
 import aritzh.util.bds.BDSString;
 import aritzh.waywia.blocks.Block;
-import aritzh.waywia.core.GameLogger;
+import aritzh.waywia.core.Game;
 import aritzh.waywia.universe.World;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -117,7 +117,7 @@ public abstract class Entity implements BDSStorable {
 		try {
 			return Entity.entities.get(id).newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
-			GameLogger.exception("Could not instantiate entity with id \"" + id + "\"", e);
+			Game.logger.exception("Could not instantiate entity with id \"" + id + "\"", e);
 		} catch (NullPointerException e) {
 			throw new IllegalArgumentException("Entity type \"" + id + "\" is not registered. This is a bug!");
 		}

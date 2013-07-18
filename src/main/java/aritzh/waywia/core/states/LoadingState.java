@@ -17,7 +17,6 @@ package aritzh.waywia.core.states;
 
 import aritzh.waywia.core.Config;
 import aritzh.waywia.core.Game;
-import aritzh.waywia.core.GameLogger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.state.transition.FadeInTransition;
@@ -46,14 +45,14 @@ public class LoadingState extends WaywiaState {
 				g.fillRect(0, 0, this.game.getGc().getWidth(), this.game.getGc().getHeight());
 				if (!Config.GAME.getBoolean("Mods", "loadMods")) {
 					step = 2;
-					GameLogger.log("Skipping mod loading");
+					Game.logger.log("Skipping mod loading");
 					return;
 				}
 				break;
 			case 1:
-				GameLogger.log("Starting to load mods...");
+				Game.logger.log("Starting to load mods...");
 				this.game.loadMods();
-				GameLogger.log("Mods loaded");
+				Game.logger.log("Mods loaded");
 				break;
 			case 2:
 				this.game.enterState(this.game.menuState.getID(), null, new FadeInTransition());

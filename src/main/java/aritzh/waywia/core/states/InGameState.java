@@ -19,7 +19,6 @@ import aritzh.waywia.blocks.BackgroundBlock;
 import aritzh.waywia.blocks.Block;
 import aritzh.waywia.blocks.WallBlock;
 import aritzh.waywia.core.Game;
-import aritzh.waywia.core.GameLogger;
 import aritzh.waywia.core.Login;
 import aritzh.waywia.entity.Entity;
 import aritzh.waywia.entity.QuadEntity;
@@ -72,7 +71,7 @@ public class InGameState extends WaywiaState {
 			try {
 				this.universe = Universe.newUniverse("UniBase", this.game.savesDir, "UniWorld", this);
 			} catch (IOException e) {
-				GameLogger.logAndThrowAsRuntime("Could not create universe UniBase", e);
+				Game.logger.logAndThrowAsRuntime("Could not create universe UniBase", e);
 			}
 		}
 		this.player = new Player(Login.getUsername(), universe);

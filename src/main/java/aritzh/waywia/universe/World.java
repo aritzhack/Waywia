@@ -23,7 +23,7 @@ import aritzh.util.bds.BDSStorable;
 import aritzh.util.bds.BDSString;
 import aritzh.waywia.blocks.BackgroundBlock;
 import aritzh.waywia.blocks.Block;
-import aritzh.waywia.core.GameLogger;
+import aritzh.waywia.core.Game;
 import aritzh.waywia.entity.Entity;
 import aritzh.waywia.entity.player.Player;
 import com.google.common.base.CaseFormat;
@@ -143,9 +143,9 @@ public class World implements BDSStorable {
 			World w = World.loadWorld(folder);
 			if (w == null) {
 				try {
-					GameLogger.warning("Folder " + folder.getCanonicalPath() + " is not a valid world folder");
+					Game.logger.warning("Folder " + folder.getCanonicalPath() + " is not a valid world folder");
 				} catch (IOException e) {
-					GameLogger.warning("Folder " + folder.getAbsolutePath() + " is not a valid world folder");
+					Game.logger.warning("Folder " + folder.getAbsolutePath() + " is not a valid world folder");
 				}
 				continue;
 			}

@@ -18,7 +18,7 @@ package aritzh.waywia.universe;
 import aritzh.util.bds.BDSCompound;
 import aritzh.util.bds.BDSStorable;
 import aritzh.util.bds.BDSString;
-import aritzh.waywia.core.GameLogger;
+import aritzh.waywia.core.Game;
 import aritzh.waywia.core.states.InGameState;
 import aritzh.waywia.entity.player.Player;
 import com.google.common.base.CaseFormat;
@@ -116,7 +116,7 @@ public class Universe implements BDSStorable {
 		for (File folder : savesFolder.listFiles(onlyFolders)) {
 			Universe u = Universe.loadUniverse(folder, state);
 			if (u == null) {
-				GameLogger.warning("Folder " + folder.getAbsolutePath() + " is not a valid universe folder");
+				Game.logger.warning("Folder " + folder.getAbsolutePath() + " is not a valid universe folder");
 				continue;
 			}
 			ret.add(u);

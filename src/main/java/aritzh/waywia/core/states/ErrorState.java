@@ -16,7 +16,6 @@
 package aritzh.waywia.core.states;
 
 import aritzh.waywia.core.Game;
-import aritzh.waywia.core.GameLogger;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -87,7 +86,7 @@ public class ErrorState extends WaywiaState {
 			throw new IllegalStateException("Error state was not correctly initialized using ErrorState.setError()");
 
 		if (!logged) {
-			GameLogger.exception(throwable);
+			Game.logger.exception(throwable.getLocalizedMessage(), throwable);
 			logged = true;
 		}
 	}
