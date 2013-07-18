@@ -15,7 +15,7 @@
 
 package aritzh.waywia.core;
 
-import aritzh.waywia.util.Util;
+import aritzh.util.Util;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 

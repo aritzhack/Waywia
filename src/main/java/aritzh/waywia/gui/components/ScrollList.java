@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class ScrollList<T> extends GUIElement {
 
-	private java.util.List<T> items = new ArrayList<>();
+	private final java.util.List<T> items = new ArrayList<>();
 	private T selected;
 	private float x, y, width, height;
 	private final Rectangle bbox;

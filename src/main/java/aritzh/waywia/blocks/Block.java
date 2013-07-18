@@ -15,9 +15,9 @@
 
 package aritzh.waywia.blocks;
 
-import aritzh.waywia.bds.BDSCompound;
-import aritzh.waywia.bds.BDSInt;
-import aritzh.waywia.bds.BDSStorable;
+import aritzh.util.bds.BDSCompound;
+import aritzh.util.bds.BDSInt;
+import aritzh.util.bds.BDSStorable;
 import aritzh.waywia.universe.World;
 import aritzh.waywia.util.RenderUtil;
 import com.google.common.collect.Lists;
@@ -33,7 +33,7 @@ import java.util.List;
 public abstract class Block implements BDSStorable {
 
 	private static final List<Block> blocks = Lists.newArrayList();
-	protected Image texture = RenderUtil.getImage("defaultBlock");
+	Image texture = RenderUtil.getImage("defaultBlock");
 	public static final int SIZE = 32;
 
 	private boolean solid = false;
@@ -63,7 +63,7 @@ public abstract class Block implements BDSStorable {
 		g.drawImage(texture, x * SIZE, y * SIZE);
 	}
 
-	public void setSolid() {
+	protected void setSolid() {
 		this.solid = true;
 	}
 

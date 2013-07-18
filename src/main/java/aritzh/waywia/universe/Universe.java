@@ -15,9 +15,9 @@
 
 package aritzh.waywia.universe;
 
-import aritzh.waywia.bds.BDSCompound;
-import aritzh.waywia.bds.BDSStorable;
-import aritzh.waywia.bds.BDSString;
+import aritzh.util.bds.BDSCompound;
+import aritzh.util.bds.BDSStorable;
+import aritzh.util.bds.BDSString;
 import aritzh.waywia.core.GameLogger;
 import aritzh.waywia.core.states.InGameState;
 import aritzh.waywia.entity.player.Player;
@@ -43,7 +43,7 @@ public class Universe implements BDSStorable {
 	private final String name;
 	private final BDSCompound customData;
 
-	private World currentWorld;
+	private final World currentWorld;
 	private final InGameState state;
 
 	private Universe(String name, File root, Set<World> worlds, World currentWorld, BDSCompound customData, InGameState state) {

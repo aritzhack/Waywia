@@ -15,17 +15,17 @@
 
 package aritzh.waywia.universe;
 
-import aritzh.waywia.bds.BDSCompound;
-import aritzh.waywia.bds.BDSInt;
-import aritzh.waywia.bds.BDSStorable;
-import aritzh.waywia.bds.BDSString;
+import aritzh.util.Matrix;
+import aritzh.util.ParametrizedFunction;
+import aritzh.util.bds.BDSCompound;
+import aritzh.util.bds.BDSInt;
+import aritzh.util.bds.BDSStorable;
+import aritzh.util.bds.BDSString;
 import aritzh.waywia.blocks.BackgroundBlock;
 import aritzh.waywia.blocks.Block;
 import aritzh.waywia.core.GameLogger;
 import aritzh.waywia.entity.Entity;
 import aritzh.waywia.entity.player.Player;
-import aritzh.waywia.util.Matrix;
-import aritzh.waywia.util.ParametrizedFunction;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;

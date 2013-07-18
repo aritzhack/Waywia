@@ -1,8 +1,8 @@
 package aritzh.waywia.mod;
 
+import aritzh.util.ReflectionUtil;
 import aritzh.waywia.core.Game;
 import aritzh.waywia.core.GameLogger;
-import aritzh.waywia.util.ReflectionUtil;
 import com.google.common.base.Preconditions;
 
 import java.lang.reflect.Field;
@@ -16,9 +16,9 @@ import java.util.Set;
  */
 public class Mods {
 
-	List<Mod> mods = new ArrayList<>();
+	private final List<Mod> mods = new ArrayList<>();
 
-	private Game game;
+	private final Game game;
 
 	public Mods(Game game) {
 		this.game = game;
@@ -48,6 +48,6 @@ public class Mods {
 
 		Mod m = new Mod(data.modName(), data.version(), data.waywiaVersion(), instance);
 		this.mods.add(m);
-		GameLogger.log("Mod \"" + m.name + "\" succesfully loaded");
+		GameLogger.log("Mod \"" + m.name + "\" successfully loaded");
 	}
 }

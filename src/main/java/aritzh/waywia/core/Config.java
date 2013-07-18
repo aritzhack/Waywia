@@ -15,8 +15,8 @@
 
 package aritzh.waywia.core;
 
+import aritzh.util.Configuration;
 import aritzh.waywia.lib.GameLib;
-import aritzh.waywia.util.Configuration;
 
 import java.io.File;
 
@@ -26,23 +26,17 @@ import java.io.File;
  */
 public class Config {
 
-	public static final Configuration GAME;
+	public static Configuration GAME;
 
-	static {
-		File configFile = new File("config.cfg");
+	public static void init(File root) {
+		File configFile = new File(root, "config.cfg");
 		GAME = Configuration.loadConfig(configFile);
 
 		Config.setDefaults();
-
-		//Config.GAME.save();
 	}
 
 	private static void setDefaults() {
 		Config.GAME.setDefault("Main", "Version", GameLib.VERSION);
 		Config.GAME.setDefault("Mods", "loadMods", true);
-	}
-
-	// For the static initializer to run
-	public static void init() {
 	}
 }

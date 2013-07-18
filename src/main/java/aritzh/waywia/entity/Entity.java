@@ -15,14 +15,14 @@
 
 package aritzh.waywia.entity;
 
-import aritzh.waywia.bds.BDSCompound;
-import aritzh.waywia.bds.BDSInt;
-import aritzh.waywia.bds.BDSStorable;
-import aritzh.waywia.bds.BDSString;
+import aritzh.util.ParametrizedFunction;
+import aritzh.util.bds.BDSCompound;
+import aritzh.util.bds.BDSInt;
+import aritzh.util.bds.BDSStorable;
+import aritzh.util.bds.BDSString;
 import aritzh.waywia.blocks.Block;
 import aritzh.waywia.core.GameLogger;
 import aritzh.waywia.universe.World;
-import aritzh.waywia.util.ParametrizedFunction;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.newdawn.slick.Graphics;
@@ -39,9 +39,9 @@ import java.util.List;
 public abstract class Entity implements BDSStorable {
 
 	protected float posX = 0, posY = 0;
-	protected float width = Block.SIZE, height = Block.SIZE;
 	protected int velX = 1, velY = 1;
 	protected int health;
+	protected final float width = Block.SIZE, height = Block.SIZE;
 	protected final BDSCompound customData = new BDSCompound("CustomData");
 	private static final BiMap<Integer, Class<? extends Entity>> entities = HashBiMap.create();
 

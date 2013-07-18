@@ -15,6 +15,10 @@
 
 package aritzh.waywia.core;
 
+import aritzh.util.ReflectionUtil;
+import aritzh.util.eventBus.DeadEvent;
+import aritzh.util.eventBus.EventBus;
+import aritzh.util.eventBus.Subscribe;
 import aritzh.waywia.core.states.*;
 import aritzh.waywia.gui.components.GUI;
 import aritzh.waywia.i18n.I18N;
@@ -22,10 +26,6 @@ import aritzh.waywia.lib.GameLib;
 import aritzh.waywia.mod.ModData;
 import aritzh.waywia.mod.Mods;
 import aritzh.waywia.mod.events.ModEvent;
-import aritzh.waywia.util.ReflectionUtil;
-import com.google.common.eventbus.DeadEvent;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
@@ -53,7 +53,7 @@ public class Game extends StateBasedGame {
 	public ErrorState errorState;
 	private boolean initMods = false;
 	private Mods mods;
-	public Reflections reflections = new Reflections(ClassLoader.getSystemClassLoader());
+	public final Reflections reflections = new Reflections(ClassLoader.getSystemClassLoader());
 
 	public Game(File root, String username, String password) throws IOException {
 		super(GameLib.FULL_NAME);
@@ -74,7 +74,7 @@ public class Game extends StateBasedGame {
 
 		this.registerEventHandler(this);
 
-		Config.init();
+		Config.init(root);
 		I18N.init(new File(this.root, "locales"));
 		GameLogger.logTranslated("test1");
 	}

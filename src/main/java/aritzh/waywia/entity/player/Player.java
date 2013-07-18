@@ -15,8 +15,8 @@
 
 package aritzh.waywia.entity.player;
 
-import aritzh.waywia.bds.BDSCompound;
-import aritzh.waywia.bds.BDSString;
+import aritzh.util.bds.BDSCompound;
+import aritzh.util.bds.BDSString;
 import aritzh.waywia.entity.Entity;
 import aritzh.waywia.universe.Universe;
 import org.newdawn.slick.Color;
@@ -28,7 +28,7 @@ import org.newdawn.slick.Graphics;
  */
 public class Player extends Entity {
 
-	String username;
+	private String username;
 	private Universe universe;
 
 	public Player(String username, Universe universe) {

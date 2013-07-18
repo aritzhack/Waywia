@@ -29,8 +29,8 @@ import org.newdawn.slick.Input;
  */
 public class HudGui extends GUI {
 
-	private static Image heartEmpty = RenderUtil.getImage("heartEmpty");
-	private static Image heartFull = RenderUtil.getImage("heartFull");
+	private static final Image heartEmpty = RenderUtil.getImage("heartEmpty");
+	private static final Image heartFull = RenderUtil.getImage("heartFull");
 
 	public HudGui(InGameState state) {
 		super(state);
