@@ -12,6 +12,11 @@ before_install:
   - mvn clean install -q
   - cd ..
   - rm -rf slick2d-maven
+  - git clone https://github.com/aritzhack/AritzhUtil.git
+  - cd AritzhUtil
+  - mvn clean install -q
+  - cd ..
+  - rm -rf AritzhUtil
 
 env:
   global:
