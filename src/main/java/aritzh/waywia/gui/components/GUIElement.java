@@ -76,7 +76,7 @@ public abstract class GUIElement implements InputListener {
 		this.setHover(this.getBBox().contains(newx, newy));
 	}
 
-	// InputListener methods not used at this level
+	//region ... InputListener methods not used at this level ...
 
 	@Override
 	public void controllerLeftPressed(int controller) {
@@ -154,4 +154,6 @@ public abstract class GUIElement implements InputListener {
 	@Override
 	public void inputStarted() {
 	}
+
+	//endregion
 }

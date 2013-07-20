@@ -49,6 +49,10 @@ public abstract class Entity implements BDSStorable {
 		this.health = this.getMaxHealth();
 	}
 
+	public Entity(int health) {
+		this.health = health;
+	}
+
 	public abstract int getMaxHealth();
 
 	public void update(int delta, World world) {
