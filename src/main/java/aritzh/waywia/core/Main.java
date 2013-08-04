@@ -15,7 +15,7 @@
 
 package aritzh.waywia.core;
 
-import aritzh.util.Util;
+import aritzh.util.IOUtil;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 
@@ -28,35 +28,35 @@ import java.io.IOException;
  */
 public class Main {
 
-	public static void main(String[] args) throws SlickException {
-		try {
-			File root = Util.getAppDir("waywia");
+    public static void main(String[] args) throws SlickException {
+        try {
+            File root = IOUtil.getAppDir("waywia");
 
-			if (args.length >= 3) {
-				root = new File(args[2]);
-			} else if (args.length == 1) {
-				root = new File(args[0]);
-			}
+            if (args.length >= 3) {
+                root = new File(args[2]);
+            } else if (args.length == 1) {
+                root = new File(args[0]);
+            }
 
-			String username = "", password = "";
-			if (args.length >= 2) {
-				username = args[0];
-				password = args[1];
-			}
+            String username = "", password = "";
+            if (args.length >= 2) {
+                username = args[0];
+                password = args[1];
+            }
 
-			Game g = new Game(root, username, password);
+            Game g = new Game(root, username, password);
 
-			AppGameContainer gc = new AppGameContainer(g, 800, 600, false);
-			gc.setShowFPS(false);
-			gc.start();
-		} catch (IOException e) {
-			if (Game.logger != null) Game.logger.logAndThrowAsRuntime("Could not initialize Waywia", e);
-			else {
-				System.err.println("Could not initialize Waywia");
-				throw new RuntimeException(e);
-			}
-			System.exit(1);
-		}
-	}
+            AppGameContainer gc = new AppGameContainer(g, 800, 600, false);
+            gc.setShowFPS(false);
+            gc.start();
+        } catch (IOException e) {
+            if (Game.logger != null) Game.logger.logAndThrowAsRuntime("Could not initialize Waywia", e);
+            else {
+                System.err.println("Could not initialize Waywia");
+                throw new RuntimeException(e);
+            }
+            System.exit(1);
+        }
+    }
 
 }
