@@ -21,6 +21,8 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.state.transition.FadeInTransition;
 
+import java.io.IOException;
+
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
@@ -51,8 +53,14 @@ public class LoadingState extends WaywiaState {
 				break;
 			case 1:
 				Game.logger.log("Starting to load mods...");
-				this.game.loadMods();
-				Game.logger.log("Mods loaded");
+
+                long before = System.currentTimeMillis();
+                try {
+                    this.game.mods.loadAllExtensions(this.game.modsDir);
+                } catch (ReflectiveOperationException | IOException ignored) { }
+                Game.logger.debug("Mod-loading lasted " + (System.currentTimeMillis() - before) / 1000.0 + " seconds");
+
+                Game.logger.log("Mods loaded");
 				break;
 			case 2:
 				this.game.enterState(this.game.menuState.getID(), null, new FadeInTransition());

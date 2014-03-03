@@ -88,8 +88,12 @@ public class Universe implements BDSStorable {
 			}
 			if (currW == null) currW = worlds.iterator().next();
 			Universe u = new Universe(name, root, worlds, currW, data, state);
-			u.save();
-			return u;
+            try {
+                u.save();
+            } catch (IOException e) {
+                Game.logger.exception("Error saving universe", e);
+            }
+            return u;
 		} catch (NullPointerException ignored) {
 		}
 		return null;
@@ -137,7 +141,7 @@ public class Universe implements BDSStorable {
 		if (this.currentWorld != null) this.currentWorld.update(delta);
 	}
 
-	public void save() {
+	public void save() throws IOException {
 		this.toBDS().writeToFile(new File(root, "universe.dat"));
 		for (World w : this.worlds) {
 			w.save();

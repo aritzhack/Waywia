@@ -38,97 +38,101 @@ import java.io.IOException;
  */
 public class InGameState extends WaywiaState {
 
-	private Universe universe;
-	private Player player;
+    private Universe universe;
+    private Player player;
 
-	public InGameState(Game game) {
-		super(game, "In-Game");
-	}
+    public InGameState(Game game) {
+        super(game, "In-Game");
+    }
 
-	@Override
-	public int getID() {
-		return 1;
-	}
+    @Override
+    public int getID() {
+        return 1;
+    }
 
-	@Override
-	public void init() {
-		this.openGUI(new HudGui(this));
+    @Override
+    public void init() {
+        this.openGUI(new HudGui(this));
 
-		this.initUniverse();
+        this.initUniverse();
 
-		InGameState.registerEntities();
-		InGameState.registerBlocks();
-	}
+        InGameState.registerEntities();
+        InGameState.registerBlocks();
+    }
 
-	@Override
-	public void keyPressed(int key, char c) {
-		super.keyPressed(key, c);
-	}
+    @Override
+    public void keyPressed(int key, char c) {
+        super.keyPressed(key, c);
+    }
 
-	private void initUniverse() {
-		this.universe = Universe.loadUniverse(new File(this.game.savesDir, "uniBase"), this);
-		if (this.universe == null) {
-			try {
-				this.universe = Universe.newUniverse("UniBase", this.game.savesDir, "UniWorld", this);
-			} catch (IOException e) {
-				Game.logger.logAndThrowAsRuntime("Could not create universe UniBase", e);
-			}
-		}
-		this.player = new Player(Login.getUsername(), universe);
+    private void initUniverse() {
+        this.universe = Universe.loadUniverse(new File(this.game.savesDir, "uniBase"), this);
+        if (this.universe == null) {
+            try {
+                this.universe = Universe.newUniverse("UniBase", this.game.savesDir, "UniWorld", this);
+            } catch (IOException e) {
+                Game.logger.logAndThrowAsRuntime("Could not create universe UniBase", e);
+            }
+        }
+        this.player = new Player(Login.getUsername(), universe);
 
-		this.universe.setPlayer(this.player);
-	}
+        this.universe.setPlayer(this.player);
+    }
 
-	public Player getPlayer() {
-		return player;
-	}
+    public Player getPlayer() {
+        return player;
+    }
 
-	private static void registerBlocks() {
-		Block.registerBlock(new BackgroundBlock(), BlockLib.IDS.BACKGROUND);
-		Block.registerBlock(new WallBlock(), BlockLib.IDS.WALL);
-	}
+    private static void registerBlocks() {
+        Block.registerBlock(new BackgroundBlock(), BlockLib.IDS.BACKGROUND);
+        Block.registerBlock(new WallBlock(), BlockLib.IDS.WALL);
+    }
 
-	private static void registerEntities() {
-		Entity.registerEntity(QuadEntity.class, 0);
-	}
+    private static void registerEntities() {
+        Entity.registerEntity(QuadEntity.class, 0);
+    }
 
-	@Override
-	public void mousePressed(int button, int x, int y) {
-		if (!this.isGuiOpen() || this.currGui.hasTransparentBackGround()) universe.clicked(x, y);
-	}
+    @Override
+    public void mousePressed(int button, int x, int y) {
+        if (!this.isGuiOpen() || this.currGui.hasTransparentBackGround()) universe.clicked(x, y);
+    }
 
-	@Override
-	public void render(Graphics g) {
-		if (this.universe != null) this.universe.render(g);
-	}
+    @Override
+    public void render(Graphics g) {
+        if (this.universe != null) this.universe.render(g);
+    }
 
-	@Override
-	public void update(int delta) {
-		this.universe.update(delta);
+    @Override
+    public void update(int delta) {
+        this.universe.update(delta);
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			player.setVY(-1);
-		} else if (player.getVY() == -1) player.setVY(0);
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			player.setVY(1);
-		} else if (player.getVY() == 1) player.setVY(0);
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			player.setVX(-1);
-		} else if (player.getVX() == -1) player.setVX(0);
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			player.setVX(1);
-		} else if (player.getVX() == 1) player.setVX(0);
+        if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+            player.setVY(-1);
+        } else if (player.getVY() == -1) player.setVY(0);
+        if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+            player.setVY(1);
+        } else if (player.getVY() == 1) player.setVY(0);
+        if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+            player.setVX(-1);
+        } else if (player.getVX() == -1) player.setVX(0);
+        if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+            player.setVX(1);
+        } else if (player.getVX() == 1) player.setVX(0);
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_W) && Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			player.setVY(0);
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_A) && Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			player.setVX(0);
-		}
-	}
+        if (Keyboard.isKeyDown(Keyboard.KEY_W) && Keyboard.isKeyDown(Keyboard.KEY_S)) {
+            player.setVY(0);
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_A) && Keyboard.isKeyDown(Keyboard.KEY_D)) {
+            player.setVX(0);
+        }
+    }
 
-	@Override
-	public void onClosing() {
-		if (this.universe != null) this.universe.save();
-	}
+    @Override
+    public void onClosing() {
+        if (this.universe != null) try {
+            this.universe.save();
+        } catch (IOException e) {
+            Game.logger.exception("Error saving universe", e);
+        }
+    }
 }

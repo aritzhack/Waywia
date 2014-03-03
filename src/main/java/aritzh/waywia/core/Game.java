@@ -15,18 +15,21 @@
 
 package aritzh.waywia.core;
 
-import aritzh.util.ReflectionUtil;
 import aritzh.util.eventBus.DeadEvent;
 import aritzh.util.eventBus.EventBus;
 import aritzh.util.eventBus.Subscribe;
+import aritzh.util.extensions.ExtensibleApp;
+import aritzh.util.extensions.Extensions;
+import aritzh.util.extensions.events.ExtensionEvent;
 import aritzh.util.logging.Logger;
 import aritzh.util.logging.LoggerBuilder;
-import aritzh.waywia.core.states.*;
+import aritzh.waywia.core.states.ErrorState;
+import aritzh.waywia.core.states.InGameState;
+import aritzh.waywia.core.states.LoadingState;
+import aritzh.waywia.core.states.MenuState;
+import aritzh.waywia.core.states.WaywiaState;
 import aritzh.waywia.gui.components.GUI;
 import aritzh.waywia.lib.GameLib;
-import aritzh.waywia.mod.ModData;
-import aritzh.waywia.mod.Mods;
-import aritzh.waywia.mod.events.ModEvent;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
@@ -40,22 +43,21 @@ import org.reflections.Reflections;
 import java.io.File;
 import java.io.IOException;
 
-import static aritzh.waywia.mod.events.ModEvent.ModUnloadEvent;
-
 /**
  * @author Aritz Lopez
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public class Game extends StateBasedGame {
+public class Game extends StateBasedGame implements ExtensibleApp {
 
 	public final File root;
 	public final File savesDir;
+    public final File modsDir;
 	private final EventBus BUS = new EventBus("MainBus");
 	private AppGameContainer gc = null;
 	public WaywiaState menuState, inGameState, loadingState;
 	public ErrorState errorState;
 	private boolean initMods = false;
-	private Mods mods;
+	public final Extensions mods;
 	public final Reflections reflections = new Reflections(ClassLoader.getSystemClassLoader());
 
 	public static Logger logger = null;
@@ -68,7 +70,7 @@ public class Game extends StateBasedGame {
 
 		Login.logIn(username, password);
 
-		this.mods = new Mods(this);
+		this.mods = new Extensions(this, Game.logger);
 
 		if (root == null) root = new File(System.getProperty("user.dir"));
 
@@ -78,6 +80,9 @@ public class Game extends StateBasedGame {
 
 		this.savesDir = new File(this.root, "saves");
 		if (!this.savesDir.exists() && !savesDir.mkdirs()) throw new IOException("Couldn't make the saves' folder");
+
+        this.modsDir = new File(this.root, "mods");
+        if (!this.modsDir.exists() && !modsDir.mkdirs()) throw new IOException("Couldn't make the mods' folder");
 
 		this.registerEventHandler(this);
 
@@ -120,8 +125,12 @@ public class Game extends StateBasedGame {
 	@Override
 	public boolean closeRequested() {
 		this.getCurrentState().closing();
-		Config.GAME.save();
-		if (Config.GAME.getBoolean("Mods", "loadMods")) this.BUS.post(new ModUnloadEvent(this));
+        try {
+            Config.GAME.save();
+        } catch (IOException e) {
+            Game.logger.exception("Error saving config", e);
+        }
+        if (Config.GAME.getBoolean("Mods", "loadMods")) this.BUS.post(new ExtensionEvent.ExtensionUnloadEvent(this));
 		return super.closeRequested();
 	}
 
@@ -161,31 +170,7 @@ public class Game extends StateBasedGame {
 		Game.logger.debug("Caught dead event: " + e.getEvent());
 	}
 
-	public void loadMods() {
-		long before = System.currentTimeMillis();
-		if (initMods) return;
-		initMods = true;
-		try {
-			File modsFolder = new File(root, "mods");
-			if (!modsFolder.exists() && !modsFolder.mkdirs()) throw new IOException("Could not create mods' folder");
-
-			ReflectionUtil.addFolderToClasspath(modsFolder);
-
-			for (Class c : this.reflections.getTypesAnnotatedWith(ModData.class)) {
-				Game.logger.debug("Found mod class: " + c.getName());
-				// TODO Add a Mods class, and call Mods.register(mod), and save it to a list or something
-				this.mods.register(c);
-			}
-		} catch (IOException e) {
-			Game.logger.exception("Error loading mods folder", e);
-		}
-
-		this.BUS.post(new ModEvent.ModLoadEvent(this));
-		Game.logger.debug("Mod-loading lasted " + (System.currentTimeMillis() - before) / 1000.0 + " seconds");
-		Game.logger.debug("Mod-loading lasted " + (System.currentTimeMillis() - before) / 1000.0 + " seconds");
-	}
-
-	@Override
+    @Override
 	protected void preUpdateState(GameContainer container, int delta) throws SlickException {
 		gc.setTitle(GameLib.FULL_NAME + " - " + gc.getFPS() + " FPS - " + this.getCurrentState().toString() + " - " + Login.getUsername() + " -  Running in " + (Login.isLoggedIn() ? "online" : "offline") + " mode");
 	}
@@ -209,4 +194,14 @@ public class Game extends StateBasedGame {
 	public boolean isGuiOpen() {
 		return this.getCurrentGui() != null;
 	}
+
+    @Override
+    public Reflections getReflections() {
+        return this.reflections;
+    }
+
+    @Override
+    public EventBus getEventBus() {
+        return this.BUS;
+    }
 }

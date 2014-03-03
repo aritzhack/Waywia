@@ -15,12 +15,12 @@
 
 package aritzh.waywia.universe;
 
-import aritzh.util.Matrix;
 import aritzh.util.ParametrizedFunction;
 import aritzh.util.bds.BDSCompound;
 import aritzh.util.bds.BDSInt;
 import aritzh.util.bds.BDSStorable;
 import aritzh.util.bds.BDSString;
+import aritzh.util.collections.Matrix;
 import aritzh.waywia.blocks.BackgroundBlock;
 import aritzh.waywia.blocks.Block;
 import aritzh.waywia.core.Game;
@@ -225,7 +225,7 @@ public class World implements BDSStorable {
 		return worldName;
 	}
 
-	public void save() {
+	public void save() throws IOException {
 		this.toBDS().writeToFile(new File(this.root, "world.dat"));
 	}
 
