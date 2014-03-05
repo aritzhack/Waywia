@@ -21,8 +21,8 @@ import io.github.aritzhack.util.eventBus.Subscribe;
 import io.github.aritzhack.util.extensions.ExtensibleApp;
 import io.github.aritzhack.util.extensions.Extensions;
 import io.github.aritzhack.util.extensions.events.ExtensionEvent;
-import io.github.aritzhack.util.logging.Logger;
-import io.github.aritzhack.util.logging.LoggerBuilder;
+import io.github.aritzhack.util.logging.ILogger;
+import io.github.aritzhack.util.logging.SLF4JLogger;
 import aritzh.waywia.core.states.ErrorState;
 import aritzh.waywia.core.states.InGameState;
 import aritzh.waywia.core.states.LoadingState;
@@ -60,11 +60,11 @@ public class Game extends StateBasedGame implements ExtensibleApp {
 	public final Extensions mods;
 	public final Reflections reflections = new Reflections(ClassLoader.getSystemClassLoader());
 
-	public static Logger logger = null;
+	public static ILogger logger = null;
 
 	public Game(File root, String username, String password) throws IOException {
 		super(GameLib.FULL_NAME);
-		Game.logger = new LoggerBuilder("Game").toConsole().setFileAmount(5).setLogRoot(new File(root, "logs")).setResBundle("locales.lang").build();
+		Game.logger = new SLF4JLogger(Game.class);
 
 		Game.shutSlick2D();
 
@@ -87,7 +87,7 @@ public class Game extends StateBasedGame implements ExtensibleApp {
 		this.registerEventHandler(this);
 
 		Config.init(root);
-		Game.logger.log("test1");
+		Game.logger.i("test1");
 	}
 
 	private static void shutSlick2D() {
@@ -128,7 +128,7 @@ public class Game extends StateBasedGame implements ExtensibleApp {
         try {
             Config.GAME.save();
         } catch (IOException e) {
-            Game.logger.exception("Error saving config", e);
+            Game.logger.e("Error saving config", e);
         }
         if (Config.GAME.getBoolean("Mods", "loadMods")) this.BUS.post(new ExtensionEvent.ExtensionUnloadEvent(this));
 		return super.closeRequested();
@@ -167,7 +167,7 @@ public class Game extends StateBasedGame implements ExtensibleApp {
 
 	@Subscribe
 	public void catchDeadEvents(DeadEvent e) {
-		Game.logger.debug("Caught dead event: " + e.getEvent());
+		Game.logger.d("Caught dead event: {}", e.getEvent());
 	}
 
     @Override

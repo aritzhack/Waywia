@@ -46,7 +46,7 @@ public class NewUniverseGUI extends GUI {
 	@Override
 	public void clicked(int id) {
 		if (id == this.newButton.getID() && !this.worldName.getText().trim().equals("")) {
-			Game.logger.debug("Creating world: " + this.worldName.getText().trim());
+			Game.logger.d("Creating world: {}", this.worldName.getText().trim());
 		} else if (id == this.backButton.getID()) {
 			this.state.openGUI(new MainMenuGUI((MenuState) this.state));
 		}

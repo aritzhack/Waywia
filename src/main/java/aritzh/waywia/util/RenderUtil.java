@@ -35,7 +35,7 @@ public class RenderUtil {
 		try {
 			return new Image(TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(filename)));
 		} catch (Exception e) {
-			Game.logger.logAndThrowAsRuntime("Could not load image " + filename, e);
+			Game.logger.e("Could not load image " + filename, e);
 		}
 		return null;
 	}

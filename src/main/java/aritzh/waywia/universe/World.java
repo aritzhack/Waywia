@@ -143,9 +143,9 @@ public class World implements BDSStorable {
 			World w = World.loadWorld(folder);
 			if (w == null) {
 				try {
-					Game.logger.warning("Folder " + folder.getCanonicalPath() + " is not a valid world folder");
+					Game.logger.w("Folder {} is not a valid world folder", folder.getCanonicalPath());
 				} catch (IOException e) {
-					Game.logger.warning("Folder " + folder.getAbsolutePath() + " is not a valid world folder");
+					Game.logger.w("Folder {} is not a valid world folder", folder.getAbsolutePath());
 				}
 				continue;
 			}

@@ -71,7 +71,7 @@ public class InGameState extends WaywiaState {
             try {
                 this.universe = Universe.newUniverse("UniBase", this.game.savesDir, "UniWorld", this);
             } catch (IOException e) {
-                Game.logger.logAndThrowAsRuntime("Could not create universe UniBase", e);
+                Game.logger.e("Could not create universe UniBase", e);
             }
         }
         this.player = new Player(Login.getUsername(), universe);
@@ -132,7 +132,7 @@ public class InGameState extends WaywiaState {
         if (this.universe != null) try {
             this.universe.save();
         } catch (IOException e) {
-            Game.logger.exception("Error saving universe", e);
+            Game.logger.e("Error saving universe", e);
         }
     }
 }

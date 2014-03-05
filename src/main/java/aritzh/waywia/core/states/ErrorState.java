@@ -86,7 +86,7 @@ public class ErrorState extends WaywiaState {
 			throw new IllegalStateException("Error state was not correctly initialized using ErrorState.setError()");
 
 		if (!logged) {
-			Game.logger.exception(throwable.getLocalizedMessage(), throwable);
+			Game.logger.e(throwable.getLocalizedMessage(), throwable);
 			logged = true;
 		}
 	}

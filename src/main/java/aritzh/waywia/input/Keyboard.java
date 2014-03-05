@@ -42,7 +42,7 @@ public class Keyboard implements KeyListener {
 					ImageOut.write(target, "screenshot.png", false);
 					target.destroy();
 				} catch (SlickException e) {
-					Game.logger.exception("Could not save screenshot", e);
+					Game.logger.e("Could not save screenshot", e);
 				}
 				break;
 			default:

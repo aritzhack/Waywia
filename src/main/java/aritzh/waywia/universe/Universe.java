@@ -91,7 +91,7 @@ public class Universe implements BDSStorable {
             try {
                 u.save();
             } catch (IOException e) {
-                Game.logger.exception("Error saving universe", e);
+                Game.logger.e("Error saving universe", e);
             }
             return u;
 		} catch (NullPointerException ignored) {
@@ -120,7 +120,7 @@ public class Universe implements BDSStorable {
 		for (File folder : savesFolder.listFiles(onlyFolders)) {
 			Universe u = Universe.loadUniverse(folder, state);
 			if (u == null) {
-				Game.logger.warning("Folder " + folder.getAbsolutePath() + " is not a valid universe folder");
+				Game.logger.w("Folder {} is not a valid universe folder", folder.getAbsolutePath());
 				continue;
 			}
 			ret.add(u);

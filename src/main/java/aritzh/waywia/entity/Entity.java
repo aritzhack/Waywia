@@ -121,7 +121,7 @@ public abstract class Entity implements BDSStorable {
 		try {
 			return Entity.entities.get(id).newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
-			Game.logger.exception("Could not instantiate entity with id \"" + id + "\"", e);
+			Game.logger.e("Could not instantiate entity with id \"" + id + "\"", e);
 		} catch (NullPointerException e) {
 			throw new IllegalArgumentException("Entity type \"" + id + "\" is not registered. This is a bug!");
 		}

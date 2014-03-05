@@ -47,20 +47,20 @@ public class LoadingState extends WaywiaState {
 				g.fillRect(0, 0, this.game.getGc().getWidth(), this.game.getGc().getHeight());
 				if (!Config.GAME.getBoolean("Mods", "loadMods")) {
 					step = 2;
-					Game.logger.log("Skipping mod loading");
+					Game.logger.i("Skipping mod loading");
 					return;
 				}
 				break;
 			case 1:
-				Game.logger.log("Starting to load mods...");
+				Game.logger.i("Starting to load mods...");
 
                 long before = System.currentTimeMillis();
                 try {
                     this.game.mods.loadAllExtensions(this.game.modsDir);
                 } catch (ReflectiveOperationException | IOException ignored) { }
-                Game.logger.debug("Mod-loading lasted " + (System.currentTimeMillis() - before) / 1000.0 + " seconds");
+                Game.logger.i("Mod-loading lasted {} seconds", (System.currentTimeMillis() - before) / 1000.0);
 
-                Game.logger.log("Mods loaded");
+                Game.logger.i("Mods loaded");
 				break;
 			case 2:
 				this.game.enterState(this.game.menuState.getID(), null, new FadeInTransition());
