@@ -15,9 +15,9 @@
 
 package aritzh.waywia.blocks;
 
-import aritzh.util.bds.BDSCompound;
-import aritzh.util.bds.BDSInt;
-import aritzh.util.bds.BDSStorable;
+import io.github.aritzhack.util.bds.BDSCompound;
+import io.github.aritzhack.util.bds.BDSInt;
+import io.github.aritzhack.util.bds.BDSStorable;
 import aritzh.waywia.universe.World;
 import aritzh.waywia.util.RenderUtil;
 import com.google.common.collect.Lists;

@@ -15,7 +15,7 @@
 
 package aritzh.waywia.core;
 
-import aritzh.util.IOUtil;
+import io.github.aritzhack.util.IOUtil;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 

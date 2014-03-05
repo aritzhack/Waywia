@@ -15,7 +15,7 @@
 
 package aritzh.waywia.core;
 
-import aritzh.util.Configuration;
+import io.github.aritzhack.util.Configuration;
 import aritzh.waywia.lib.GameLib;
 
 import java.io.File;

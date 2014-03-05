@@ -15,14 +15,14 @@
 
 package aritzh.waywia.core;
 
-import aritzh.util.eventBus.DeadEvent;
-import aritzh.util.eventBus.EventBus;
-import aritzh.util.eventBus.Subscribe;
-import aritzh.util.extensions.ExtensibleApp;
-import aritzh.util.extensions.Extensions;
-import aritzh.util.extensions.events.ExtensionEvent;
-import aritzh.util.logging.Logger;
-import aritzh.util.logging.LoggerBuilder;
+import io.github.aritzhack.util.eventBus.DeadEvent;
+import io.github.aritzhack.util.eventBus.EventBus;
+import io.github.aritzhack.util.eventBus.Subscribe;
+import io.github.aritzhack.util.extensions.ExtensibleApp;
+import io.github.aritzhack.util.extensions.Extensions;
+import io.github.aritzhack.util.extensions.events.ExtensionEvent;
+import io.github.aritzhack.util.logging.Logger;
+import io.github.aritzhack.util.logging.LoggerBuilder;
 import aritzh.waywia.core.states.ErrorState;
 import aritzh.waywia.core.states.InGameState;
 import aritzh.waywia.core.states.LoadingState;
@@ -201,7 +201,7 @@ public class Game extends StateBasedGame implements ExtensibleApp {
     }
 
     @Override
-    public EventBus getEventBus() {
+    public EventBus getExtensionsEventBus() {
         return this.BUS;
     }
 }

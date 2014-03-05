@@ -15,7 +15,7 @@
 
 package aritzh.waywia.event;
 
-import aritzh.util.ReflectionUtil;
+import io.github.aritzhack.util.ReflectionUtil;
 
 /**
  * Root of all events. Listen to this in order to handle all events

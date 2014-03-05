@@ -15,8 +15,8 @@
 
 package aritzh.waywia.entity.player;
 
-import aritzh.util.bds.BDSCompound;
-import aritzh.util.bds.BDSString;
+import io.github.aritzhack.util.bds.BDSCompound;
+import io.github.aritzhack.util.bds.BDSString;
 import aritzh.waywia.entity.Entity;
 import aritzh.waywia.universe.Universe;
 import org.newdawn.slick.Color;

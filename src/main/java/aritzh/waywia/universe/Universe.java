@@ -15,9 +15,9 @@
 
 package aritzh.waywia.universe;
 
-import aritzh.util.bds.BDSCompound;
-import aritzh.util.bds.BDSStorable;
-import aritzh.util.bds.BDSString;
+import io.github.aritzhack.util.bds.BDSCompound;
+import io.github.aritzhack.util.bds.BDSStorable;
+import io.github.aritzhack.util.bds.BDSString;
 import aritzh.waywia.core.Game;
 import aritzh.waywia.core.states.InGameState;
 import aritzh.waywia.entity.player.Player;
