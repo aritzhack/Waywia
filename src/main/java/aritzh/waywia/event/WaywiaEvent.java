@@ -25,30 +25,30 @@ import io.github.aritzhack.util.ReflectionUtil;
  */
 public abstract class WaywiaEvent {
 
-	protected final boolean isCancelable;
-	protected Result result;
+    protected final boolean isCancelable;
+    protected Result result;
 
-	public WaywiaEvent() {
-		this.isCancelable = ReflectionUtil.classHasAnnotation(this.getClass(), Cancelable.class);
-	}
+    public WaywiaEvent() {
+        this.isCancelable = ReflectionUtil.classHasAnnotation(this.getClass(), Cancelable.class);
+    }
 
-	public WaywiaEvent(boolean isCancelable) {
-		this.isCancelable = isCancelable;
-	}
+    public WaywiaEvent(boolean isCancelable) {
+        this.isCancelable = isCancelable;
+    }
 
-	public boolean isCancelable() {
-		return isCancelable;
-	}
+    public boolean isCancelable() {
+        return isCancelable;
+    }
 
-	public Result getResult() {
-		return this.result;
-	}
+    public Result getResult() {
+        return this.result;
+    }
 
-	public void setResult(Result result) {
-		this.result = result;
-	}
+    public void setResult(Result result) {
+        this.result = result;
+    }
 
-	public void cancel() {
-		this.result = Result.CANCEL;
-	}
+    public void cancel() {
+        this.result = Result.CANCEL;
+    }
 }

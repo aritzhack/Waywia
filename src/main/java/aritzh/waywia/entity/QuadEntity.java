@@ -27,33 +27,33 @@ import org.newdawn.slick.geom.Shape;
  */
 public class QuadEntity extends EntityNPC {
 
-	private static final Image texture = RenderUtil.getImage("quadEntity");
+    private static final Image texture = RenderUtil.getImage("quadEntity");
 
-	public QuadEntity() {
-		super();
-	}
+    public QuadEntity() {
+        super();
+    }
 
-	public QuadEntity(int posX, int posY) {
-		super(posX, posY);
-	}
+    public QuadEntity(int posX, int posY) {
+        super(posX, posY);
+    }
 
-	@Override
-	public int getMaxHealth() {
-		return 100;
-	}
+    @Override
+    public int getMaxHealth() {
+        return 100;
+    }
 
-	@Override
-	public Shape getBoundingShape() {
-		return new Rectangle(0, 0, texture.getWidth(), texture.getHeight());
-	}
+    @Override
+    public Shape getBoundingShape() {
+        return new Rectangle(0, 0, texture.getWidth(), texture.getHeight());
+    }
 
-	@Override
-	public void render(Graphics g) {
-		texture.draw(this.posX, this.posY);
-	}
+    @Override
+    public void render(Graphics g) {
+        texture.draw(this.posX, this.posY);
+    }
 
-	@Override
-	public String getName() {
-		return "QuadEntity";
-	}
+    @Override
+    public String getName() {
+        return "QuadEntity";
+    }
 }

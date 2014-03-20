@@ -21,16 +21,16 @@ package aritzh.waywia.gui.components;
  */
 public class Label extends InputBox {
 
-	public Label(String text, int x, int y, int width) {
-		super(x, y, width);
-		this.text = text;
-	}
+    public Label(String text, int x, int y, int width) {
+        super(x, y, width);
+        this.text = text;
+    }
 
-	@Override
-	public void keyPressed(int key, char c) {
-	}
+    @Override
+    public void keyPressed(int key, char c) {
+    }
 
-	@Override
-	public void mouseClicked(int button, int x, int y, int clickCount) {
-	}
+    @Override
+    public void mouseClicked(int button, int x, int y, int clickCount) {
+    }
 }

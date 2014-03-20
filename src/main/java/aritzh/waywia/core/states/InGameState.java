@@ -50,51 +50,8 @@ public class InGameState extends WaywiaState {
         return 1;
     }
 
-    @Override
-    public void init() {
-        this.openGUI(new HudGui(this));
-
-        this.initUniverse();
-
-        InGameState.registerEntities();
-        InGameState.registerBlocks();
-    }
-
-    @Override
-    public void keyPressed(int key, char c) {
-        super.keyPressed(key, c);
-    }
-
-    private void initUniverse() {
-        this.universe = Universe.loadUniverse(new File(this.game.savesDir, "uniBase"), this);
-        if (this.universe == null) {
-            try {
-                this.universe = Universe.newUniverse("UniBase", this.game.savesDir, "UniWorld", this);
-            } catch (IOException e) {
-                Game.logger.e("Could not create universe UniBase", e);
-            }
-        }
-        this.player = new Player(Login.getUsername(), universe);
-
-        this.universe.setPlayer(this.player);
-    }
-
     public Player getPlayer() {
         return player;
-    }
-
-    private static void registerBlocks() {
-        Block.registerBlock(new BackgroundBlock(), BlockLib.IDS.BACKGROUND);
-        Block.registerBlock(new WallBlock(), BlockLib.IDS.WALL);
-    }
-
-    private static void registerEntities() {
-        Entity.registerEntity(QuadEntity.class, 0);
-    }
-
-    @Override
-    public void mousePressed(int button, int x, int y) {
-        if (!this.isGuiOpen() || this.currGui.hasTransparentBackGround()) universe.clicked(x, y);
     }
 
     @Override
@@ -128,11 +85,54 @@ public class InGameState extends WaywiaState {
     }
 
     @Override
+    public void init() {
+        this.openGUI(new HudGui(this));
+
+        this.initUniverse();
+
+        InGameState.registerEntities();
+        InGameState.registerBlocks();
+    }
+
+    private void initUniverse() {
+        this.universe = Universe.loadUniverse(new File(this.game.savesDir, "uniBase"), this);
+        if (this.universe == null) {
+            try {
+                this.universe = Universe.newUniverse("UniBase", this.game.savesDir, "UniWorld", this);
+            } catch (IOException e) {
+                Game.logger.e("Could not create universe UniBase", e);
+            }
+        }
+        this.player = new Player(Login.getUsername(), universe);
+
+        this.universe.setPlayer(this.player);
+    }
+
+    private static void registerEntities() {
+        Entity.registerEntity(QuadEntity.class, 0);
+    }
+
+    private static void registerBlocks() {
+        Block.registerBlock(new BackgroundBlock(), BlockLib.IDS.BACKGROUND);
+        Block.registerBlock(new WallBlock(), BlockLib.IDS.WALL);
+    }
+
+    @Override
     public void onClosing() {
         if (this.universe != null) try {
             this.universe.save();
         } catch (IOException e) {
             Game.logger.e("Error saving universe", e);
         }
+    }
+
+    @Override
+    public void keyPressed(int key, char c) {
+        super.keyPressed(key, c);
+    }
+
+    @Override
+    public void mousePressed(int button, int x, int y) {
+        if (!this.isGuiOpen() || this.currGui.hasTransparentBackGround()) universe.clicked(x, y);
     }
 }

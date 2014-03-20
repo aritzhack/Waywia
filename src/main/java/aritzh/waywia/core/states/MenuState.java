@@ -25,25 +25,25 @@ import org.newdawn.slick.Graphics;
  */
 public class MenuState extends WaywiaState {
 
-	public MenuState(Game game) {
-		super(game, "Menu");
-	}
+    public MenuState(Game game) {
+        super(game, "Menu");
+    }
 
-	@Override
-	public int getID() {
-		return 0;
-	}
+    @Override
+    public int getID() {
+        return 0;
+    }
 
-	@Override
-	public void init() {
-		this.currGui = new MainMenuGUI(this);
-	}
+    @Override
+    public void render(Graphics g) {
+    }
 
-	@Override
-	public void render(Graphics g) {
-	}
+    @Override
+    public void update(int delta) {
+    }
 
-	@Override
-	public void update(int delta) {
-	}
+    @Override
+    public void init() {
+        this.currGui = new MainMenuGUI(this);
+    }
 }

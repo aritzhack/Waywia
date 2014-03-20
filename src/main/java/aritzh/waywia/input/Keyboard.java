@@ -16,7 +16,11 @@
 package aritzh.waywia.input;
 
 import aritzh.waywia.core.Game;
-import org.newdawn.slick.*;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
+import org.newdawn.slick.KeyListener;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.imageout.ImageOut;
 
 /**
@@ -25,51 +29,51 @@ import org.newdawn.slick.imageout.ImageOut;
  */
 public class Keyboard implements KeyListener {
 
-	private final Game game;
+    private final Game game;
 
-	public Keyboard(Game game) {
-		this.game = game;
-	}
+    public Keyboard(Game game) {
+        this.game = game;
+    }
 
-	@Override
-	public void keyPressed(int key, char c) {
-		GameContainer gc = this.game.getGc();
-		switch (key) {
-			case Input.KEY_S:
-				try {
-					Image target = new Image(gc.getWidth(), gc.getHeight());
-					gc.getGraphics().copyArea(target, 0, 0);
-					ImageOut.write(target, "screenshot.png", false);
-					target.destroy();
-				} catch (SlickException e) {
-					Game.logger.e("Could not save screenshot", e);
-				}
-				break;
-			default:
-				break;
-		}
-		this.game.getCurrentState().keyPressed(key, c);
-	}
+    @Override
+    public void keyPressed(int key, char c) {
+        GameContainer gc = this.game.getGc();
+        switch (key) {
+            case Input.KEY_S:
+                try {
+                    Image target = new Image(gc.getWidth(), gc.getHeight());
+                    gc.getGraphics().copyArea(target, 0, 0);
+                    ImageOut.write(target, "screenshot.png", false);
+                    target.destroy();
+                } catch (SlickException e) {
+                    Game.logger.e("Could not save screenshot", e);
+                }
+                break;
+            default:
+                break;
+        }
+        this.game.getCurrentState().keyPressed(key, c);
+    }
 
-	@Override
-	public void keyReleased(int key, char c) {
-		this.game.getCurrentState().keyReleased(key, c);
-	}
+    @Override
+    public void keyReleased(int key, char c) {
+        this.game.getCurrentState().keyReleased(key, c);
+    }
 
-	@Override
-	public void setInput(Input input) {
-	}
+    @Override
+    public void setInput(Input input) {
+    }
 
-	@Override
-	public boolean isAcceptingInput() {
-		return true;
-	}
+    @Override
+    public boolean isAcceptingInput() {
+        return true;
+    }
 
-	@Override
-	public void inputEnded() {
-	}
+    @Override
+    public void inputEnded() {
+    }
 
-	@Override
-	public void inputStarted() {
-	}
+    @Override
+    public void inputStarted() {
+    }
 }

@@ -28,15 +28,15 @@ import org.newdawn.slick.util.ResourceLoader;
  */
 public class RenderUtil {
 
-	public static Image getImage(String filename) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(filename), "Image file name must not be null or empty!");
-		if (!filename.endsWith(".png")) filename += ".png";
-		filename = "img/" + filename;
-		try {
-			return new Image(TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(filename)));
-		} catch (Exception e) {
-			Game.logger.e("Could not load image " + filename, e);
-		}
-		return null;
-	}
+    public static Image getImage(String filename) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(filename), "Image file name must not be null or empty!");
+        if (!filename.endsWith(".png")) filename += ".png";
+        filename = "img/" + filename;
+        try {
+            return new Image(TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(filename)));
+        } catch (Exception e) {
+            Game.logger.e("Could not load image " + filename, e);
+        }
+        return null;
+    }
 }

@@ -25,19 +25,19 @@ import org.newdawn.slick.geom.Rectangle;
  */
 public class BackgroundBlock extends Block {
 
-	@Override
-	public void update(int x, int y, int delta, World arg) {
-		super.update(x, y, delta, arg);
-	}
+    @Override
+    public void clicked(int x, int y, World world) {
+        if (!world.anyEntityCollides(new Rectangle(x, y, Block.SIZE, Block.SIZE)))
+            world.setBlock(x, y, BlockLib.IDS.WALL);
+    }
 
-	@Override
-	public void clicked(int x, int y, World world) {
-		if (!world.anyEntityCollides(new Rectangle(x, y, Block.SIZE, Block.SIZE)))
-			world.setBlock(x, y, BlockLib.IDS.WALL);
-	}
+    @Override
+    public void update(int x, int y, int delta, World arg) {
+        super.update(x, y, delta, arg);
+    }
 
-	@Override
-	public String getName() {
-		return "Background";
-	}
+    @Override
+    public String getName() {
+        return "Background";
+    }
 }

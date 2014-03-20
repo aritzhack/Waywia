@@ -23,13 +23,13 @@ import aritzh.waywia.entity.EntityNPC;
  */
 public abstract class AI {
 
-	private final String name;
+    private final String name;
 
-	public AI(String name) {
-		this.name = name;
-	}
+    public AI(String name) {
+        this.name = name;
+    }
 
-	public abstract void perform(EntityNPC entity, int delta);
+    public abstract void perform(EntityNPC entity, int delta);
 
 
 }

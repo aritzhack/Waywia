@@ -29,55 +29,53 @@ import java.util.List;
  */
 public class ScrollList<T> extends GUIElement {
 
-	private final java.util.List<T> items = new ArrayList<>();
-	private T selected;
-	private float x, y, width, height;
-	private final Rectangle bbox;
-	private int scrollPercent = 0;
+    private static Image scrollQuad;
+    private static Image scrollBar;
+    private final java.util.List<T> items = new ArrayList<>();
+    private final Rectangle bbox;
+    private T selected;
+    private float x, y, width, height;
+    private int scrollPercent = 0;
+    private Image backGround;
 
-	private Image backGround;
+    public ScrollList(T[] items, float x, float y, float w, float h, int id) {
+        this(Arrays.asList(items), x, y, w, h);
+    }
 
-	private static Image scrollQuad;
-	private static Image scrollBar;
+    public ScrollList(List<T> items, float x, float y, float w, float h) {
+        this.items.addAll(items);
+        this.bbox = new Rectangle(this.x, this.y, this.width, this.height);
+        this.initTextures();
+    }
 
-	public ScrollList(List<T> items, float x, float y, float w, float h) {
-		this.items.addAll(items);
-		this.bbox = new Rectangle(this.x, this.y, this.width, this.height);
-		this.initTextures();
-	}
+    private void initTextures() {
+        // TODO load the textures
+    }
 
-	private void initTextures() {
-		// TODO load the textures
-	}
-
-	public ScrollList(T[] items, float x, float y, float w, float h, int id) {
-		this(Arrays.asList(items), x, y, w, h);
-	}
-
-	public ScrollList(T item, float x, float y, float w, float h) {
-		this.items.add(item);
-		this.bbox = new Rectangle(x, y, width, height);
-	}
+    public ScrollList(T item, float x, float y, float w, float h) {
+        this.items.add(item);
+        this.bbox = new Rectangle(x, y, width, height);
+    }
 
 
-	@Override
-	public void render(Graphics g) {
-		// TODO Render!
-	}
+    @Override
+    public void render(Graphics g) {
+        // TODO Render!
+    }
 
-	@Override
-	public Rectangle getBBox() {
-		return bbox;
-	}
+    @Override
+    public Rectangle getBBox() {
+        return bbox;
+    }
 
-	@Override
-	public void mouseClicked(int button, int x, int y, int clickCount) {
-		super.mouseClicked(button, x, y, clickCount);
-		// TODO Handle clicking to select
-	}
+    @Override
+    public void mouseClicked(int button, int x, int y, int clickCount) {
+        super.mouseClicked(button, x, y, clickCount);
+        // TODO Handle clicking to select
+    }
 
-	@Override
-	public void mouseDragged(int oldx, int oldy, int newx, int newy) {
-		super.mouseDragged(oldx, oldy, newx, newy);
-	}
+    @Override
+    public void mouseDragged(int oldx, int oldy, int newx, int newy) {
+        super.mouseDragged(oldx, oldy, newx, newy);
+    }
 }

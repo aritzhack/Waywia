@@ -28,27 +28,27 @@ import aritzh.waywia.gui.components.Label;
  */
 public class NewUniverseGUI extends GUI {
 
-	private final Button newButton, backButton;
-	private final InputBox worldName;
-	private final Label title;
+    private final Button newButton, backButton;
+    private final InputBox worldName;
+    private final Label title;
 
-	public NewUniverseGUI(MenuState menuState) {
-		super(menuState);
+    public NewUniverseGUI(MenuState menuState) {
+        super(menuState);
 
-		this.addElement(newButton = new Button("Create", -this.width / 2 + 75, this.height - 50));
-		this.addElement(backButton = new Button("Back", -this.width / 2 - 75, this.height - 50));
+        this.addElement(newButton = new Button("Create", -this.width / 2 + 75, this.height - 50));
+        this.addElement(backButton = new Button("Back", -this.width / 2 - 75, this.height - 50));
 
-		this.addElement(worldName = new InputBox(-this.width / 2, -this.height / 2, 200));
+        this.addElement(worldName = new InputBox(-this.width / 2, -this.height / 2, 200));
 
-		this.addElement(title = new Label("Hola!", -this.width / 2, -this.height / 2 + 100, 200));
-	}
+        this.addElement(title = new Label("Hola!", -this.width / 2, -this.height / 2 + 100, 200));
+    }
 
-	@Override
-	public void clicked(int id) {
-		if (id == this.newButton.getID() && !this.worldName.getText().trim().equals("")) {
-			Game.logger.d("Creating world: {}", this.worldName.getText().trim());
-		} else if (id == this.backButton.getID()) {
-			this.state.openGUI(new MainMenuGUI((MenuState) this.state));
-		}
-	}
+    @Override
+    public void clicked(int id) {
+        if (id == this.newButton.getID() && !this.worldName.getText().trim().equals("")) {
+            Game.logger.d("Creating world: {}", this.worldName.getText().trim());
+        } else if (id == this.backButton.getID()) {
+            this.state.openGUI(new MainMenuGUI((MenuState) this.state));
+        }
+    }
 }

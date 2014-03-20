@@ -24,13 +24,13 @@ import aritzh.waywia.util.RenderUtil;
 public class WallBlock extends Block {
 
 
-	public WallBlock() {
-		this.setSolid();
-		this.texture = RenderUtil.getImage("wallBlock");
-	}
+    public WallBlock() {
+        this.setSolid();
+        this.texture = RenderUtil.getImage("wallBlock");
+    }
 
-	@Override
-	public String getName() {
-		return "Wall";
-	}
+    @Override
+    public String getName() {
+        return "Wall";
+    }
 }

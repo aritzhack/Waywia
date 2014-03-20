@@ -21,9 +21,9 @@ package aritzh.waywia.lib;
  */
 public class BlockLib {
 
-	public static final class IDS {
-		public static final int BACKGROUND = 0;
-		public static final int WALL = 1;
-		public static final int FLOOR = 2;
-	}
+    public static final class IDS {
+        public static final int BACKGROUND = 0;
+        public static final int WALL = 1;
+        public static final int FLOOR = 2;
+    }
 }

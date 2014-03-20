@@ -21,12 +21,12 @@ package aritzh.waywia.lib;
  */
 public class GameLib {
 
-	public static final String GAME_NAME = "Waywia";
+    public static final String GAME_NAME = "Waywia";
 
-	public static final int VERSION_MAJOR = 0;
-	public static final int VERSION_MINOR = 0;
-	public static final int VERSION_BUILD = 0;
-	public static final String VERSION = VERSION_MAJOR + "." + VERSION_MINOR + "." + VERSION_BUILD;
+    public static final int VERSION_MAJOR = 0;
+    public static final int VERSION_MINOR = 0;
+    public static final int VERSION_BUILD = 0;
+    public static final String VERSION = VERSION_MAJOR + "." + VERSION_MINOR + "." + VERSION_BUILD;
 
-	public static final String FULL_NAME = GAME_NAME + " v" + VERSION;
+    public static final String FULL_NAME = GAME_NAME + " v" + VERSION;
 }

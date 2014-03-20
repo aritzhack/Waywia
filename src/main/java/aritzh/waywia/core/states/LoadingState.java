@@ -29,30 +29,30 @@ import java.io.IOException;
  */
 public class LoadingState extends WaywiaState {
 
-	private int step = 0;
+    private int step = 0;
 
-	public LoadingState(Game game) {
-		super(game, "Loading");
-	}
+    public LoadingState(Game game) {
+        super(game, "Loading");
+    }
 
-	@Override
-	public void init() {
-	}
+    @Override
+    public void init() {
+    }
 
-	@Override
-	public void render(Graphics g) {
-		switch (step) {
-			case 0:
-				g.setColor(Color.pink);
-				g.fillRect(0, 0, this.game.getGc().getWidth(), this.game.getGc().getHeight());
-				if (!Config.GAME.getBoolean("Mods", "loadMods")) {
-					step = 2;
-					Game.logger.i("Skipping mod loading");
-					return;
-				}
-				break;
-			case 1:
-				Game.logger.i("Starting to load mods...");
+    @Override
+    public void render(Graphics g) {
+        switch (step) {
+            case 0:
+                g.setColor(Color.pink);
+                g.fillRect(0, 0, this.game.getGc().getWidth(), this.game.getGc().getHeight());
+                if (!Config.GAME.getBoolean("Mods", "loadMods")) {
+                    step = 2;
+                    Game.logger.i("Skipping mod loading");
+                    return;
+                }
+                break;
+            case 1:
+                Game.logger.i("Starting to load mods...");
 
                 long before = System.currentTimeMillis();
                 try {
@@ -61,20 +61,20 @@ public class LoadingState extends WaywiaState {
                 Game.logger.i("Mod-loading lasted {} seconds", (System.currentTimeMillis() - before) / 1000.0);
 
                 Game.logger.i("Mods loaded");
-				break;
-			case 2:
-				this.game.enterState(this.game.menuState.getID(), null, new FadeInTransition());
-				return;
-		}
-		this.step++;
-	}
+                break;
+            case 2:
+                this.game.enterState(this.game.menuState.getID(), null, new FadeInTransition());
+                return;
+        }
+        this.step++;
+    }
 
-	@Override
-	public void update(int delta) {
-	}
+    @Override
+    public void update(int delta) {
+    }
 
-	@Override
-	public int getID() {
-		return 4;
-	}
+    @Override
+    public int getID() {
+        return 4;
+    }
 }

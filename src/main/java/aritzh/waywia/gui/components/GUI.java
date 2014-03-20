@@ -29,160 +29,160 @@ import java.util.List;
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public abstract class GUI implements InputListener {
-	private final List<GUIElement> elements = new ArrayList<>();
-	protected final WaywiaState state;
-	protected final int width, height;
-	private int lastElementID = 0;
+    protected final WaywiaState state;
+    protected final int width, height;
+    private final List<GUIElement> elements = new ArrayList<>();
+    private int lastElementID = 0;
 
-	public GUI(WaywiaState state) {
-		this.state = state;
-		this.width = this.state.getGame().getGc().getWidth();
-		this.height = this.state.getGame().getGc().getHeight();
-	}
+    public GUI(WaywiaState state) {
+        this.state = state;
+        this.width = this.state.getGame().getGc().getWidth();
+        this.height = this.state.getGame().getGc().getHeight();
+    }
 
-	public void render(Graphics g) {
-		if (!this.hasTransparentBackGround()) {
-			g.setColor(Color.black);
-			g.fillRect(0, 0, width, height);
-		}
-		for (GUIElement e : this.elements) {
-			e.render(g);
-		}
-	}
+    public void render(Graphics g) {
+        if (!this.hasTransparentBackGround()) {
+            g.setColor(Color.black);
+            g.fillRect(0, 0, width, height);
+        }
+        for (GUIElement e : this.elements) {
+            e.render(g);
+        }
+    }
 
-	protected final void addElement(GUIElement e) {
-		this.elements.add(e);
-		e.setID(lastElementID++);
-	}
+    public boolean hasTransparentBackGround() {
+        return !stopsGame();
+    }
 
-	public boolean stopsGame() {
-		return false;
-	}
+    public boolean stopsGame() {
+        return false;
+    }
 
-	public boolean hasTransparentBackGround() {
-		return !stopsGame();
-	}
+    protected final void addElement(GUIElement e) {
+        this.elements.add(e);
+        e.setID(lastElementID++);
+    }
 
-	public void mouseClicked(int button, int x, int y, int clickCount) {
-		for (GUIElement e : this.elements) {
-			if (e.getBBox().contains(x, y)) {
-				this.clicked(e.getID());
-			}
-			e.mouseClicked(button, x, y, clickCount);
-		}
-	}
+    @Override
+    public void mouseWheelMoved(int change) {
+        for (GUIElement e : this.elements) {
+            e.mouseWheelMoved(change);
+        }
+    }
 
-	public void mousePressed(int button, int x, int y) {
-		for (GUIElement e : this.elements) {
-			e.mousePressed(button, x, y);
-		}
-	}
+    public void mouseClicked(int button, int x, int y, int clickCount) {
+        for (GUIElement e : this.elements) {
+            if (e.getBBox().contains(x, y)) {
+                this.clicked(e.getID());
+            }
+            e.mouseClicked(button, x, y, clickCount);
+        }
+    }
 
-	public void mouseReleased(int button, int x, int y) {
-		for (GUIElement e : this.elements) {
-			e.mouseReleased(button, x, y);
-		}
-	}
+    public void mousePressed(int button, int x, int y) {
+        for (GUIElement e : this.elements) {
+            e.mousePressed(button, x, y);
+        }
+    }
 
-	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-		for (GUIElement e : this.elements) {
-			e.mouseMoved(oldx, oldy, newx, newy);
-		}
-	}
+    public void mouseReleased(int button, int x, int y) {
+        for (GUIElement e : this.elements) {
+            e.mouseReleased(button, x, y);
+        }
+    }
 
-	public void mouseDragged(int oldx, int oldy, int newx, int newy) {
-		for (GUIElement e : this.elements) {
-			e.setHover(e.getBBox().contains(newx, newy));
-			e.setPressed(e.getBBox().contains(newx, newy));
-			e.mouseDragged(oldx, oldy, newx, newy);
-		}
-	}
+    public void mouseMoved(int oldx, int oldy, int newx, int newy) {
+        for (GUIElement e : this.elements) {
+            e.mouseMoved(oldx, oldy, newx, newy);
+        }
+    }
 
-	@Override
-	public void mouseWheelMoved(int change) {
-		for (GUIElement e : this.elements) {
-			e.mouseWheelMoved(change);
-		}
-	}
+    public void mouseDragged(int oldx, int oldy, int newx, int newy) {
+        for (GUIElement e : this.elements) {
+            e.setHover(e.getBBox().contains(newx, newy));
+            e.setPressed(e.getBBox().contains(newx, newy));
+            e.mouseDragged(oldx, oldy, newx, newy);
+        }
+    }
 
-	@Override
-	public void keyPressed(int key, char c) {
-		for (GUIElement e : this.elements) {
-			e.keyPressed(key, c);
-		}
-	}
+    /**
+     * For use in sub-classes. This is called with the ID of the element clicked
+     *
+     * @param id The id of the element that was clicked
+     */
+    public void clicked(int id) {
+    }
 
-	@Override
-	public void keyReleased(int key, char c) {
-		for (GUIElement e : this.elements) {
-			e.keyReleased(key, c);
-		}
-	}
+    @Override
+    public void keyPressed(int key, char c) {
+        for (GUIElement e : this.elements) {
+            e.keyPressed(key, c);
+        }
+    }
 
-	/**
-	 * For use in sub-classes. This is called with the ID of the element clicked
-	 *
-	 * @param id The id of the element that was clicked
-	 */
-	public void clicked(int id) {
-	}
+    @Override
+    public void keyReleased(int key, char c) {
+        for (GUIElement e : this.elements) {
+            e.keyReleased(key, c);
+        }
+    }
 
-	// InputListener methods not used at this level
+    // InputListener methods not used at this level
 
-	@Override
-	public void setInput(Input input) {
-	}
+    @Override
+    public void setInput(Input input) {
+    }
 
-	@Override
-	public boolean isAcceptingInput() {
-		return true;
-	}
+    @Override
+    public boolean isAcceptingInput() {
+        return true;
+    }
 
-	@Override
-	public void inputEnded() {
-	}
+    @Override
+    public void inputEnded() {
+    }
 
-	@Override
-	public void inputStarted() {
-	}
+    @Override
+    public void inputStarted() {
+    }
 
-	@Override
-	public void controllerButtonPressed(int controller, int button) {
-	}
+    @Override
+    public void controllerLeftPressed(int controller) {
+    }
 
-	@Override
-	public void controllerLeftPressed(int controller) {
-	}
+    @Override
+    public void controllerLeftReleased(int controller) {
+    }
 
-	@Override
-	public void controllerLeftReleased(int controller) {
-	}
+    @Override
+    public void controllerRightPressed(int controller) {
+    }
 
-	@Override
-	public void controllerRightPressed(int controller) {
-	}
+    @Override
+    public void controllerRightReleased(int controller) {
+    }
 
-	@Override
-	public void controllerRightReleased(int controller) {
-	}
+    @Override
+    public void controllerUpPressed(int controller) {
+    }
 
-	@Override
-	public void controllerUpPressed(int controller) {
-	}
+    @Override
+    public void controllerUpReleased(int controller) {
+    }
 
-	@Override
-	public void controllerUpReleased(int controller) {
-	}
+    @Override
+    public void controllerDownPressed(int controller) {
+    }
 
-	@Override
-	public void controllerDownPressed(int controller) {
-	}
+    @Override
+    public void controllerDownReleased(int controller) {
+    }
 
-	@Override
-	public void controllerDownReleased(int controller) {
-	}
+    @Override
+    public void controllerButtonPressed(int controller, int button) {
+    }
 
-	@Override
-	public void controllerButtonReleased(int controller, int button) {
-	}
+    @Override
+    public void controllerButtonReleased(int controller, int button) {
+    }
 }

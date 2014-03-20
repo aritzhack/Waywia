@@ -29,28 +29,28 @@ import org.newdawn.slick.Input;
  */
 public class HudGui extends GUI {
 
-	private static final Image heartEmpty = RenderUtil.getImage("heartEmpty");
-	private static final Image heartFull = RenderUtil.getImage("heartFull");
+    private static final Image heartEmpty = RenderUtil.getImage("heartEmpty");
+    private static final Image heartFull = RenderUtil.getImage("heartFull");
 
-	public HudGui(InGameState state) {
-		super(state);
-	}
+    public HudGui(InGameState state) {
+        super(state);
+    }
 
-	@Override
-	public void render(Graphics g) {
-		super.render(g);
-		Player p = ((InGameState) this.state).getPlayer();
-		for (int i = 0; i < p.getMaxHealth(); i++) {
-			if (p.getHealth() > i) g.drawImage(HudGui.heartFull, HudGui.heartFull.getWidth() * i, 0);
-			else g.drawImage(HudGui.heartEmpty, HudGui.heartFull.getWidth() * i, 0);
-		}
-	}
+    @Override
+    public void render(Graphics g) {
+        super.render(g);
+        Player p = ((InGameState) this.state).getPlayer();
+        for (int i = 0; i < p.getMaxHealth(); i++) {
+            if (p.getHealth() > i) g.drawImage(HudGui.heartFull, HudGui.heartFull.getWidth() * i, 0);
+            else g.drawImage(HudGui.heartEmpty, HudGui.heartFull.getWidth() * i, 0);
+        }
+    }
 
 
-	@Override
-	public void keyPressed(int key, char c) {
-		super.keyPressed(key, c);
-		if (key == Input.KEY_ESCAPE) this.state.openGUI(new GamePauseGUI((InGameState) this.state, this));
-		else if (key == Input.KEY_ENTER) ((InGameState) this.state).getPlayer().hurt(1);
-	}
+    @Override
+    public void keyPressed(int key, char c) {
+        super.keyPressed(key, c);
+        if (key == Input.KEY_ESCAPE) this.state.openGUI(new GamePauseGUI((InGameState) this.state, this));
+        else if (key == Input.KEY_ENTER) ((InGameState) this.state).getPlayer().hurt(1);
+    }
 }

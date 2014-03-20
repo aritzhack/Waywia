@@ -25,19 +25,19 @@ import org.newdawn.slick.Input;
  */
 public class UniverseListGUI extends GUI {
 
-	public UniverseListGUI(MenuState state) {
-		super(state);
-		//List<Universe> universes = Universe.getUniverseList(new File(this.state.getGame().root, "saves"));
-		//this.addElement(new ScrollList<>(universes, 0, 0, this.width, this.height));
-		this.state.getGame().enterState(this.state.getGame().inGameState.getID());
-	}
+    public UniverseListGUI(MenuState state) {
+        super(state);
+        //List<Universe> universes = Universe.getUniverseList(new File(this.state.getGame().root, "saves"));
+        //this.addElement(new ScrollList<>(universes, 0, 0, this.width, this.height));
+        this.state.getGame().enterState(this.state.getGame().inGameState.getID());
+    }
 
-	@Override
-	public void keyPressed(int key, char c) {
-		if (key == Input.KEY_ESCAPE) {
-			this.state.openGUI(new MainMenuGUI((MenuState) this.state));
-		} else {
-			super.keyPressed(key, c);
-		}
-	}
+    @Override
+    public void keyPressed(int key, char c) {
+        if (key == Input.KEY_ESCAPE) {
+            this.state.openGUI(new MainMenuGUI((MenuState) this.state));
+        } else {
+            super.keyPressed(key, c);
+        }
+    }
 }

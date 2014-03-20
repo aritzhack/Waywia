@@ -27,22 +27,22 @@ import java.util.List;
  */
 public abstract class EntityNPC extends Entity {
 
-	protected final List<AI> ais = new ArrayList<>();
+    protected final List<AI> ais = new ArrayList<>();
 
-	public EntityNPC() {
-		super();
-	}
+    public EntityNPC() {
+        super();
+    }
 
-	public EntityNPC(int posX, int posY) {
-		this.setPosition(posX, posY);
-	}
+    public EntityNPC(int posX, int posY) {
+        this.setPosition(posX, posY);
+    }
 
-	@Override
-	public void update(int delta, World world) {
-		for (AI ai : this.ais) {
-			ai.perform(this, delta);
-		}
+    @Override
+    public void update(int delta, World world) {
+        for (AI ai : this.ais) {
+            ai.perform(this, delta);
+        }
 
-		super.update(delta, world);
-	}
+        super.update(delta, world);
+    }
 }

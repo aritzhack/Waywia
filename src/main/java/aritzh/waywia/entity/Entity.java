@@ -15,16 +15,16 @@
 
 package aritzh.waywia.entity;
 
-import io.github.aritzhack.util.collections.ParametrizedFunction;
-import io.github.aritzhack.util.bds.BDSCompound;
-import io.github.aritzhack.util.bds.BDSInt;
-import io.github.aritzhack.util.bds.BDSStorable;
-import io.github.aritzhack.util.bds.BDSString;
 import aritzh.waywia.blocks.Block;
 import aritzh.waywia.core.Game;
 import aritzh.waywia.universe.World;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import io.github.aritzhack.util.bds.BDSCompound;
+import io.github.aritzhack.util.bds.BDSInt;
+import io.github.aritzhack.util.bds.BDSStorable;
+import io.github.aritzhack.util.bds.BDSString;
+import io.github.aritzhack.util.collections.ParametrizedFunction;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
@@ -38,159 +38,154 @@ import java.util.List;
  */
 public abstract class Entity implements BDSStorable {
 
-	protected float posX = 0, posY = 0;
-	protected int velX = 1, velY = 1;
-	protected int health;
-	protected final float width = Block.SIZE, height = Block.SIZE;
-	protected final BDSCompound customData = new BDSCompound("CustomData");
-	private static final BiMap<Integer, Class<? extends Entity>> entities = HashBiMap.create();
+    private static final BiMap<Integer, Class<? extends Entity>> entities = HashBiMap.create();
+    private static final ParametrizedFunction<Block, Boolean> checkCollision = (input, args) -> {
+        int x = (int) args[0] * Block.SIZE;
+        int y = (int) args[1] * Block.SIZE;
+        Shape bbox = (Shape) args[2];
+        return input.isSolid() && bbox.intersects(new Rectangle(x, y, Block.SIZE, Block.SIZE));
+    };
+    protected final float width = Block.SIZE, height = Block.SIZE;
+    protected final BDSCompound customData = new BDSCompound("CustomData");
+    protected float posX = 0, posY = 0;
+    protected int velX = 1, velY = 1;
+    protected int health;
 
-	public Entity() {
-		this.health = this.getMaxHealth();
-	}
+    public Entity() {
+        this.health = this.getMaxHealth();
+    }
 
-	public Entity(int health) {
-		this.health = health;
-	}
+    public abstract int getMaxHealth();
 
-	public abstract int getMaxHealth();
+    public Entity(int health) {
+        this.health = health;
+    }
 
-	public void update(int delta, World world) {
-		float targetPosX = this.posX + (delta * velX) / 5f;
-		float targetPosY = this.posY + (delta * velY) / 5f;
+    public abstract void render(Graphics g);
 
+    public abstract String getName();
 
-		if (!this.collides(world, new Rectangle(targetPosX, this.posY, Block.SIZE, Block.SIZE))) this.posX = targetPosX;
-		if (!this.collides(world, new Rectangle(this.posX, targetPosY, Block.SIZE, Block.SIZE))) this.posY = targetPosY;
-	}
+    public static void registerEntity(Class<? extends Entity> clazz, int id) {
+        if (Entity.entities.containsValue(clazz))
+            throw new IllegalArgumentException("Entity class " + clazz + "was already registered!");
+        if (Entity.entities.containsKey(id))
+            throw new IllegalArgumentException("Entity ID " + id + "was already in use by " + Entity.entities.get(id) + " when adding " + clazz);
 
-	private static final ParametrizedFunction<Block, Boolean> checkCollision = new ParametrizedFunction<Block, Boolean>() {
-		@Override
-		public Boolean apply(Block input, Object... args) {
-			int x = (int) args[0] * Block.SIZE;
-			int y = (int) args[1] * Block.SIZE;
-			Shape bbox = (Shape) args[2];
-			return input.isSolid() && bbox.intersects(new Rectangle(x, y, Block.SIZE, Block.SIZE));
-		}
-	};
+        Entity.entities.put(id, clazz);
+    }
 
-	private boolean collides(World world, Rectangle bbox) {
-		List<Boolean> booleanList = world.runForEachBlock(checkCollision, bbox).toFlatArrayList();
-		for (boolean bool : booleanList) {
-			if (bool) return true;
-		}
-		return false;
-	}
+    public static Entity fromBDS(BDSCompound comp) {
+        int id = comp.getInt("ID", 0).getData();
 
-	public Shape getBoundingShape() {
-		return new Rectangle(this.posX, this.posY, this.width, this.height);
-	}
+        float posX = Float.valueOf(comp.getString("posX", 0).getData());
+        float posY = Float.valueOf(comp.getString("posY", 0).getData());
 
-	public BDSCompound getCustomData() {
-		return this.customData;
-	}
+        int velX = comp.getInt("velX", 0).getData();
+        int velY = comp.getInt("velY", 0).getData();
 
-	public Shape getBoundingBox() {
-		return new Rectangle(this.posX, this.posY, Block.SIZE, Block.SIZE);
-	}
+        Entity e = Entity.getNewEntity(id);
 
-	public abstract void render(Graphics g);
+        e.setPosition(posX, posY);
+        e.setVelocity(velX, velY);
 
-	public abstract String getName();
+        return e;
+    }
 
-	public BDSCompound toBDS() {
-		return new BDSCompound("Entity")
-				.add(new BDSInt(Entity.entities.inverse().get(this.getClass()), "ID"))
-				.add(new BDSString(Float.toString(posX), "posX"))
-				.add(new BDSString(Float.toString(posY), "posY"))
-				.add(new BDSInt(velX, "velX"))
-				.add(new BDSInt(velY, "velY"))
-				.add(this.customData);
-	}
+    public static Entity getNewEntity(int id) {
+        try {
+            return Entity.entities.get(id).newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            Game.logger.e("Could not instantiate entity with id \"" + id + "\"", e);
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("Entity type \"" + id + "\" is not registered. This is a bug!");
+        }
+        return null;
+    }
 
-	public static void registerEntity(Class<? extends Entity> clazz, int id) {
-		if (Entity.entities.containsValue(clazz))
-			throw new IllegalArgumentException("Entity class " + clazz + "was already registered!");
-		if (Entity.entities.containsKey(id))
-			throw new IllegalArgumentException("Entity ID " + id + "was already in use by " + Entity.entities.get(id) + " when adding " + clazz);
+    public void setPosition(float x, float y) {
+        this.posX = x;
+        this.posY = y;
+    }
 
-		Entity.entities.put(id, clazz);
-	}
+    public void setVelocity(int vx, int vy) {
+        this.velX = vx;
+        this.velY = vy;
+    }
 
-	public static Entity getNewEntity(int id) {
-		try {
-			return Entity.entities.get(id).newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			Game.logger.e("Could not instantiate entity with id \"" + id + "\"", e);
-		} catch (NullPointerException e) {
-			throw new IllegalArgumentException("Entity type \"" + id + "\" is not registered. This is a bug!");
-		}
-		return null;
-	}
-
-	public static Entity fromBDS(BDSCompound comp) {
-		int id = comp.getInt("ID", 0).getData();
-
-		float posX = Float.valueOf(comp.getString("posX", 0).getData());
-		float posY = Float.valueOf(comp.getString("posY", 0).getData());
-
-		int velX = comp.getInt("velX", 0).getData();
-		int velY = comp.getInt("velY", 0).getData();
-
-		Entity e = Entity.getNewEntity(id);
-
-		e.setPosition(posX, posY);
-		e.setVelocity(velX, velY);
-
-		return e;
-	}
-
-	public Vector2f getPosition() {
-		return new Vector2f(posX, posY);
-	}
-
-	public Vector2f getVelocity() {
-		return new Vector2f(velX, velY);
-	}
-
-	public void setPosition(float x, float y) {
-		this.posX = x;
-		this.posY = y;
-	}
-
-	public void setVelocity(int vx, int vy) {
-		this.velX = vx;
-		this.velY = vy;
-	}
-
-	public void setPosition(Vector2f pos) {
-		this.posX = pos.getX();
-		this.posY = pos.getY();
-	}
-
-	public int getHealth() {
-		return this.health;
-	}
-
-	public void hurt(int amount) {
-		this.health -= amount;
-		if (this.health < 0) this.health = 0;
-	}
-
-	public void setVX(int vx) {
-		this.velX = vx;
-	}
-
-	public void setVY(int vy) {
-		this.velY = vy;
-	}
+    public void update(int delta, World world) {
+        float targetPosX = this.posX + (delta * velX) / 5f;
+        float targetPosY = this.posY + (delta * velY) / 5f;
 
 
-	public int getVX() {
-		return this.velX;
-	}
+        if (!this.collides(world, new Rectangle(targetPosX, this.posY, Block.SIZE, Block.SIZE))) this.posX = targetPosX;
+        if (!this.collides(world, new Rectangle(this.posX, targetPosY, Block.SIZE, Block.SIZE))) this.posY = targetPosY;
+    }
 
-	public int getVY() {
-		return this.velY;
-	}
+    private boolean collides(World world, Rectangle bbox) {
+        List<Boolean> booleanList = world.runForEachBlock(checkCollision, bbox).toFlatArrayList();
+        for (boolean bool : booleanList) {
+            if (bool) return true;
+        }
+        return false;
+    }
+
+    public Shape getBoundingShape() {
+        return new Rectangle(this.posX, this.posY, this.width, this.height);
+    }
+
+    public BDSCompound getCustomData() {
+        return this.customData;
+    }
+
+    public Shape getBoundingBox() {
+        return new Rectangle(this.posX, this.posY, Block.SIZE, Block.SIZE);
+    }
+
+    public BDSCompound toBDS() {
+        return new BDSCompound("Entity")
+                .add(new BDSInt(Entity.entities.inverse().get(this.getClass()), "ID"))
+                .add(new BDSString(Float.toString(posX), "posX"))
+                .add(new BDSString(Float.toString(posY), "posY"))
+                .add(new BDSInt(velX, "velX"))
+                .add(new BDSInt(velY, "velY"))
+                .add(this.customData);
+    }
+
+    public Vector2f getPosition() {
+        return new Vector2f(posX, posY);
+    }
+
+    public void setPosition(Vector2f pos) {
+        this.posX = pos.getX();
+        this.posY = pos.getY();
+    }
+
+    public Vector2f getVelocity() {
+        return new Vector2f(velX, velY);
+    }
+
+    public int getHealth() {
+        return this.health;
+    }
+
+    public void hurt(int amount) {
+        this.health -= amount;
+        if (this.health < 0) this.health = 0;
+    }
+
+    public int getVX() {
+        return this.velX;
+    }
+
+    public void setVX(int vx) {
+        this.velX = vx;
+    }
+
+    public int getVY() {
+        return this.velY;
+    }
+
+    public void setVY(int vy) {
+        this.velY = vy;
+    }
 }

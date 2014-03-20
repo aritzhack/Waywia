@@ -25,56 +25,56 @@ import org.newdawn.slick.MouseListener;
  */
 public class Mouse implements MouseListener {
 
-	private final Game game;
+    private final Game game;
 
-	public Mouse(Game game) {
-		this.game = game;
-	}
+    public Mouse(Game game) {
+        this.game = game;
+    }
 
-	@Override
-	public void mouseWheelMoved(int change) {
-	}
+    @Override
+    public void mouseWheelMoved(int change) {
+    }
 
-	@Override
-	public void mouseClicked(int button, int x, int y, int clickCount) {
-		this.game.getCurrentState().mouseClicked(button, x, y, clickCount);
-	}
+    @Override
+    public void mouseClicked(int button, int x, int y, int clickCount) {
+        this.game.getCurrentState().mouseClicked(button, x, y, clickCount);
+    }
 
-	@Override
-	public void mousePressed(int button, int x, int y) {
-		this.game.getCurrentState().mousePressed(button, x, y);
-	}
+    @Override
+    public void mousePressed(int button, int x, int y) {
+        this.game.getCurrentState().mousePressed(button, x, y);
+    }
 
-	@Override
-	public void mouseReleased(int button, int x, int y) {
-		this.game.getCurrentState().mouseReleased(button, x, y);
-	}
+    @Override
+    public void mouseReleased(int button, int x, int y) {
+        this.game.getCurrentState().mouseReleased(button, x, y);
+    }
 
-	@Override
-	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-		this.game.getCurrentState().mouseMoved(oldx, oldy, newx, newy);
+    @Override
+    public void mouseMoved(int oldx, int oldy, int newx, int newy) {
+        this.game.getCurrentState().mouseMoved(oldx, oldy, newx, newy);
 
-	}
+    }
 
-	@Override
-	public void mouseDragged(int oldx, int oldy, int newx, int newy) {
-		this.game.getCurrentState().mouseDragged(oldx, oldy, newx, newy);
-	}
+    @Override
+    public void mouseDragged(int oldx, int oldy, int newx, int newy) {
+        this.game.getCurrentState().mouseDragged(oldx, oldy, newx, newy);
+    }
 
-	@Override
-	public void setInput(Input input) {
-	}
+    @Override
+    public void setInput(Input input) {
+    }
 
-	@Override
-	public boolean isAcceptingInput() {
-		return true;
-	}
+    @Override
+    public boolean isAcceptingInput() {
+        return true;
+    }
 
-	@Override
-	public void inputEnded() {
-	}
+    @Override
+    public void inputEnded() {
+    }
 
-	@Override
-	public void inputStarted() {
-	}
+    @Override
+    public void inputStarted() {
+    }
 }

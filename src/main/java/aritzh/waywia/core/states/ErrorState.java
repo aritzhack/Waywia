@@ -31,69 +31,69 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class ErrorState extends WaywiaState {
 
-	private String when;
-	private Throwable throwable;
-	private boolean logged = false;
-	String stackTrace = "";
+    String stackTrace = "";
+    private String when;
+    private Throwable throwable;
+    private boolean logged = false;
 
-	public ErrorState(Game game) {
-		super(game, "ErrorState");
-	}
+    public ErrorState(Game game) {
+        super(game, "ErrorState");
+    }
 
-	@Override
-	public int getID() {
-		return 3;
-	}
+    /**
+     * Sets the throwable and moment, so that the error can be printed to the user
+     *
+     * @param when A string identifying when the error occurred
+     * @param t    The throwable that describes the error
+     * @return The StateID of ErrorState, so that it can be used like Game.enterState(ErrorState.setError(...))
+     */
+    public int setError(String when, Throwable t) {
+        checkArgument(t != null, "Throwable must not be null!");
+        checkArgument(when != null, "When must not be null!");
+        this.when = when;
+        this.throwable = t;
+        this.logged = false;
+        StringWriter wr = new StringWriter();
+        PrintWriter pr = new PrintWriter(wr);
+        t.printStackTrace(pr);
+        wr.flush();
+        stackTrace = wr.toString();
+        return this.getID();
+    }
 
-	/**
-	 * Sets the throwable and moment, so that the error can be printed to the user
-	 *
-	 * @param when A string identifying when the error occurred
-	 * @param t    The throwable that describes the error
-	 * @return The StateID of ErrorState, so that it can be used like Game.enterState(ErrorState.setError(...))
-	 */
-	public int setError(String when, Throwable t) {
-		checkArgument(t != null, "Throwable must not be null!");
-		checkArgument(when != null, "When must not be null!");
-		this.when = when;
-		this.throwable = t;
-		this.logged = false;
-		StringWriter wr = new StringWriter();
-		PrintWriter pr = new PrintWriter(wr);
-		t.printStackTrace(pr);
-		wr.flush();
-		stackTrace = wr.toString();
-		return this.getID();
-	}
+    @Override
+    public int getID() {
+        return 3;
+    }
 
-	@Override
-	public void init() {
-	}
+    @Override
+    public void render(Graphics g) {
+        if (this.when == null || this.throwable == null)
+            throw new IllegalStateException("Error state was not correctly initialized using ErrorState.setError()");
+        g.setBackground(Color.black);
+        g.clear();
+        g.setColor(Color.white);
+        g.drawString(stackTrace, 0, 0);
+    }
 
-	@Override
-	public void render(Graphics g) {
-		if (this.when == null || this.throwable == null)
-			throw new IllegalStateException("Error state was not correctly initialized using ErrorState.setError()");
-		g.setBackground(Color.black);
-		g.clear();
-		g.setColor(Color.white);
-		g.drawString(stackTrace, 0, 0);
-	}
+    @Override
+    public void update(int delta) {
+        if (this.when == null || this.throwable == null)
+            throw new IllegalStateException("Error state was not correctly initialized using ErrorState.setError()");
 
-	@Override
-	public void update(int delta) {
-		if (this.when == null || this.throwable == null)
-			throw new IllegalStateException("Error state was not correctly initialized using ErrorState.setError()");
+        if (!logged) {
+            Game.logger.e(throwable.getLocalizedMessage(), throwable);
+            logged = true;
+        }
+    }
 
-		if (!logged) {
-			Game.logger.e(throwable.getLocalizedMessage(), throwable);
-			logged = true;
-		}
-	}
+    @Override
+    public void init() {
+    }
 
-	@Override
-	public void keyPressed(int key, char c) {
-		super.keyPressed(key, c);
-		if (key == Input.KEY_ESCAPE) this.game.exit();
-	}
+    @Override
+    public void keyPressed(int key, char c) {
+        super.keyPressed(key, c);
+        if (key == Input.KEY_ESCAPE) this.game.exit();
+    }
 }

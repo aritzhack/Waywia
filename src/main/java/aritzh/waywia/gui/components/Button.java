@@ -15,7 +15,11 @@
 
 package aritzh.waywia.gui.components;
 
-import org.newdawn.slick.*;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 
@@ -26,96 +30,93 @@ import org.newdawn.slick.geom.Rectangle;
 public class Button extends GUIElement {
 
 
-	protected static Font defaultFont;
+    /**
+     * Brightest to darkest
+     */
+    protected static final Color[] colors = new Color[3];
+    static {
+        Button.colors[0] = new Color(196, 196, 196);
+        Button.colors[1] = new Color(119, 119, 119);
+        Button.colors[2] = new Color(63, 63, 63);
+        try {
+            defaultFont = new Image(0, 0).getGraphics().getFont();
+        } catch (SlickException ignored) {
+        }
+    }
+    protected static Font defaultFont;
+    protected final float x, y, textX, textY;
+    protected final int width, height;
+    protected String text;
 
-	protected final float x, y, textX, textY;
-	protected final int width, height;
-	protected String text;
+    /**
+     * Creates a button, with customizable position and text,
+     * and with a width of 100. <br />
+     * To specify the with, {@link Button#Button(String, int, int, int)}
+     *
+     * @param text The text inside the button
+     * @param x    x coordinate. If negative, button will be centered around it
+     * @param y    y coordinate. If negative, button will be centered around it
+     * @see Button#Button(String, int, int, int)
+     */
+    public Button(String text, int x, int y) {
+        this(text, x, y, 100);
+    }
 
-	/**
-	 * Brightest to darkest
-	 */
-	protected static final Color[] colors = new Color[3];
+    /**
+     * Creates a button, with customizable position, text and size
+     *
+     * @param text  The text inside the button
+     * @param x     x coordinate. If negative, button will be centered around it
+     * @param y     y coordinate. If negative, button will be centered around it
+     * @param width The width of the button
+     */
+    public Button(String text, int x, int y, int width) {
 
-	static {
-		Button.colors[0] = new Color(196, 196, 196);
-		Button.colors[1] = new Color(119, 119, 119);
-		Button.colors[2] = new Color(63, 63, 63);
-		try {
-			defaultFont = new Image(0, 0).getGraphics().getFont();
-		} catch (SlickException ignored) {
-		}
-	}
+        this.text = text;
+        this.width = width;
+        this.height = 35;
 
-	/**
-	 * Creates a button, with customizable position and text,
-	 * and with a width of 100. <br />
-	 * To specify the with, {@link Button#Button(String, int, int, int)}
-	 *
-	 * @param text The text inside the button
-	 * @param x    x coordinate. If negative, button will be centered around it
-	 * @param y    y coordinate. If negative, button will be centered around it
-	 * @see Button#Button(String, int, int, int)
-	 */
-	public Button(String text, int x, int y) {
-		this(text, x, y, 100);
-	}
+        x = x >= 0 ? x : -x - this.width / 2;
+        y = y >= 0 ? y : -y - this.height / 2;
 
-	/**
-	 * Creates a button, with customizable position, text and size
-	 *
-	 * @param text  The text inside the button
-	 * @param x     x coordinate. If negative, button will be centered around it
-	 * @param y     y coordinate. If negative, button will be centered around it
-	 * @param width The width of the button
-	 */
-	public Button(String text, int x, int y, int width) {
+        this.x = x;
+        this.y = y;
 
-		this.text = text;
-		this.width = width;
-		this.height = 35;
+        this.textX = (this.x + this.width / 2);
+        if (Button.defaultFont == null) {
+            try {
+                Button.defaultFont = new Image(0, 0).getGraphics().getFont();
+            } catch (SlickException ignored) {
+            }
+        }
+        // Magic math!
+        if (Button.defaultFont != null)
+            this.textY = (this.y + this.height / 2) - (Button.defaultFont.getHeight(this.text)) / 2;
+        else this.textY = (this.y + this.height / 2);
+    }
 
-		x = x >= 0 ? x : -x - this.width / 2;
-		y = y >= 0 ? y : -y - this.height / 2;
+    public void render(Graphics g) {
+        if (!this.render) return;
 
-		this.x = x;
-		this.y = y;
+        g.setColor(this.pressed ? Button.colors[2] : this.hover ? Button.colors[0] : Button.colors[1]);
+        g.fillRect(this.x, this.y, this.width, this.height);
 
-		this.textX = (this.x + this.width / 2);
-		if (Button.defaultFont == null) {
-			try {
-				Button.defaultFont = new Image(0, 0).getGraphics().getFont();
-			} catch (SlickException ignored) {
-			}
-		}
-		// Magic math!
-		if (Button.defaultFont != null)
-			this.textY = (this.y + this.height / 2) - (Button.defaultFont.getHeight(this.text)) / 2;
-		else this.textY = (this.y + this.height / 2);
-	}
+        g.setColor(this.pressed ? Button.colors[0] : this.hover ? Button.colors[1] : Button.colors[2]);
+        g.drawRect(this.x, this.y, this.width, this.height);
 
-	public void render(Graphics g) {
-		if (!this.render) return;
+        g.setColor(Color.black);
+        g.draw(new Point(this.x, this.y));
+        g.draw(new Point(this.x + this.width, this.y));
+        g.draw(new Point(this.x, this.y + this.height));
+        g.draw(new Point(this.x + this.width, this.y + this.height));
 
-		g.setColor(this.pressed ? Button.colors[2] : this.hover ? Button.colors[0] : Button.colors[1]);
-		g.fillRect(this.x, this.y, this.width, this.height);
+        float x = textX - g.getFont().getWidth(this.text) / 2;
+        float y = textY;
+        g.setColor(Color.white);
+        g.drawString(this.text, x, y);
+    }
 
-		g.setColor(this.pressed ? Button.colors[0] : this.hover ? Button.colors[1] : Button.colors[2]);
-		g.drawRect(this.x, this.y, this.width, this.height);
-
-		g.setColor(Color.black);
-		g.draw(new Point(this.x, this.y));
-		g.draw(new Point(this.x + this.width, this.y));
-		g.draw(new Point(this.x, this.y + this.height));
-		g.draw(new Point(this.x + this.width, this.y + this.height));
-
-		float x = textX - g.getFont().getWidth(this.text) / 2;
-		float y = textY;
-		g.setColor(Color.white);
-		g.drawString(this.text, x, y);
-	}
-
-	public Rectangle getBBox() {
-		return new Rectangle(this.x, this.y, this.width, this.height);
-	}
+    public Rectangle getBBox() {
+        return new Rectangle(this.x, this.y, this.width, this.height);
+    }
 }

@@ -23,5 +23,5 @@ package aritzh.waywia.event;
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public enum Result {
-	CONTINUE, CANCEL
+    CONTINUE, CANCEL
 }

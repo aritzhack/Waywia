@@ -15,10 +15,10 @@
 
 package aritzh.waywia.entity.player;
 
-import io.github.aritzhack.util.bds.BDSCompound;
-import io.github.aritzhack.util.bds.BDSString;
 import aritzh.waywia.entity.Entity;
 import aritzh.waywia.universe.Universe;
+import io.github.aritzhack.util.bds.BDSCompound;
+import io.github.aritzhack.util.bds.BDSString;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
@@ -28,52 +28,51 @@ import org.newdawn.slick.Graphics;
  */
 public class Player extends Entity {
 
-	private String username;
-	private Universe universe;
+    private String username;
+    private Universe universe;
 
-	public Player(String username, Universe universe) {
-		this.username = username;
-		this.universe = universe;
-		this.universe.setPlayer(this);
-	}
+    public Player(String username, Universe universe) {
+        this.username = username;
+        this.universe = universe;
+        this.universe.setPlayer(this);
+    }
 
-	public Player() {
-	}
+    public Player() {
+    }
 
-	@Override
-	public void render(Graphics g) {
-		g.setColor(Color.red);
-		g.fillRect(this.posX, this.posY, 32, 32);
-	}
+    public static Player fromBDS(BDSCompound comp) {
+        Player p = (Player) Entity.fromBDS(comp);
+        p.username = comp.getString("Username", 0).getData();
+        return p;
+    }
 
-	@Override
-	public String getName() {
-		return "Player";
-	}
+    @Override
+    public int getMaxHealth() {
+        return 20;
+    }
 
-	public String getUsername() {
-		return this.username;
-	}
+    @Override
+    public void render(Graphics g) {
+        g.setColor(Color.red);
+        g.fillRect(this.posX, this.posY, 32, 32);
+    }
 
-	@Override
-	public BDSCompound toBDS() {
-		// Maybe friends list?
-		return super.toBDS().add(new BDSString(this.getUsername(), "Username"));
-	}
+    @Override
+    public String getName() {
+        return "Player";
+    }
 
-	@Override
-	public int getMaxHealth() {
-		return 20;
-	}
+    @Override
+    public BDSCompound toBDS() {
+        // Maybe friends list?
+        return super.toBDS().add(new BDSString(this.getUsername(), "Username"));
+    }
 
-	public static Player fromBDS(BDSCompound comp) {
-		Player p = (Player) Entity.fromBDS(comp);
-		p.username = comp.getString("Username", 0).getData();
-		return p;
-	}
+    public String getUsername() {
+        return this.username;
+    }
 
-
-	public void setUniverse(Universe universe) {
-		this.universe = universe;
-	}
+    public void setUniverse(Universe universe) {
+        this.universe = universe;
+    }
 }

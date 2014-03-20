@@ -25,24 +25,24 @@ import aritzh.waywia.gui.components.GUI;
  */
 public class MainMenuGUI extends GUI {
 
-	private final Button newGameButton, loadButton, exitButton;
+    private final Button newGameButton, loadButton, exitButton;
 
-	public MainMenuGUI(MenuState state) {
-		super(state);
-		this.addElement(newGameButton = new Button("New Game", -this.width / 2, -this.height / 2 + 100));
-		this.addElement(loadButton = new Button("Load", -this.width / 2, -this.height / 2 + 50));
-		this.addElement(exitButton = new Button("Exit", -this.width / 2, -this.height / 2));
-	}
+    public MainMenuGUI(MenuState state) {
+        super(state);
+        this.addElement(newGameButton = new Button("New Game", -this.width / 2, -this.height / 2 + 100));
+        this.addElement(loadButton = new Button("Load", -this.width / 2, -this.height / 2 + 50));
+        this.addElement(exitButton = new Button("Exit", -this.width / 2, -this.height / 2));
+    }
 
-	@Override
-	public void clicked(int id) {
-		super.clicked(id);
-		if (id == exitButton.getID()) {
-			this.state.getGame().exit();
-		} else if (id == newGameButton.getID()) {
-			this.state.openGUI(new NewUniverseGUI((MenuState) this.state));
-		} else if (id == loadButton.getID()) {
-			this.state.openGUI(new UniverseListGUI((MenuState) this.state));
-		}
-	}
+    @Override
+    public void clicked(int id) {
+        super.clicked(id);
+        if (id == exitButton.getID()) {
+            this.state.getGame().exit();
+        } else if (id == newGameButton.getID()) {
+            this.state.openGUI(new NewUniverseGUI((MenuState) this.state));
+        } else if (id == loadButton.getID()) {
+            this.state.openGUI(new UniverseListGUI((MenuState) this.state));
+        }
+    }
 }
