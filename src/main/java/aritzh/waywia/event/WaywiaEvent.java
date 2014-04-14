@@ -21,7 +21,6 @@ import io.github.aritzhack.util.ReflectionUtil;
  * Root of all events. Listen to this in order to handle all events
  *
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public abstract class WaywiaEvent {
 

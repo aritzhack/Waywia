@@ -23,7 +23,6 @@ import org.newdawn.slick.geom.Shape;
 
 /**
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public class QuadEntity extends EntityNPC {
 

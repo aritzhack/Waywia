@@ -28,7 +28,6 @@ import java.util.List;
 
 /**
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public abstract class Block implements BDSStorable {
 
@@ -76,7 +75,7 @@ public abstract class Block implements BDSStorable {
         return new BDSCompound("Block").add(new BDSInt(Block.blocks.indexOf(this), "ID"));
     }
 
-    public void clicked(int x, int y, World world) {
+    public void clicked(float x, float y, World world) {
     }
 
     public void update(int x, int y, int delta, World arg) {

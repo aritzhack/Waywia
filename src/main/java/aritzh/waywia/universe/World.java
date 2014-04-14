@@ -41,7 +41,6 @@ import java.util.Set;
 
 /**
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public class World implements BDSStorable {
 
@@ -243,9 +242,9 @@ public class World implements BDSStorable {
     }
 
     public void clicked(int x, int y) {
-        x /= Block.SIZE;
-        y /= Block.SIZE;
-        this.blocks.get(x, y).clicked(x, y, this);
+        float cx = x / (float) Block.SIZE;
+        float cy = y / (float) Block.SIZE;
+        this.blocks.get((int) cx, (int) cy).clicked(cx, cy, this);
     }
 
     public Player getPlayer() {

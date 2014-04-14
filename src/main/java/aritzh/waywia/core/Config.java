@@ -22,7 +22,6 @@ import java.io.File;
 
 /**
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public class Config {
 

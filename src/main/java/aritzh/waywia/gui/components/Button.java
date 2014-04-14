@@ -25,7 +25,6 @@ import org.newdawn.slick.geom.Rectangle;
 
 /**
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public class Button extends GUIElement {
 
@@ -50,7 +49,7 @@ public class Button extends GUIElement {
 
     /**
      * Creates a button, with customizable position and text,
-     * and with a width of 100. <br />
+     * and with a width of 100. <br>
      * To specify the with, {@link Button#Button(String, int, int, int)}
      *
      * @param text The text inside the button

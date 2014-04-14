@@ -22,7 +22,6 @@ import org.newdawn.slick.geom.Rectangle;
 
 /**
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public abstract class GUIElement implements InputListener {
 

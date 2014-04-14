@@ -25,7 +25,6 @@ import org.newdawn.slick.state.StateBasedGame;
 
 /**
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public abstract class WaywiaState extends BasicGameState {
 

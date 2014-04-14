@@ -34,7 +34,6 @@ import java.util.List;
 
 /**
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public abstract class Entity implements BDSStorable {
 

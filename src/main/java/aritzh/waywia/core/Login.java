@@ -33,7 +33,6 @@ import java.util.Random;
  * Use <a href="http://waywia.hostzi.com/login/register.php">this page</a> to register (please, do not abuse)
  *
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public class Login {
 
@@ -80,7 +79,7 @@ public class Login {
     }
 
     /**
-     * Checks whether the password corresponds to the given user. <br />
+     * Checks whether the password corresponds to the given user. <br>
      * In case of timeout, it checks again, and if if times out again, prints the exception
      *
      * @param username The username

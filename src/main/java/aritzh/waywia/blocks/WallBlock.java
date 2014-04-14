@@ -19,7 +19,6 @@ import aritzh.waywia.util.RenderUtil;
 
 /**
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public class WallBlock extends Block {
 

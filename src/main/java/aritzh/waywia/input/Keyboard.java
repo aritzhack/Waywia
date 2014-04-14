@@ -25,7 +25,6 @@ import org.newdawn.slick.imageout.ImageOut;
 
 /**
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public class Keyboard implements KeyListener {
 

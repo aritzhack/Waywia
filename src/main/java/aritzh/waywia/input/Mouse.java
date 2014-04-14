@@ -21,7 +21,6 @@ import org.newdawn.slick.MouseListener;
 
 /**
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public class Mouse implements MouseListener {
 

@@ -27,7 +27,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * @author Aritz Lopez
- * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 public class ErrorState extends WaywiaState {
 
