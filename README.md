@@ -1,4 +1,6 @@
 # Waywia
+
+[![Join the chat at https://gitter.im/aritzhack/Waywia](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aritzhack/Waywia?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Current build status: [![Build status][2]][1]
   [1]: https://travis-ci.org/aritzhack/Waywia
   [2]: https://travis-ci.org/aritzhack/Waywia.png?branch=master (Build status)
